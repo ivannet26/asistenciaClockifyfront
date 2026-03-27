@@ -1,0 +1,66 @@
+<div style="display: flex; min-height: 100vh; position: relative; font-family: sans-serif;">
+    <div class="image-section"
+        style="width: 50%; background-image: url('/assets/demo/images/empresaprueba.jpg'); background-size: cover; background-position: center;">
+    </div>
+    <div class="form-section"
+        style="width: 50%;display: flex;align-items: center;justify-content: center;position: relative;z-index: 2;">
+        <div class="p-fluid" style="width: 100%; max-width: 450px;">
+            <div class="p-card" style="border-radius: 12px;box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <div class="p-card-body flex align-items-center justify-content-center flex-column">
+                    <div style="text-align:center; margin-bottom:15px;">
+                        <img src="/assets/demo/images/logo.ico" style="height:150px; margin: 0;">
+                        <h2 style="text-align:center; color: #9aa4af; font-weight:bold">Clockify</h2>
+                    </div>
+
+                    <div class="p-fluid" [style]="{
+                        width: '90%'}">
+                        <div class="p-field" style="margin-bottom:18px;">
+                            <label class="form-label">
+                                Correo Electrónico
+                            </label>
+
+                            <span class="p-input-icon-left" style="width:100%;">
+                                <i class="pi pi-envelope"></i>
+                                <input pInputText type="text" placeholder="nombre@empresa.com"
+                                    style="width:100%; background:white;color:#252a31;border:1px solid #3d444d;padding:12px 12px 12px 40px;border-radius:8px;">
+                            </span>
+                        </div>
+
+                        <div class="p-field" style="margin-bottom:18px;">
+                            <label class="form-label">
+                                Contraseña
+                            </label>
+
+                            <p-password [toggleMask]="true" [feedback]="false" placeholder="Tu contraseña"
+                                styleClass="w-full" [inputStyle]="{'background':'white', 'color':'#252a31', 'border':'1px solid #3d444d', 'padding':'12px', 'border-radius':'8px', 'width':'100%'
+                                }">
+                            </p-password>
+                        </div>
+
+                        <!--<div class="p-field" style="margin-bottom:20px;">
+                            <label class="form-label">
+                                Empresa
+                            </label>
+
+                            <span class="p-input-icon-left" style="width:100%;">
+                                <i class="pi pi-building"></i>
+                                <input pInputText type="text"
+                                    placeholder="Nombre de la Empresa"
+                                    style="width:100%; background:#252a31; color:white; border:1px solid #3d444d; padding:12px 12px 12px 40px; border-radius:8px;">
+                            </span>
+                        </div>-->
+
+                        <p-button label="Iniciar Sesión"  (onClick)="login2()"  [style]="{
+                        width: '100%',
+                        border: 'none',
+                        fontWeight: 'bold',
+                        padding: '12px',
+                        borderRadius: '8px'
+                            }">
+                        </p-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

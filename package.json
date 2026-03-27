@@ -57,12 +57,12 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/librairum/cajabancofrontend.git"
+    "url": "git+https://github.com/librairum/Clockify.git"
   },
   "keywords": [],
   "author": "",
   "bugs": {
-    "url": "https://github.com/librairum/cajabancofrontend/issues"
+    "url": "https://github.com/librairum/Clockify/issues"
   },
-  "homepage": "https://github.com/librairum/cajabancofrontend#readme"
+  "homepage": "https://github.com/librairum/Clockify#readme"
 }

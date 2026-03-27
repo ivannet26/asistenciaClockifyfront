@@ -17,30 +17,30 @@ import { verMensajeInformativo } from '../utilities/funciones_utilitarias';
 import { ConfigService } from '../../service/config.service';
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [ToastModule, CommonModule, ReactiveFormsModule, CardModule, ButtonModule, InputTextModule, CheckboxModule, RouterModule, FormsModule,DropdownModule],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
-  providers: [MessageService]
+    selector: 'app-login',
+    standalone: true,
+    imports: [ToastModule, CommonModule, ReactiveFormsModule, CardModule, ButtonModule, InputTextModule, CheckboxModule, RouterModule, FormsModule, DropdownModule],
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.css',
+    providers: [MessageService]
 })
 export class LoginComponent implements OnInit {
-    credencialesFRM:FormGroup;
+    credencialesFRM: FormGroup;
     errorMessage: string = '';
     showDialog: boolean = false;
     recordarme: boolean = false;
     dialogMessage: string = '';
-    Empresa:EmpresasxModulo[]=[]
+    Empresa: EmpresasxModulo[] = []
     selectedEmpresa: string = '';
 
 
-    constructor(private globalservice:GlobalService,private fb:FormBuilder,
-        private LoginServicio:LoginService, private router:Router,
-        private messageService:MessageService, private link:Router, private configService: ConfigService){
-        this.credencialesFRM=fb.group({
-            nombreusuario:['',[Validators.required,Validators.maxLength(50)]],
-            claveusuario: ['',[Validators.required,Validators.maxLength(50)]],
-            codigoempresa:['',[Validators.required,Validators.maxLength(50)]],
+    constructor(private globalservice: GlobalService, private fb: FormBuilder,
+        private LoginServicio: LoginService, private router: Router,
+        private messageService: MessageService, private link: Router, private configService: ConfigService) {
+        this.credencialesFRM = fb.group({
+            nombreusuario: ['', [Validators.required, Validators.maxLength(50)]],
+            claveusuario: ['', [Validators.required, Validators.maxLength(50)]],
+            codigoempresa: ['', [Validators.required, Validators.maxLength(50)]],
 
         });
     }
@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
         this.LoginServicio.isAuthenticated().subscribe(isAuthenticated => {
             if (isAuthenticated) {
                 this.link.navigate(['/Home']);
-            } else{
+            } else {
                 this.link.navigate(['/'])
             }
         });
@@ -64,66 +64,67 @@ export class LoginComponent implements OnInit {
     }
 
     //Método para manejar el envió del form
-    iniciarSesion(){
-        if(this.credencialesFRM.valid){
+    iniciarSesion() {
+        if (this.credencialesFRM.valid) {
             const autenticacion: Login = this.credencialesFRM.value;
             this.LoginServicio.autenticacion(autenticacion).subscribe({
-                    next:  (response)=>{
-                        if(response.isSuccess){
-                            this.globalservice.setNombreUsuario(autenticacion.nombreusuario)
-                            this.globalservice.setCodigoEmpresa(autenticacion.codigoempresa)
-                            this.globalservice.setCodigoPerfil(response.data[0].codigoPerfil);
+                next: (response) => {
+                    if (response.isSuccess) {
+                        this.globalservice.setNombreUsuario(autenticacion.nombreusuario)
+                        this.globalservice.setCodigoEmpresa(autenticacion.codigoempresa)
+                        this.globalservice.setCodigoPerfil(response.data[0].codigoPerfil);
 
-                             console.log("autenticacion exitosa");
-                            // console.log(this.globalservice.getCodigoPerfil());
+                        
 
-                            this.router.navigate(['/Home']);
-                            if (this.recordarme) {
-                               localStorage.setItem('rememberedUser', JSON.stringify({
-                                   nombreusuario: autenticacion.nombreusuario,
-                                   claveusuario: autenticacion.claveusuario,
-                                   codigoempresa: autenticacion.codigoempresa,
-                               }));
-                           } else {
-                               localStorage.removeItem('rememberedUser');
-                           }
-                        } else{
-                            console.log("Error en autenticaion");
-                            console.log(response);
-                            verMensajeInformativo(this.messageService,'error', 'Credenciales inválidas', 'Usuario y/o clave incorrecta');
+                        console.log("autenticacion exitosa");
 
+                        this.router.navigate(['/Home']);
+                        if (this.recordarme) {
+                            localStorage.setItem('rememberedUser', JSON.stringify({
+                                nombreusuario: autenticacion.nombreusuario,
+                                claveusuario: autenticacion.claveusuario,
+                                codigoempresa: autenticacion.codigoempresa,
+                            }));
+                        } else {
+                            localStorage.removeItem('rememberedUser');
                         }
-
-                    }, error:(error) =>{
-                        verMensajeInformativo(this.messageService, 'error', 'Credenciales invalidas','Usuario y/o clave incorrecta');
+                    } else {
+                        console.log("Error en autenticaion");
+                        console.log(response);
+                        verMensajeInformativo(this.messageService, 'error', 'Credenciales inválidas', 'Usuario y/o clave incorrecta');
 
                     }
-                });
+
+                }, error: (error) => {
+                    verMensajeInformativo(this.messageService, 'error', 'Credenciales invalidas', 'Usuario y/o clave incorrecta');
+
+                }
+            });
         } else {
             verMensajeInformativo(this.messageService, 'warn', 'Campos incompletos', 'Por favor completa los campos correctamente.');
         }
     }
 
-    loadEmpresa(){
+    loadEmpresa() {
         const codigomodulo = this.configService.getCodigoModulo()
         this.LoginServicio.getEmpresa(codigomodulo).subscribe(
-            (data:EmpresasxModulo[])=>{
+            (data: EmpresasxModulo[]) => {
                 this.Empresa = data;
-                if(this.selectedEmpresa){
-                    const empresaEncontrada=this.Empresa.find(p=>p.codigomodulo===this.selectedEmpresa);
+                if (this.selectedEmpresa) {
+                    const empresaEncontrada = this.Empresa.find(p => p.codigomodulo === this.selectedEmpresa);
                     // console.log(data);
                 }
             }
         )
     }
 
-    onEmpresaChallenge(event:any){
+    onEmpresaChallenge(event: any) {
         console.log("onEmpresaChallenge");
         this.credencialesFRM.patchValue({
             codigoempresa: event.value
-            
+
         });
-        
+
         console.log(event.value);
     }
 

@@ -19,7 +19,6 @@ import { calendario_traduccion } from 'src/app/shared/Calendarios';
 import { InputTextModule } from 'primeng/inputtext';
 import { verMensajeInformativo } from 'src/app/demo/components/utilities/funciones_utilitarias';
 import { ConfigService } from 'src/app/demo/service/config.service';
-import { ConfirmarPagoComponent } from '../../presupuesto/confirmar-pago/confirmar-pago.component';
 import { DialogModule } from 'primeng/dialog';
 import { DetraccionService } from 'src/app/demo/service/detraccion.service';
 import { DetraccionIndividualDocPen } from 'src/app/demo/model/DetraccionIndividual';
@@ -39,7 +38,7 @@ import { DocPendienteDetra } from 'src/app/demo/model/DetraccionIndividual';
         RouterModule,
         CalendarModule,
         DropdownModule,
-        InputTextModule,ConfirmarPagoComponent ,
+        InputTextModule,
       
          DialogModule],
   templateUrl: './detraccion-individual-ayuda.component.html',

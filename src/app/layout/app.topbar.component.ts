@@ -10,6 +10,7 @@ import { calendario_traduccion } from 'src/app/shared/Calendarios';
     selector: 'app-topbar',
     templateUrl: './app.topbar.component.html'
 })
+
 export class AppTopBarComponent {
 
     items!: MenuItem[];
@@ -25,8 +26,6 @@ export class AppTopBarComponent {
     }
 
     nombre:string=this.gS.getNombreUsuario();
-
-
 
     cerrarSesion(){
         this.aS.logout();

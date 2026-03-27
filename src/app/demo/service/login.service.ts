@@ -120,7 +120,7 @@ export class LoginService {
                 { params }
             )
             .pipe(map((response) => response.data));
-        //  return this.http.get<RespuestaAPI<EmpresasxModulo>>(`https://localhost:7277/Autenticacion/SpTraeEmpresasxModulo`,
+        //  return this.http.get<RespuestaAPI<EmpresasxModulo>>(`https://192.168.1.38:7277/Autenticacion/SpTraeEmpresasxModulo`,
         // {params}).pipe(map(response=>response.data));
     }
 }

@@ -1,0 +1,27 @@
+@media (max-width: 768px) {
+
+    .image-section {
+        position: absolute !important;
+        width: 100% !important;
+        height: 100% !important;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
+
+    .form-section {
+        width: 100% !important;
+        background-color: rgba(12, 18, 37, 0.85) !important;
+        z-index: 2;
+    }
+
+}
+
+.form-label {
+    color: #9aa4af;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+}

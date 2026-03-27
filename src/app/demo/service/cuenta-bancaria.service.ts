@@ -14,7 +14,6 @@ export class CuentaBancariaService {
    private http = inject(HttpClient);
       apiUrl: string = ''; //
       urlAPI: string = ''; //
-      //apiUrl = 'https://localhost:7277/CtaBancaria';
 
   constructor(private httpClient: HttpClient, private configService: ConfigService)
   {

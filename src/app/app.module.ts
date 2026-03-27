@@ -15,12 +15,12 @@ import { TagModule } from 'primeng/tag';
 
 @NgModule({
     declarations: [AppComponent, NotfoundComponent],
-    imports: [AppRoutingModule, AppLayoutModule,FormsModule,BrowserModule,ReactiveFormsModule,ToastModule,LoginComponent, TagModule],
+    imports: [AppRoutingModule, AppLayoutModule, FormsModule, BrowserModule, ReactiveFormsModule, ToastModule, LoginComponent, TagModule],
     providers: [
         { provide: LocationStrategy, useClass: PathLocationStrategy },
 
-         ConfirmationService,HttpClientModule
+        ConfirmationService, HttpClientModule
     ],
     bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

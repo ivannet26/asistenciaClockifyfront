@@ -144,7 +144,7 @@ export class PresupuestoService {
 
     public obtenerMedioPago(empresa: string): Observable<MedioPago[]> {
         const params = new HttpParams().set('empresa', empresa);
-        /*https://localhost:7277/Presupuesto/SpTraeTipoPago?empresa=01*/
+        /*https://192.168.1.38:7277/Presupuesto/SpTraeTipoPago?empresa=01*/
         return this.http
             .get<RespuestaAPIBase<MedioPago[]>>(
                 `${this.urlApi}/SpTraeTipoPago`,
