@@ -1,0 +1,13 @@
+<ul class="layout-menu">
+    <li *ngFor="let item of model; let i = index" class="layout-root-menuitem">
+        <div class="layout-menuitem-root-text" style="font-weight: 700; color: #495057; margin-bottom: 0.5rem;">
+            {{item.label}}
+        </div>
+        
+        <ul>
+            <li app-menuitem *ngFor="let child of item.items; let j = index" 
+                [item]="child" [index]="j" [root]="false">
+            </li>
+        </ul>
+    </li>
+</ul>

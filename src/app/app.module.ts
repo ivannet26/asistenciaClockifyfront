@@ -8,18 +8,29 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { LoginComponent } from './demo/components/login/login.component';
+import { LoginCComponent } from './demo/components/login-c/login-c.component'; // Importación arriba
 import { HttpClientModule } from '@angular/common/http';
 import { TagModule } from 'primeng/tag';
 
-
 @NgModule({
-    declarations: [AppComponent, NotfoundComponent],
-    imports: [AppRoutingModule, AppLayoutModule, FormsModule, BrowserModule, ReactiveFormsModule, ToastModule, LoginComponent, TagModule],
+    declarations: [
+        AppComponent,
+        NotfoundComponent
+    ],
+    imports: [
+        AppRoutingModule,
+        AppLayoutModule,
+        FormsModule,
+        BrowserModule,
+        ReactiveFormsModule,
+        ToastModule,
+        TagModule,
+        LoginCComponent,
+    ],
     providers: [
         { provide: LocationStrategy, useClass: PathLocationStrategy },
-
-        ConfirmationService, HttpClientModule
+        ConfirmationService,
+        HttpClientModule
     ],
     bootstrap: [AppComponent],
 })

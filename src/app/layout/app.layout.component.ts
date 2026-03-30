@@ -12,21 +12,25 @@ import { AppTopBarComponent } from './app.topbar.component';
 export class AppLayoutComponent implements OnDestroy {
 
     overlayMenuOpenSubscription: Subscription;
-
     menuOutsideClickListener: any;
-
     profileMenuOutsideClickListener: any;
 
     @ViewChild(AppSidebarComponent) appSidebar!: AppSidebarComponent;
-
     @ViewChild(AppTopBarComponent) appTopbar!: AppTopBarComponent;
 
     constructor(public layoutService: LayoutService, public renderer: Renderer2, public router: Router) {
         this.overlayMenuOpenSubscription = this.layoutService.overlayOpen$.subscribe(() => {
             if (!this.menuOutsideClickListener) {
                 this.menuOutsideClickListener = this.renderer.listen('document', 'click', event => {
-                    const isOutsideClicked = !(this.appSidebar.el.nativeElement.isSameNode(event.target) || this.appSidebar.el.nativeElement.contains(event.target) 
-                        || this.appTopbar.menuButton.nativeElement.isSameNode(event.target) || this.appTopbar.menuButton.nativeElement.contains(event.target));
+                    
+                    // VALIDACIÓN DE SEGURIDAD PARA EVITAR EL ERROR 'UNDEFINED'
+                    const sidebarEl = this.appSidebar ? this.appSidebar.el.nativeElement : null;
+                    const topbarEl = this.appTopbar ? this.appTopbar.menuButton.nativeElement : null;
+
+                    const isOutsideClicked = !(
+                        (sidebarEl && (sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target))) ||
+                        (topbarEl && (topbarEl.isSameNode(event.target) || topbarEl.contains(event.target)))
+                    );
                     
                     if (isOutsideClicked) {
                         this.hideMenu();
@@ -36,8 +40,13 @@ export class AppLayoutComponent implements OnDestroy {
 
             if (!this.profileMenuOutsideClickListener) {
                 this.profileMenuOutsideClickListener = this.renderer.listen('document', 'click', event => {
-                    const isOutsideClicked = !(this.appTopbar.menu.nativeElement.isSameNode(event.target) || this.appTopbar.menu.nativeElement.contains(event.target)
-                        || this.appTopbar.topbarMenuButton.nativeElement.isSameNode(event.target) || this.appTopbar.topbarMenuButton.nativeElement.contains(event.target));
+                    const topbarMenuEl = this.appTopbar ? this.appTopbar.menu.nativeElement : null;
+                    const topbarProfileBtnEl = this.appTopbar ? this.appTopbar.topbarMenuButton.nativeElement : null;
+
+                    const isOutsideClicked = !(
+                        (topbarMenuEl && (topbarMenuEl.isSameNode(event.target) || topbarMenuEl.contains(event.target))) ||
+                        (topbarProfileBtnEl && (topbarProfileBtnEl.isSameNode(event.target) || topbarProfileBtnEl.contains(event.target)))
+                    );
 
                     if (isOutsideClicked) {
                         this.hideProfileMenu();
@@ -55,6 +64,10 @@ export class AppLayoutComponent implements OnDestroy {
                 this.hideMenu();
                 this.hideProfileMenu();
             });
+    }
+
+    get isNuevaRuta(): boolean {
+        return this.router.url.includes('/menu-layout');
     }
 
     hideMenu() {
@@ -79,8 +92,7 @@ export class AppLayoutComponent implements OnDestroy {
     blockBodyScroll(): void {
         if (document.body.classList) {
             document.body.classList.add('blocked-scroll');
-        }
-        else {
+        } else {
             document.body.className += ' blocked-scroll';
         }
     }
@@ -88,8 +100,7 @@ export class AppLayoutComponent implements OnDestroy {
     unblockBodyScroll(): void {
         if (document.body.classList) {
             document.body.classList.remove('blocked-scroll');
-        }
-        else {
+        } else {
             document.body.className = document.body.className.replace(new RegExp('(^|\\b)' +
                 'blocked-scroll'.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
         }
@@ -113,7 +124,6 @@ export class AppLayoutComponent implements OnDestroy {
         if (this.overlayMenuOpenSubscription) {
             this.overlayMenuOpenSubscription.unsubscribe();
         }
-
         if (this.menuOutsideClickListener) {
             this.menuOutsideClickListener();
         }

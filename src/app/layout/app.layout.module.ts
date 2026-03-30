@@ -19,6 +19,7 @@ import { AppSidebarComponent } from "./app.sidebar.component";
 import { AppLayoutComponent } from "./app.layout.component";
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { CalendarModule } from 'primeng/calendar';
+import { AppMenuLayoutComponent } from './app-menu-layout.component';
 
 @NgModule({ declarations: [
         AppMenuitemComponent,
@@ -27,6 +28,7 @@ import { CalendarModule } from 'primeng/calendar';
         AppMenuComponent,
         AppSidebarComponent,
         AppLayoutComponent,
+        AppMenuLayoutComponent
     ],
     exports: [AppLayoutComponent], imports: [BrowserModule,OverlayPanelModule,FormsModule,CalendarModule,
         FormsModule,

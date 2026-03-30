@@ -65,6 +65,7 @@ export class LoginComponent implements OnInit {
 
     //Método para manejar el envió del form
     iniciarSesion() {
+        console.log(this.credencialesFRM.value);
         if (this.credencialesFRM.valid) {
             const autenticacion: Login = this.credencialesFRM.value;
             this.LoginServicio.autenticacion(autenticacion).subscribe({
@@ -73,8 +74,6 @@ export class LoginComponent implements OnInit {
                         this.globalservice.setNombreUsuario(autenticacion.nombreusuario)
                         this.globalservice.setCodigoEmpresa(autenticacion.codigoempresa)
                         this.globalservice.setCodigoPerfil(response.data[0].codigoPerfil);
-
-                        
 
                         console.log("autenticacion exitosa");
 

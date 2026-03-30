@@ -11,7 +11,7 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 import { DashboardsRoutingModule } from './dashboard-routing.module';
 import { BancoComponent } from '../banco/banco.component';
 import { RouterModule } from '@angular/router';
-import { LoginComponent } from '../login/login.component';
+import { LoginCComponent } from '../login-c/login-c.component';
 import { UsuarioComponent } from '../usuario/usuario/usuario.component';
 import { CuentaBancariaComponent } from '../cuenta-bancaria/cuenta-bancaria.component';
 @NgModule({

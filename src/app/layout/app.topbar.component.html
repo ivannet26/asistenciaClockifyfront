@@ -5,39 +5,31 @@
             <i class="pi pi-bars"></i>
         </button>
 
-        <a class="layout-topbar-logo" routerLink="/Home">
-            <img src="assets\demo\images\logo.jpg" alt="logo">
-            <span></span>
+        <a class="layout-topbar-logo w-8rem h-3rem font-bold text-xl text-primary flex align-items-center justify-content-center"
+            routerLink="/Home">
+            CLOCKIFY
         </a>
     </div>
 
     <div class="right-section" style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
-        <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button"
-            (click)="layoutService.showProfileSidebar()">
-            <i class="pi pi-ellipsis-v"></i>
+        <button class="p-link layout-topbar-button layout-topbar-profile-mobile" (click)="op.toggle($event)">
+            <i class="pi pi-user"></i>
         </button>
-
-        <div #topbarmenu class="layout-topbar-menu"
-            [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
-            <button class="p-link layout-topbar-button" (click)="op.toggle($event)">
-                <i class="pi pi-user"></i>
-                <span>Profile</span>
-            </button>
-        </div>
     </div>
 
+
     <p-overlayPanel #op [showCloseIcon]="false" styleClass="border-round-xl">
-            <div class="flex flex-column align-items-center">
-                <div class="flex align-items-center justify-content-center w-5rem h-5rem border-circle surface-200 ">
-                    <i class="pi pi-user text-5xl"></i>
-                </div>
-                <div>
-                    <div class="text-2xl font-medium">{{nombre}}</div>
-                </div>
+        <div class="flex flex-column align-items-center">
+            <div class="flex align-items-center justify-content-center w-5rem h-5rem border-circle surface-200 ">
+                <i class="pi pi-user text-5xl"></i>
             </div>
-            <div class="border-top-1 surface-border my-2"></div>
-            <p-button severity="danger" label="Cerrar Sesión" icon="pi pi-sign-out" (click)="cerrarSesion()"
-                styleClass="w-full border-round-lg">
-            </p-button>
+            <div>
+                <div class="text-2xl font-medium">{{nombre}}</div>
+            </div>
+        </div>
+        <div class="border-top-1 surface-border my-2"></div>
+        <p-button severity="danger" label="Cerrar Sesión" icon="pi pi-sign-out" (click)="cerrarSesion()"
+            styleClass="w-full border-round-lg">
+        </p-button>
     </p-overlayPanel>
 </div>

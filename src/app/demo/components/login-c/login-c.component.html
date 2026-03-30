@@ -1,4 +1,5 @@
 <div style="display: flex; min-height: 100vh; position: relative; font-family: sans-serif;">
+    <p-toast [style]="{marginTop: 'marginTop'}" styleClass="styleClass" key="key" position="position"></p-toast>
     <div class="image-section"
         style="width: 50%; background-image: url('/assets/demo/images/empresaprueba.jpg'); background-size: cover; background-position: center;">
     </div>
@@ -12,8 +13,8 @@
                         <h2 style="text-align:center; color: #9aa4af; font-weight:bold">Clockify</h2>
                     </div>
 
-                    <div class="p-fluid" [style]="{
-                        width: '90%'}">
+                    <form [formGroup]="credencialesFRM" (ngSubmit)="iniciarSesion()" class="p-fluid"
+                        [style]="{width: '90%'}">
                         <div class="p-field" style="margin-bottom:18px;">
                             <label class="form-label">
                                 Correo Electrónico
@@ -21,7 +22,7 @@
 
                             <span class="p-input-icon-left" style="width:100%;">
                                 <i class="pi pi-envelope"></i>
-                                <input pInputText type="text" placeholder="nombre@empresa.com"
+                                <input pInputText formControlName="nombreusuario" type="text" placeholder="nombre@empresa.com"
                                     style="width:100%; background:white;color:#252a31;border:1px solid #3d444d;padding:12px 12px 12px 40px;border-radius:8px;">
                             </span>
                         </div>
@@ -31,26 +32,24 @@
                                 Contraseña
                             </label>
 
-                            <p-password [toggleMask]="true" [feedback]="false" placeholder="Tu contraseña"
+                            <p-password formControlName="claveusuario" [toggleMask]="true" [feedback]="false" placeholder="Tu contraseña"
                                 styleClass="w-full" [inputStyle]="{'background':'white', 'color':'#252a31', 'border':'1px solid #3d444d', 'padding':'12px', 'border-radius':'8px', 'width':'100%'
                                 }">
                             </p-password>
                         </div>
 
-                        <!--<div class="p-field" style="margin-bottom:20px;">
-                            <label class="form-label">
-                                Empresa
-                            </label>
+                        <div class="flex align-items-center justify-content-between mb-5 gap-5"
+                            style="margin-top: 10px;">
+                            <div class="flex align-items-center">
+                                <p-checkbox id="rememberme1" [(ngModel)]="recordarme"
+                                    [ngModelOptions]="{standalone: true}" [binary]="true"
+                                    styleClass="mr-2"></p-checkbox>
+                                <label for="rememberme1">Recordarme</label>
+                            </div>
 
-                            <span class="p-input-icon-left" style="width:100%;">
-                                <i class="pi pi-building"></i>
-                                <input pInputText type="text"
-                                    placeholder="Nombre de la Empresa"
-                                    style="width:100%; background:#252a31; color:white; border:1px solid #3d444d; padding:12px 12px 12px 40px; border-radius:8px;">
-                            </span>
-                        </div>-->
+                        </div>
 
-                        <p-button label="Iniciar Sesión"  (onClick)="login2()"  [style]="{
+                        <p-button label="Iniciar Sesión" type="submit" [style]="{
                         width: '100%',
                         border: 'none',
                         fontWeight: 'bold',
@@ -58,7 +57,7 @@
                         borderRadius: '8px'
                             }">
                         </p-button>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

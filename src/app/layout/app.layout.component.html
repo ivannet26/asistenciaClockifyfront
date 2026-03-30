@@ -1,8 +1,9 @@
 <div class="layout-wrapper" [ngClass]="containerClass">
     <app-topbar></app-topbar>
-    <div class="layout-sidebar w-16rem">
-        <app-sidebar></app-sidebar>
-    </div>
+    <div class="layout-sidebar" [ngClass]="{'layout-sidebar-active': layoutService.state.staticMenuMobileActive || layoutService.state.overlayMenuActive}">
+    <app-sidebar *ngIf="!isNuevaRuta"></app-sidebar>
+    <app-menu-layout *ngIf="isNuevaRuta"></app-menu-layout>
+</div>
     <div class="layout-main-container">
         <div class="layout-main">
             <router-outlet></router-outlet>
@@ -13,3 +14,4 @@
 
     <div class="layout-mask"></div>
 </div>
+
