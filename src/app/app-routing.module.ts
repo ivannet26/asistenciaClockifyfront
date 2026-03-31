@@ -16,6 +16,7 @@ import { ConsultahistoricaCtaxcobrarComponent } from './demo/components/consulta
 import { RegistroCobroComponent } from './demo/components/cobrofactura/registro-cobro/registro-cobro.component';
 import { RegistroCobroDetalleComponent } from './demo/components/cobrofactura/registro-cobro-detalle/registro-cobro-detalle.component';
 import { AgregaFacturaxcobrarComponent } from './demo/components/cobrofactura/agrega-facturaxcobrar/agrega-facturaxcobrar.component';
+import { ClientesComponent } from './demo/components/clientes/clientes.component';
 
 @NgModule({
     imports: [
@@ -50,7 +51,8 @@ import { AgregaFacturaxcobrarComponent } from './demo/components/cobrofactura/ag
                 component: AppLayoutComponent,
                 children: [
                     // Dejamos el path vacío para que no cargue nada en el centro (router-outlet)
-                    { path: '', component: NotfoundComponent }
+                    { path: '', component: NotfoundComponent },
+                    { path: 'clientes', component: ClientesComponent } //CLIENTES EN EL NUEVO MENÚ
                 ]
             },
 

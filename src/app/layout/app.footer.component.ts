@@ -13,7 +13,5 @@ export class AppFooterComponent {
 
     ngOnInit(): void {
         this.version = this.configService.getVersion()
-        // console.log(this.version);
-
     }
 }

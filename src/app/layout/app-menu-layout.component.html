@@ -5,8 +5,11 @@
         </div>
         
         <ul>
-            <li app-menuitem *ngFor="let child of item.items; let j = index" 
-                [item]="child" [index]="j" [root]="false">
+            <li app-menuitem 
+                *ngFor="let child of item.items; let j = index" 
+                [item]="child" 
+                [index]="j" 
+                [root]="false">
             </li>
         </ul>
     </li>
