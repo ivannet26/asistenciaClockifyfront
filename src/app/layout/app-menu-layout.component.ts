@@ -13,7 +13,7 @@ export class AppMenuLayoutComponent implements OnInit {
         {
             label: '',
             items: [
-                { label: 'RASTRADOR', icon: 'pi pi-fw pi-clock', routerLink: ['/menu-layout/rastreador'] },
+                { label: 'RASTREADOR', icon: 'pi pi-fw pi-clock', routerLink: ['/menu-layout/rastreador'] },
                 { label: 'CALENDARIO', icon: 'pi pi-fw pi-calendar', routerLink: ['/menu-layout/calendario'] }
             ]
         },

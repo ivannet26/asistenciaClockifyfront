@@ -16,8 +16,10 @@ import { ConsultahistoricaCtaxcobrarComponent } from './demo/components/consulta
 import { RegistroCobroComponent } from './demo/components/cobrofactura/registro-cobro/registro-cobro.component';
 import { RegistroCobroDetalleComponent } from './demo/components/cobrofactura/registro-cobro-detalle/registro-cobro-detalle.component';
 import { AgregaFacturaxcobrarComponent } from './demo/components/cobrofactura/agrega-facturaxcobrar/agrega-facturaxcobrar.component';
+import { RastreadorComponent } from './demo/components/rastreador/rastreador.component';
 import { ClientesComponent } from './demo/components/clientes/clientes.component';
 import { EtiquetasComponent } from './demo/components/etiquetas/etiquetas.component';
+import { ProyectosComponent } from './demo/components/proyectos/proyectos.component';
 
 @NgModule({
     imports: [
@@ -52,9 +54,11 @@ import { EtiquetasComponent } from './demo/components/etiquetas/etiquetas.compon
                 component: AppLayoutComponent,
                 children: [
                     // Dejamos el path vacío para que no cargue nada en el centro (router-outlet)
-                    { path: '', component: NotfoundComponent },
+                    { path: '', component: RastreadorComponent },
+                    { path: 'rastreador', component: RastreadorComponent },
+                    { path: 'proyectos', component: ProyectosComponent },
                     { path: 'clientes', component: ClientesComponent },//CLIENTES EN EL NUEVO MENÚ
-                    { path: 'etiquetas', component: EtiquetasComponent } 
+                    { path: 'etiquetas', component: EtiquetasComponent }  ,
                 ]
             },
 

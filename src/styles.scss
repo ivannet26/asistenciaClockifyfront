@@ -56,3 +56,22 @@ $gutter: 1rem; //for primeflex grid system
     zoom: 90%;
 }
 */
+
+/* --- AJUSTE PARA QUE EL MENÚ NO TAPE EL CONTENIDO --- */
+
+.layout-wrapper .layout-main-container {
+    /* CAMBIA ESTO: De 280px a 300px o 310px */
+    margin-left: 300px !important; 
+    transition: margin-left 0.2s;
+}
+
+.layout-wrapper.layout-static-inactive .layout-main-container {
+    margin-left: 0 !important;
+}
+
+
+@media (max-width: 992px) {
+    .layout-wrapper .layout-main-container {
+        margin-left: 0 !important;
+    }
+}
