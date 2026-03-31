@@ -1,0 +1,110 @@
+<div class="etiquetas-pagina">
+  <div class="etiquetas-panel">
+    <h2>Etiquetas</h2>
+
+    <div class="etiquetas-contenido">
+
+      <!-- Barra superior -->
+      <div class="barra-herramientas" *ngIf="mostrarLista">
+        <div class="busqueda-filtros">
+          <p-dropdown
+            [options]="opcionesFiltro"
+            [(ngModel)]="filtroSeleccionado"
+            placeholder="Mostrar activo">
+          </p-dropdown>
+
+          <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input
+              type="text"
+              pInputText
+              placeholder="Buscar por nombre"
+              class="input-busqueda" />
+          </span>
+        </div>
+
+        <div class="grupo-input-compacto">
+          <input
+            type="text"
+            pInputText
+            placeholder="Añadir nueva etiqueta"
+            class="input-personalizado" />
+          <button
+            pButton
+            type="button"
+            label="AÑADIR"
+            class="boton-personalizado"
+            (click)="mostrarTabla()">
+          </button>
+        </div>
+      </div>
+
+      <p-card>
+
+        <!-- Estado vacío -->
+        <div class="contenedor-vacio" *ngIf="!mostrarLista">
+          <h1 class="titulo-principal">
+            Organiza tus entradas con etiquetas
+          </h1>
+          <p class="subtitulo">
+            Usa etiquetas para añadir información adicional a las entradas de tiempo y obtener más información sobre los datos con informes.
+          </p>
+
+          <div class="grupo-input">
+            <input
+              type="text"
+              pInputText
+              placeholder="Añadir nueva etiqueta"
+              class="input-personalizado" />
+            <button
+              pButton
+              type="button"
+              label="AÑADIR"
+              class="boton-personalizado"
+              (click)="mostrarTabla()">
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="contenedor-tabla" *ngIf="mostrarLista">
+          <p-table [value]="etiquetas" class="tabla-personalizada">
+
+            <ng-template pTemplate="header">
+              <tr class="cabecera-gris">
+                <th style="width: 4rem">
+                  <p-checkbox [binary]="true"></p-checkbox>
+                </th>
+                <th>NOMBRE</th>
+                <th style="width: 8rem"></th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-etiqueta>
+              <tr>
+                <td>
+                  <p-checkbox [binary]="true"></p-checkbox>
+                </td>
+                <td>{{ etiqueta.nombre }}</td>
+                <td class="acciones-celda">
+                  <button
+                    pButton
+                    icon="pi pi-pencil"
+                    class="p-button-text p-button-secondary">
+                  </button>
+                  <button
+                    pButton
+                    icon="pi pi-ellipsis-v"
+                    class="p-button-text p-button-secondary">
+                  </button>
+                </td>
+              </tr>
+            </ng-template>
+
+          </p-table>
+        </div>
+
+      </p-card>
+    </div>
+  </div>
+</div>

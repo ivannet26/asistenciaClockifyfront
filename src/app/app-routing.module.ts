@@ -17,6 +17,7 @@ import { RegistroCobroComponent } from './demo/components/cobrofactura/registro-
 import { RegistroCobroDetalleComponent } from './demo/components/cobrofactura/registro-cobro-detalle/registro-cobro-detalle.component';
 import { AgregaFacturaxcobrarComponent } from './demo/components/cobrofactura/agrega-facturaxcobrar/agrega-facturaxcobrar.component';
 import { ClientesComponent } from './demo/components/clientes/clientes.component';
+import { EtiquetasComponent } from './demo/components/etiquetas/etiquetas.component';
 
 @NgModule({
     imports: [
@@ -52,7 +53,8 @@ import { ClientesComponent } from './demo/components/clientes/clientes.component
                 children: [
                     // Dejamos el path vacío para que no cargue nada en el centro (router-outlet)
                     { path: '', component: NotfoundComponent },
-                    { path: 'clientes', component: ClientesComponent } //CLIENTES EN EL NUEVO MENÚ
+                    { path: 'clientes', component: ClientesComponent },//CLIENTES EN EL NUEVO MENÚ
+                    { path: 'etiquetas', component: EtiquetasComponent } 
                 ]
             },
 

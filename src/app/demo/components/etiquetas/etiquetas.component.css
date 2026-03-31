@@ -3,32 +3,36 @@
   display: block;
   position: relative;
   z-index: 1;
-  padding: 0.5rem;
+  padding: 1.5rem;
   box-sizing: border-box;
 }
 
-.clientes-pagina {
+.etiquetas-pagina {
   margin: 0 80px 0 80px;
   transition: margin 0.3s ease;
 }
 
 @media (max-width: 1024px) {
-  .clientes-pagina {
+  .etiquetas-pagina {
     margin: 0 25px 0 80px;
   }
 }
 
 @media (max-width: 992px) {
-  .clientes-pagina {
+  .etiquetas-pagina {
     margin: auto;
   }
 }
 
-.clientes-panel {
+.etiquetas-panel {
   background: var(--surface-card);
   border-radius: 0.5rem;
   box-shadow: 0 1px 4px rgba(0,0,0,.08);
   padding: 1.25rem;
+}
+
+.etiquetas-contenido {
+  margin-top: 1rem;
 }
 
 .contenedor-vacio {
@@ -132,9 +136,11 @@
   font-weight: bold;
 }
 
+/* MODO PANTALLA PEQUEÑA O MOVIL */
+
 @media (max-width: 768px) {
 
-  .clientes-panel {
+  .etiquetass-panel {
     padding: 1rem;
   }
 
