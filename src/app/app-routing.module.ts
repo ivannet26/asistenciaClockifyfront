@@ -58,7 +58,7 @@ import { ProyectosComponent } from './demo/components/proyectos/proyectos.compon
                     { path: 'rastreador', component: RastreadorComponent },
                     { path: 'proyectos', component: ProyectosComponent },
                     { path: 'clientes', component: ClientesComponent },//CLIENTES EN EL NUEVO MENÚ
-                    { path: 'etiquetas', component: EtiquetasComponent }  ,
+                    { path: 'etiquetas', component: EtiquetasComponent },
                 ]
             },
 
