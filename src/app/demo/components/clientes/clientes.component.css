@@ -8,8 +8,14 @@
 }
 
 .clientes-pagina {
-  margin: 0 80px;
+  margin: 0 80px 0 80px;
   transition: margin-left 0.3s ease;
+}
+
+@media (min-width: 1024px) {
+  .clientes-pagina {
+    margin: 0 25px 0 80px;
+  }
 }
 
 @media (min-width: 992px) {
