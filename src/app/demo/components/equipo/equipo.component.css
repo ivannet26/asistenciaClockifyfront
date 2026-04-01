@@ -1,0 +1,187 @@
+/* Estilos existentes que no se tocan */
+:host {
+  display: block;
+  position: relative;
+  z-index: 1;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.equipo-pagina {
+  margin: 0 80px 0 80px;
+  transition: margin 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+  .equipo-pagina {
+    margin: 0 25px 0 80px;
+  }
+}
+
+@media (max-width: 992px) {
+  .equipo-pagina {
+    margin: auto;
+  }
+}
+
+.equipo-panel {
+  background: var(--surface-card);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  padding: 1.25rem;
+}
+
+.contenedor-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  text-align: center;
+}
+
+.titulo-principal {
+  font-size: 1.75rem;
+  color: #334155;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.subtitulo {
+  color: #64748b;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.grupo-input {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  max-width: 500px;
+}
+
+:host ::v-deep .p-card-body {
+  padding: 0;
+}
+
+.barra-herramientas {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.busqueda-filtros {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.input-busqueda {
+  width: 250px;
+}
+
+.grupo-input-compacto {
+  display: flex;
+  max-height: 38px;
+  max-width: 400px;
+}
+
+/* Estilos para la Tabla */
+.contenedor-tabla {
+  width: 100%;
+}
+
+:host ::v-deep .cabecera-gris th {
+  background-color: #f1f5f9 !important;
+  color: #64748b !important;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none !important;
+  padding: 1rem;
+}
+
+:host ::v-deep .p-datatable .p-datatable-tbody > tr > td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.acciones-celda {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Inputs y botones */
+.input-personalizado {
+  flex: 1;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border: 1px solid #ced4da;
+  padding: 0.75rem;
+}
+
+.boton-personalizado {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border: none;
+  color: white !important;
+  padding: 0 1rem;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+
+  .equipo-panel {
+    padding: 1rem;
+  }
+
+  .titulo-principal {
+    font-size: 1.4rem;
+  }
+
+  .subtitulo {
+    font-size: 0.9rem;
+  }
+
+  .barra-herramientas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .busqueda-filtros {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .input-busqueda {
+    width: 100%;
+  }
+
+  .grupo-input,
+  .grupo-input-compacto {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .input-personalizado {
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .boton-personalizado {
+    border-radius: 0.5rem;
+    width: 100%;
+  }
+
+  .contenedor-tabla {
+    overflow-x: auto;
+  }
+
+  :host ::v-deep .p-datatable {
+    min-width: 600px;
+  }
+}
