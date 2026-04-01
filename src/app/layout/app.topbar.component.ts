@@ -1,19 +1,24 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MenuItem, PrimeNGConfig } from 'primeng/api';
 import { LayoutService } from "../demo/components/service/app.layout.service";
 import { Router } from '@angular/router';
 import { GlobalService } from '../demo/service/global.service';
 import { LoginService } from '../demo/service/login.service';
 import { calendario_traduccion } from 'src/app/shared/Calendarios';
+import { SplitButtonModule} from 'primeng/splitbutton';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+
 
 @Component({
+    standalone: true,
+    imports: [SplitButtonModule,OverlayPanelModule],
     selector: 'app-topbar',
-    templateUrl: './app.topbar.component.html'
+    templateUrl: './app.topbar.component.html',
 })
 
-export class AppTopBarComponent {
+export class AppTopBarComponent implements OnInit {
 
-    items!: MenuItem[];
+    proyectos!: MenuItem[];
 
     @ViewChild('menubutton') menuButton!: ElementRef;
 
@@ -25,6 +30,13 @@ export class AppTopBarComponent {
         this.primeng.setTranslation(calendario_traduccion());
     }
 
+    ngOnInit(): void {
+        this.proyectos = [
+            { label: 'Proyecto 1', icon: 'pi pi-fw pi-file', command: () => this.link.navigate(['/menu-layout']) },
+            { label: 'Proyecto 2', icon: 'pi pi-fw pi-file', command: () => this.link.navigate(['/Home']) }
+        ];
+    }
+
     nombre:string=this.gS.getNombreUsuario();
 
     cerrarSesion(){
@@ -32,4 +44,10 @@ export class AppTopBarComponent {
         this.gS.clearSession();
         this.link.navigate(['/Inicio_Sesion']);
     }
+
+    espaciostrabajo(){
+        this.link.navigate(['/espaciotrabajo']);
+    }
+
+
 }

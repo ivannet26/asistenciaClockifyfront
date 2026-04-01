@@ -23,14 +23,13 @@ import { AppMenuLayoutComponent } from './app-menu-layout.component';
 
 @NgModule({ declarations: [
         AppMenuitemComponent,
-        AppTopBarComponent,
         AppFooterComponent,
         AppMenuComponent,
         AppSidebarComponent,
         AppLayoutComponent,
         AppMenuLayoutComponent
     ],
-    exports: [AppLayoutComponent], imports: [BrowserModule,OverlayPanelModule,FormsModule,CalendarModule,
+    exports: [AppLayoutComponent], imports: [BrowserModule,OverlayPanelModule,FormsModule,CalendarModule,AppTopBarComponent,
         FormsModule,
         BrowserAnimationsModule,
         InputTextModule,
