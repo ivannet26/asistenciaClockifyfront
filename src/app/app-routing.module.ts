@@ -22,6 +22,7 @@ import { EtiquetasComponent } from './demo/components/etiquetas/etiquetas.compon
 import { ProyectosComponent } from './demo/components/proyectos/proyectos.component';
 import { EspaciotrabajoComponent } from './demo/components/espaciotrabajo/espaciotrabajo.component';
 import { EquipoComponent } from './demo/components/equipo/equipo.component';
+import { PanelComponent } from './demo/components/panel/panel.component';
 
 @NgModule({
     imports: [
@@ -63,6 +64,7 @@ import { EquipoComponent } from './demo/components/equipo/equipo.component';
                     { path: 'rastreador', component: RastreadorComponent },
                     { path: 'proyectos', component: ProyectosComponent },
                     { path: 'equipo', component: EquipoComponent },
+                    { path: 'panel', component: PanelComponent },
                     { path: 'clientes', component: ClientesComponent },//CLIENTES EN EL NUEVO MENÚ
                     { path: 'etiquetas', component: EtiquetasComponent },
                 ]
