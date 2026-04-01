@@ -22,16 +22,16 @@ export class AppLayoutComponent implements OnDestroy {
         this.overlayMenuOpenSubscription = this.layoutService.overlayOpen$.subscribe(() => {
             if (!this.menuOutsideClickListener) {
                 this.menuOutsideClickListener = this.renderer.listen('document', 'click', event => {
-                    
+
                     // VALIDACIÓN DE SEGURIDAD PARA EVITAR EL ERROR 'UNDEFINED'
-                    const sidebarEl = this.appSidebar ? this.appSidebar.el.nativeElement : null;
-                    const topbarEl = this.appTopbar ? this.appTopbar.menuButton.nativeElement : null;
+                    const sidebarEl = this.appSidebar?.el?.nativeElement || null;
+                    const topbarEl = this.appTopbar?.menuButton?.nativeElement || null;
 
                     const isOutsideClicked = !(
                         (sidebarEl && (sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target))) ||
                         (topbarEl && (topbarEl.isSameNode(event.target) || topbarEl.contains(event.target)))
                     );
-                    
+
                     if (isOutsideClicked) {
                         this.hideMenu();
                     }
@@ -40,8 +40,8 @@ export class AppLayoutComponent implements OnDestroy {
 
             if (!this.profileMenuOutsideClickListener) {
                 this.profileMenuOutsideClickListener = this.renderer.listen('document', 'click', event => {
-                    const topbarMenuEl = this.appTopbar ? this.appTopbar.menu.nativeElement : null;
-                    const topbarProfileBtnEl = this.appTopbar ? this.appTopbar.topbarMenuButton.nativeElement : null;
+                    const topbarMenuEl = this.appTopbar?.menu?.nativeElement || null;
+                    const topbarProfileBtnEl = this.appTopbar?.topbarMenuButton?.nativeElement || null;
 
                     const isOutsideClicked = !(
                         (topbarMenuEl && (topbarMenuEl.isSameNode(event.target) || topbarMenuEl.contains(event.target))) ||

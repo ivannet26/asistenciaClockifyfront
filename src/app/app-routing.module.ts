@@ -20,6 +20,7 @@ import { RastreadorComponent } from './demo/components/rastreador/rastreador.com
 import { ClientesComponent } from './demo/components/clientes/clientes.component';
 import { EtiquetasComponent } from './demo/components/etiquetas/etiquetas.component';
 import { ProyectosComponent } from './demo/components/proyectos/proyectos.component';
+import { EspaciotrabajoComponent } from './demo/components/espaciotrabajo/espaciotrabajo.component';
 
 @NgModule({
     imports: [
@@ -29,6 +30,9 @@ import { ProyectosComponent } from './demo/components/proyectos/proyectos.compon
             },
             {
                 path: 'Inicio_Sesion', component: LoginCComponent
+            },
+            {
+                path: 'espaciotrabajo', component: EspaciotrabajoComponent
             },
             {
                 path: 'Home', component: AppLayoutComponent, //canActivate:[AuthGuard],

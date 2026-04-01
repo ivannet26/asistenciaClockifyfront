@@ -80,7 +80,7 @@ export class LoginCComponent implements OnInit {
 
             console.log("autenticacion exitosa");
 
-            this.router.navigate(['/menu-layout']);
+            this.router.navigate(['/espaciotrabajo']);
             if (this.recordarme) {
               localStorage.setItem('recordarusuario', JSON.stringify({
                 nombreusuario: autenticacion.nombreusuario,
