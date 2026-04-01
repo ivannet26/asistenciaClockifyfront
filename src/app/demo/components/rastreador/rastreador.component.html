@@ -1,54 +1,253 @@
 <div class="rastreador-pagina">
     <div class="rastreador-panel">
-
         <div class="barra-rastreador">
+
             <div class="tarea-proyecto-seccion">
                 <div class="input-seccion">
-                    <input type="text" pInputText placeholder="¿En qué estás trabajando?" class="input-tarea" />
+                    <input type="text" pInputText placeholder="¿En qué estás trabajando?" class="input-tarea"
+                        [(ngModel)]="tareaActual" />
                 </div>
-
                 <div class="proyecto-seccion">
-                    <button pButton type="button" class="p-button-text boton-proyecto">
+                    <button pButton type="button" class="p-button-text boton-proyecto"
+                        (click)="panelProyectos.toggle($event)">
 
-                        <i class="pi pi-plus icono-proyecto"></i>
-                        <span class="texto-proyecto">Proyecto</span>
+                        <div class="flex align-items-center gap-2">
 
+                            <div *ngIf="proyectoSeleccionado" [style.background]="proyectoSeleccionado.color"
+                                style="width: 10px; height: 10px; border-radius: 50%;">
+                            </div>
+
+                            <i *ngIf="!proyectoSeleccionado" class="pi pi-plus icono-proyecto"></i>
+
+                            <span class="texto-proyecto">
+                                {{ proyectoSeleccionado?.nombre || 'Proyecto' }}
+                            </span>
+
+                        </div>
                     </button>
                 </div>
+
             </div>
 
             <div class="acciones-seccion">
-                <button pButton icon="pi pi-tag" class="p-button-text p-button-secondary"></button>
+                <button pButton icon="pi pi-tag" class="p-button-text"></button>
+
                 <div class="divisor-vertical"></div>
-                <button pButton icon="pi pi-dollar" class="p-button-text p-button-secondary"></button>
+                <button pButton class="p-button-text boton-dolar" (click)="alternarFacturable()">
+
+                    <i class="pi pi-dollar" [ngClass]="esFacturable ? 'icono-activo' : 'icono-inactivo'">
+                    </i>
+
+                </button>
+
                 <div class="divisor-vertical"></div>
 
-                <span class="timer-display">00:00:00</span>
+                <span class="timer-display">{{ tiempoTranscurrido }}</span>
 
                 <div class="botones-control">
-                    <button pButton label="INICIO" class="p-button-info boton-inicio">
+
+                    <button pButton [label]="corriendo ? 'DETENER' : 'INICIO'"
+                        [ngClass]="corriendo ? 'p-button-danger' : 'p-button-info'" (click)="toggleTimer()">
                     </button>
 
-                    <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-secondary"></button>
+                    <button pButton icon="pi pi-ellipsis-v" class="p-button-text" (click)="menuModos.toggle($event)">
+                    </button>
+
                 </div>
 
             </div>
+
         </div>
 
-        <div class="rastreador-contenido-central">
-            <p-card class="tarjeta-bienvenida">
-                <div class="flex flex-column align-items-center text-center p-4">
-                    <div class="icono-reloj mb-3">
-                        <i class="pi pi-clock" style="font-size: 5rem; color: #03a9f4;"></i>
+    </div>
+
+    <div style="height: 20px;"></div>
+    <div *ngIf="registros.length > 0" class="contenedor-lista">
+
+        <div class="cabecera-tiempo">
+            <span>Esta semana</span>
+            <span>Total semanal: {{ totalSemana }}</span>
+        </div>
+
+        <div class="cabecera-tiempo">
+            <span>Hoy</span>
+            <span>Total: {{ totalHoy }}</span>
+        </div>
+
+        <!-- REGISTROS -->
+        <div *ngFor="let r of registros" class="registro-item">
+
+            <div class="registro-contenido">
+                <div class="registro-izquierda">
+                    <input type="text" pInputText [(ngModel)]="r.descripcion" (focus)="onFocusDescripcion(r)"
+                        (blur)="onBlurDescripcion(r)" (ngModelChange)="guardarRegistros()" class="input-descripcion" />
+                </div>
+
+                <div class="registro-centro">
+
+                    <div class="color-dot" [style.background]="r.proyecto?.color">
                     </div>
 
-                    <h2 class="titulo-bienvenida">¡Empecemos a rastrear!</h2>
-                    <div class="divisor-horizontal w-full mb-3"></div>
-                    <h3 class="texto-secundario">
-                        Click en inicio para empezar el contador.
-                    </h3>
+                    <span class="proyecto-nombre">
+                        {{ r.proyecto?.nombre || 'Sin proyecto' }}
+                    </span>
+
+                    <i class="pi pi-tag icono-suave"></i>
+
+                    <i class="pi pi-dollar" [ngClass]="r.facturable ? 'icono-activo' : 'icono-inactivo'">
+                    </i>
+
+                    <span class="hora-rango">
+                        {{ formatearHora(r.inicio) }} - {{ formatearHora(r.fin) }}
+                    </span>
+
+                    <i class="pi pi-calendar icono-suave"></i>
+
+                    <strong class="duracion">{{ r.duracion }}</strong>
+
                 </div>
-            </p-card>
+
+                <div class="registro-derecha">
+                    <button pButton icon="pi pi-play" class="p-button-text"></button>
+                    <button pButton icon="pi pi-ellipsis-v" class="p-button-text" (click)="menuFila.toggle($event)">
+                    </button>
+
+                    <p-overlayPanel #menuFila [style]="{ width: '200px' }">
+                        <div class="menu-fila">
+
+                            <div class="item-menu" (click)="dividirRegistro(r); menuFila.hide()">
+                                <i class="pi pi-clone"></i>
+                                <span>Dividir</span>
+                            </div>
+
+                            <div class="item-menu" (click)="duplicarRegistro(r); menuFila.hide()">
+                                <i class="pi pi-copy"></i>
+                                <span>Duplicar</span>
+                            </div>
+
+                            <div class="item-menu" (click)="toggleFavorito(r); menuFila.hide()">
+                                <i class="pi pi-star"></i>
+                                <span>Añadir a favoritos</span>
+                            </div>
+
+                            <div class="item-menu danger" (click)="eliminarRegistro(r); menuFila.hide()">
+                                <i class="pi pi-trash"></i>
+                                <span>Eliminar</span>
+                            </div>
+
+                        </div>
+                    </p-overlayPanel>
+                </div>
+
+            </div>
+
         </div>
+
     </div>
+
 </div>
+
+<p-overlayPanel #panelProyectos [style]="{ width: '320px' }">
+
+    <div class="flex flex-column gap-3">
+
+        <span class="p-input-icon-left w-full">
+            <i class="pi pi-search"></i>
+            <input type="text" pInputText placeholder="Buscar Proyecto o Cliente" [(ngModel)]="busquedaProyecto"
+                class="w-full p-inputtext-sm" />
+        </span>
+
+        <div *ngIf="proyectos.length > 0; else sinProyectos">
+
+            <div *ngFor="let proyecto of proyectos"
+                class="flex align-items-center justify-content-between p-2 border-round cursor-pointer hover:bg-100"
+                (click)="seleccionarProyecto(proyecto, panelProyectos)">
+
+                <div class="flex align-items-center gap-2">
+                    <div [style.background]="proyecto.color" style="width: 12px; height: 12px; border-radius: 50%;">
+                    </div>
+                    <span>{{ proyecto.nombre }}</span>
+                </div>
+
+                <i class="pi pi-chevron-right"></i>
+            </div>
+
+        </div>
+
+        <ng-template #sinProyectos>
+            <div class="p-3 text-center">
+                No hay proyectos
+            </div>
+        </ng-template>
+
+        <button pButton label="Crear nuevo Proyecto" icon="pi pi-plus-circle" class="p-button-text p-button-info w-full"
+            (click)="panelProyectos.hide(); abrirModalNuevoProyecto()">
+        </button>
+
+    </div>
+
+</p-overlayPanel>
+
+<p-overlayPanel #menuModos [style]="{ width: '220px' }">
+
+    <div class="flex flex-column">
+
+        <div class="item-menu" (click)="cambiarModo('temporizador'); menuModos.hide()">
+            <i class="pi pi-clock"></i>
+            <span>Modo temporizador</span>
+        </div>
+
+        <div class="item-menu" (click)="cambiarModo('manual'); menuModos.hide()">
+            <i class="pi pi-pencil"></i>
+            <span>Modo manual</span>
+        </div>
+
+        <div class="item-menu" (click)="cambiarModo('descanso'); menuModos.hide()">
+            <i class="pi pi-cloud"></i>
+            <span>Modo descanso</span>
+        </div>
+
+    </div>
+
+</p-overlayPanel>
+
+<p-dialog header="Crear nuevo Proyecto" [(visible)]="mostrarModalProyecto" [modal]="true" [style]="{ width: '520px' }"
+    [closable]="true" [draggable]="false" [resizable]="false">
+
+    <div class="form-grid">
+
+        <input pInputText placeholder="Introduce el nombre de Proyecto" [(ngModel)]="nuevoProyecto.nombre"
+            class="input-full" />
+
+        <p-dropdown [options]="clientes" optionLabel="nombre" optionValue="code" [(ngModel)]="nuevoProyecto.cliente"
+            placeholder="Seleccionar cliente" [scrollHeight]="'200px'" class="input-full">
+        </p-dropdown>
+
+        <div class="color-box">
+            <input type="color" [(ngModel)]="nuevoProyecto.color" />
+        </div>
+
+        <div class="publico-box">
+            <p-checkbox [(ngModel)]="nuevoProyecto.publico" binary="true"></p-checkbox>
+            <label>Público</label>
+        </div>
+
+        <p-dropdown [options]="plantillas" optionLabel="nombre" optionValue="code" [(ngModel)]="nuevoProyecto.plantilla"
+            placeholder="Sin plantilla" [scrollHeight]="'200px'" appendTo="body" class="input-full">
+        </p-dropdown>
+
+    </div>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-end gap-2">
+
+            <button pButton label="Cancelar" class="p-button-text" (click)="mostrarModalProyecto = false">
+            </button>
+
+            <button pButton label="CREAR" class="p-button-info" (click)="guardarProyecto()">
+            </button>
+
+        </div>
+    </ng-template>
+
+</p-dialog>
