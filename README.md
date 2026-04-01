@@ -33,4 +33,4 @@ config.json asignar valor para lectura de variable dinamica, revisar que debe fu
 Proyecto creado apartir de cajabanco algunos archivos seran eliminados en su debido tiempo por ahora solo se usaran de guia
 Algunos archivos sin uso si fueron eliminados no afectaban en nada o fueron reemplazados por otras funciones
 
-para ver el nuevo login ir a [tu url o localhost].[port]/login2 (esto sera temporal)
+para ver el nuevo login ir a [tu url o localhost].[port]/login2 (esto sera temporal).
