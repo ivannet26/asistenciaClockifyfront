@@ -1,0 +1,7 @@
+.informes-container{
+    display:  flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: white;
+    padding: 10px 10px 10px 0px;
+}

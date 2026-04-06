@@ -1,0 +1,358 @@
+<div class="informes-container">
+    <div class="flex align-items-center justify-content-between flex-nowrap">
+        <div class="flex align-items-center gap-3 flex-nowrap">
+            <p-dropdown class="p-1" [options]="[
+                {label:'INFORME DE TIEMPO', value:'1'},
+                {label:'INFORME DE EQUIPO', value:'2'},
+                {label:'INFORME DE GASTOS'}
+            ]" placeholder="INFORME TIPO" styleClass="w-auto">
+            </p-dropdown>
+            <p-tabMenu [model]="tabs" [activeItem]="tabactivo" (activeItemChange)="CambioTab($event)"
+                styleClass="w-auto">
+            </p-tabMenu>
+        </div>
+        <p-calendar class="p-1" view="month" dateFormat="dd/mm/yy" [(ngModel)]="selectedDate" [readonlyInput]="true"
+            [showIcon]="true">
+        </p-calendar>
+    </div>
+    <div class="m-3 surface-100" *ngIf="tabactivo?.id === 0">
+        <div class="surface-0 border-y-1 surface-border">
+            <div class="flex align-items-stretch w-full">
+                <div class="flex align-items-center  border-right-1 surface-border bg-gray-50"
+                    style="border-right-style: dashed !important; min-width: 120px;">
+                    <span class="text-500 font-bold text-xs uppercase">Filtrar</span>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Todo', value:'A'}]" placeholder="Equipo"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Rol', value:'A'}]" placeholder="Cliente"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Grupo', value:'A'}]" placeholder="Proyecto"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Todo', value:'A'}]" placeholder="Tarea"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Rol', value:'A'}]" placeholder="Etiqueta"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Grupo', value:'A'}]" placeholder="Descripción"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <button pButton label="Aplicar Filtro" class="p-button-info px-3 m-3 font-bold"
+                        style="width: auto; border-radius: 4px;">
+                    </button>
+                </div>
+            </div>
+        </div>
+        <p-table [value]="equipos" class="tabla-personalizada">
+
+            <ng-template pTemplate="header">
+                <tr class="cabecera-gris">
+                    <th style="width: 4rem">
+                        <p-checkbox [binary]="true"></p-checkbox>
+                    </th>
+                    <th>NOMBRE</th>
+                    <th>CORREO</th>
+                    <th>TARIFA</th>
+                    <th>TARIFA COSTE</th>
+                    <th>ROL</th>
+                    <th>GRUPO</th>
+                    <th style="width: 8rem"></th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-equipo>
+                <tr>
+                    <td>
+                        <p-checkbox [binary]="true"></p-checkbox>
+                    </td>
+                    <td>{{ equipo.nombre }}</td>
+                    <td>{{ equipo.correo }}</td>
+                    <td>{{ equipo.tarifa }}</td>
+                    <td>{{ equipo.tarifa_coste }}</td>
+                    <td>{{ equipo.rol }}</td>
+                    <td>{{ equipo.grupo }}</td>
+                    <td class="acciones-celda">
+                        <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary">
+                        </button>
+                        <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-secondary">
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="m-3 surface-100" *ngIf="tabactivo?.id === 1">
+        <div class="surface-0 border-y-1 surface-border">
+            <div class="flex align-items-stretch w-full">
+                <div class="flex align-items-center  border-right-1 surface-border bg-gray-50"
+                    style="border-right-style: dashed !important; min-width: 120px;">
+                    <span class="text-500 font-bold text-xs uppercase">Filtrar</span>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Todo', value:'A'}]" placeholder="Equipo"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Rol', value:'A'}]" placeholder="Cliente"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Grupo', value:'A'}]" placeholder="Proyecto"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Todo', value:'A'}]" placeholder="Tarea"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Rol', value:'A'}]" placeholder="Etiqueta"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Grupo', value:'A'}]" placeholder="Descripción"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <button pButton label="Aplicar Filtro" class="p-button-info px-3 m-3 font-bold"
+                        style="width: auto; border-radius: 4px;">
+                    </button>
+                </div>
+            </div>
+        </div>
+        <p-table [value]="equipos" class="tabla-personalizada">
+
+            <ng-template pTemplate="header">
+                <tr class="cabecera-gris">
+                    <th style="width: 4rem">
+                        <p-checkbox [binary]="true"></p-checkbox>
+                    </th>
+                    <th>NOMBRE</th>
+                    <th>CORREO</th>
+                    <th>TARIFA</th>
+                    <th>TARIFA COSTE</th>
+                    <th>ROL</th>
+                    <th>GRUPO</th>
+                    <th style="width: 8rem"></th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-equipo>
+                <tr>
+                    <td>
+                        <p-checkbox [binary]="true"></p-checkbox>
+                    </td>
+                    <td>{{ equipo.nombre }}</td>
+                    <td>{{ equipo.correo }}</td>
+                    <td>{{ equipo.tarifa }}</td>
+                    <td>{{ equipo.tarifa_coste }}</td>
+                    <td>{{ equipo.rol }}</td>
+                    <td>{{ equipo.grupo }}</td>
+                    <td class="acciones-celda">
+                        <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary">
+                        </button>
+                        <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-secondary">
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="m-3 surface-100" *ngIf="tabactivo?.id === 2">
+        <div class="surface-0 border-y-1 surface-border">
+            <div class="flex align-items-stretch w-full">
+                <div class="flex align-items-center  border-right-1 surface-border bg-gray-50"
+                    style="border-right-style: dashed !important; min-width: 120px;">
+                    <span class="text-500 font-bold text-xs uppercase">Filtrar</span>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Todo', value:'A'}]" placeholder="Equipo"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Rol', value:'A'}]" placeholder="Cliente"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Grupo', value:'A'}]" placeholder="Proyecto"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Todo', value:'A'}]" placeholder="Tarea"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Rol', value:'A'}]" placeholder="Etiqueta"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <p-dropdown [options]="[{label:'Grupo', value:'A'}]" placeholder="Descripción"
+                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                        class="w-full">
+                    </p-dropdown>
+                </div>
+                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                    style="border-right-style: dashed !important;">
+                    <button pButton label="Aplicar Filtro" class="p-button-info px-3 m-3 font-bold"
+                        style="width: auto; border-radius: 4px;">
+                    </button>
+                </div>
+            </div>
+        </div>
+        <p-table [value]="equipos" class="tabla-personalizada">
+
+            <ng-template pTemplate="header">
+                <tr class="cabecera-gris">
+                    <th style="width: 4rem">
+                        <p-checkbox [binary]="true"></p-checkbox>
+                    </th>
+                    <th>NOMBRE</th>
+                    <th>CORREO</th>
+                    <th>TARIFA</th>
+                    <th>TARIFA COSTE</th>
+                    <th>ROL</th>
+                    <th>GRUPO</th>
+                    <th style="width: 8rem"></th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-equipo>
+                <tr>
+                    <td>
+                        <p-checkbox [binary]="true"></p-checkbox>
+                    </td>
+                    <td>{{ equipo.nombre }}</td>
+                    <td>{{ equipo.correo }}</td>
+                    <td>{{ equipo.tarifa }}</td>
+                    <td>{{ equipo.tarifa_coste }}</td>
+                    <td>{{ equipo.rol }}</td>
+                    <td>{{ equipo.grupo }}</td>
+                    <td class="acciones-celda">
+                        <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary">
+                        </button>
+                        <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-secondary">
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="m-3" *ngIf="tabactivo?.id === 3">
+        <div class="flex align-items-center gap-3 flex-nowrap">
+            <p-dropdown class="p-1" [options]="[
+                {label:'TODOS LOS INFORMES', value:'1'},
+                {label:'MIS INFORMES', value:'2'},
+                {label:'COMPARTIDO CONMIGO'}
+            ]" placeholder="TODOS LOS INFORMES" styleClass="w-auto">
+            </p-dropdown>
+            <div class="flex align-items-center gap-3">
+                <div class="flex-1 flex align-items-center border-1 surface-border border-round px-2 bg-white">
+                    <i class="pi pi-search text-400 mx-2 py-2"></i>
+                    <input type="text" pInputText placeholder="Buscar por nombre"
+                        class="border-none w-full shadow-none py-2 text-sm">
+                </div>
+                <button pButton label="Aplicar" class="p-button-info px-4"
+                    style="width: auto; height: 38px; border-radius: 4px; font-weight: bold;"></button>
+            </div>
+        </div>
+        <p-table [value]="equipos" class="tabla-personalizada">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th colspan="5" class="text-left">
+                        <p>Informes Compartidos</p>
+                    </th>
+                </tr>
+                <tr class="cabecera-gris">
+                    <th style="width: 4rem">
+                        <p-checkbox [binary]="true"></p-checkbox>
+                    </th>
+                    <th>NOMBRE</th>
+                    <th>ETIQUETA</th>
+                    <th>URL</th>
+                    <th></th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-equipo>
+                <tr>
+                    <td>
+                        <p-checkbox [binary]="true"></p-checkbox>
+                    </td>
+                    <td>{{ equipo.nombre }}</td>
+                    <td>{{ equipo.correo }}</td>
+                    <td>{{ equipo.tarifa }}</td>
+                    <td class="acciones-celda">
+                        <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary">
+                        </button>
+                        <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-secondary">
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
