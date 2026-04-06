@@ -11,17 +11,11 @@ import { ToastModule } from 'primeng/toast';
 import { LoginCComponent } from './demo/components/login-c/login-c.component'; // Importación arriba
 import { HttpClientModule } from '@angular/common/http';
 import { TagModule } from 'primeng/tag';
-import { PanelComponent } from './demo/components/panel/panel.component';
-import { DropdownModule } from 'primeng/dropdown';
-import { ChartModule } from 'primeng/chart';
-import { ProgressBarModule } from 'primeng/progressbar';
 
 @NgModule({
     declarations: [
         AppComponent,
-        NotfoundComponent,
-        PanelComponent
-
+        NotfoundComponent
     ],
     imports: [
         AppRoutingModule,
@@ -32,9 +26,6 @@ import { ProgressBarModule } from 'primeng/progressbar';
         ToastModule,
         TagModule,
         LoginCComponent,
-        DropdownModule,
-        ChartModule,
-        ProgressBarModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: PathLocationStrategy },

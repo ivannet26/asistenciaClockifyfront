@@ -1,1 +1,191 @@
-<p>equipo works!</p>
+<div class="equipo-pagina">
+    <div class="equipo-panel">
+        <h2>Equipo</h2>
+
+        <div class="equipo-contenido">
+            <p-card>
+
+                <div class="contenedor-tabla" *ngIf="mostrarLista">
+
+                    <p-tabMenu [model]="tabs" [activeItem]="tabactivo" (activeItemChange)="CambioTab($event)" />
+
+                    <div class="m-3" *ngIf="tabactivo?.id === 0">
+
+                        <button pButton icon="pi pi-plus" label="Crear miembro"
+                            class="p-button-info px-3 py-2 m-3 font-bold" style="width: auto; border-radius: 4px;"
+                            (click)="showDialog()">
+                        </button>
+
+                        <div class="surface-0 border-y-1 surface-border">
+                            <div class="flex align-items-stretch w-full">
+
+                                <div class="flex align-items-center px-4 border-right-1 surface-border bg-gray-50"
+                                    style="border-right-style: dashed !important; min-width: 120px;">
+                                    <span class="text-500 font-bold text-xs uppercase">Filtrar</span>
+                                </div>
+
+                                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                                    style="border-right-style: dashed !important;">
+                                    <p-dropdown [options]="[{label:'Todo', value:'A'}]" placeholder="Todo"
+                                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                                        class="w-full">
+                                    </p-dropdown>
+                                </div>
+
+                                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                                    style="border-right-style: dashed !important;">
+                                    <p-dropdown [options]="[{label:'Rol', value:'A'}]" placeholder="Rol"
+                                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                                        class="w-full">
+                                    </p-dropdown>
+                                </div>
+
+                                <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                                    style="border-right-style: dashed !important;">
+                                    <p-dropdown [options]="[{label:'Grupo', value:'A'}]" placeholder="Grupo"
+                                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                                        class="w-full">
+                                    </p-dropdown>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <p-table [value]="equipos" class="tabla-personalizada">
+
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th colspan="6" class="">
+                                        <p>Miembros</p>
+                                    </th>
+                                    <th colspan="2">
+                                        <button pButton label="Exportar" icon="pi pi-chevron-down" iconPos="right"
+                                            class="p-button-info p-button-sm text-xs py-1 px-3 w-auto"
+                                            style="border-radius: 4px; font-weight: bold;"></button>
+                                    </th>
+                                </tr>
+                                <tr class="cabecera-gris">
+                                    <th style="width: 4rem">
+                                        <p-checkbox [binary]="true"></p-checkbox>
+                                    </th>
+                                    <th>NOMBRE</th>
+                                    <th>CORREO</th>
+                                    <th>TARIFA</th>
+                                    <th>TARIFA COSTE</th>
+                                    <th>ROL</th>
+                                    <th>GRUPO</th>
+                                    <th style="width: 8rem"></th>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="body" let-equipo>
+                                <tr>
+                                    <td>
+                                        <p-checkbox [binary]="true"></p-checkbox>
+                                    </td>
+                                    <td>{{ equipo.nombre }}</td>
+                                    <td>{{ equipo.correo }}</td>
+                                    <td>{{ equipo.tarifa }}</td>
+                                    <td>{{ equipo.tarifa_coste }}</td>
+                                    <td>{{ equipo.rol }}</td>
+                                    <td>{{ equipo.grupo }}</td>
+                                    <td class="acciones-celda">
+                                        <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary">
+                                        </button>
+                                        <button pButton icon="pi pi-ellipsis-v"
+                                            class="p-button-text p-button-secondary">
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                        </p-table>
+                    </div>
+
+                    <div class="m-3" *ngIf="tabactivo?.id === 1">
+
+                        <div class="barra-herramientas" *ngIf="mostrarLista">
+                            <div class="busqueda-filtros">
+                                <span class="p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input type="text" pInputText placeholder="Buscar por nombre"
+                                        class="input-busqueda" />
+                                </span>
+                            </div>
+
+                            <div class="grupo-input-compacto">
+                                <input type="text" pInputText placeholder="Añadir nuevo cliente"
+                                    class="input-personalizado" />
+                                <button pButton type="button" label="AÑADIR" class="boton-personalizado "
+                                    (click)="mostrarTabla()">
+                                </button>
+                            </div>
+                        </div>
+                        <p-table [value]="grupos" class="tabla-personalizada">
+
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th colspan="3" class="">
+                                        <p>Grupos</p>
+                                    </th>
+                                    <th colspan="1">
+                                        <button pButton label="Exportar" icon="pi pi-chevron-down" iconPos="right"
+                                            class="p-button-info p-button-sm text-xs py-1 px-3 w-auto"
+                                            style="border-radius: 4px; font-weight: bold;"></button>
+                                    </th>
+                                </tr>
+                                <tr class="cabecera-gris">
+                                    <th style="width: 4rem">
+                                        <p-checkbox [binary]="true"></p-checkbox>
+                                    </th>
+                                    <th>NOMBRE</th>
+                                    <th>ACCESO</th>
+                                    <th style="width: 8rem"></th>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="body" let-grupo>
+                                <tr>
+                                    <td>
+                                        <p-checkbox [binary]="true"></p-checkbox>
+                                    </td>
+                                    <td>{{ grupo.nombre }}</td>
+                                    <td>{{ grupo.acceso }}</td>
+                                    <td class="acciones-celda">
+                                        <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary">
+                                        </button>
+                                        <button pButton icon="pi pi-ellipsis-v"
+                                            class="p-button-text p-button-secondary">
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                        </p-table>
+                    </div>
+
+                    <div class="m-3" *ngIf="tabactivo?.id === 2">
+
+                    </div>
+                </div>
+
+                <div class="contenedor-vacio" *ngIf="!mostrarLista">
+                    <h1 class="titulo-principal">
+                        Añadir miembro al equipo para organizar tus proyectos
+                    </h1>
+                    <p class="subtitulo">
+                        Asignar miembros a proyectos y seguir el progreso de cada cliente.
+                    </p>
+
+                    <div class="grupo-input">
+                        <input type="text" pInputText placeholder="Añadir nuevo miembro" class="input-personalizado" />
+                        <button pButton type="button" label="AÑADIR" class="boton-personalizado"
+                            (click)="mostrarTabla()">
+                        </button>
+                    </div>
+                </div>
+
+            </p-card>
+        </div>
+    </div>
+</div>
