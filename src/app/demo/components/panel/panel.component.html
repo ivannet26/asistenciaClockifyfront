@@ -1,81 +1,81 @@
-<div class="grid p-3">
-    <div class="col-12 mb-3 flex align-items-center justify-content-between">
-        <h1 class="text-3xl font-bold m-0 text-900">Panel</h1>
+<div class="grid p-fluid">
+    
+    <div class="col-12 flex justify-content-between align-items-center mb-3">
+        <h2 class="m-0 text-900 font-normal">Panel</h2>
         <div class="flex gap-2">
-            <p-dropdown [options]="proyectos" placeholder="Proyecto" class="w-10rem"></p-dropdown>
-            <p-dropdown [options]="usuarios" placeholder="Solo yo" class="w-10rem"></p-dropdown>
-            <p-dropdown [options]="fechas" placeholder="Esta semana" class="w-12rem"></p-dropdown>
+            <p-dropdown [options]="[{label:'Proyecto', value:1}]" placeholder="Proyecto" styleClass="w-full md:w-10rem"></p-dropdown>
+            <p-dropdown [options]="[{label:'Solo yo', value:1}]" placeholder="Solo yo" styleClass="w-full md:w-10rem"></p-dropdown>
+            <div class="p-inputgroup w-full md:w-15rem">
+                <span class="p-inputgroup-addon"><i class="pi pi-calendar"></i></span>
+                <input type="text" pInputText placeholder="Esta semana" readonly />
+            </div>
         </div>
     </div>
 
-    <div class="col-12 md:col-9">
-        <div class="card shadow-2 p-0">
-            <div class="grid text-center m-0 border-bottom-1 border-200">
-                <div class="col-4 p-4 border-right-1 border-200">
-                    <span class="block text-500 font-medium mb-3">Tiempo total</span>
-                    <div class="text-900 font-bold text-3xl">00:04:10</div>
-                </div>
-                <div class="col-4 p-4 border-right-1 border-200">
-                    <span class="block text-500 font-medium mb-3">Proyecto principal</span>
-                    <div class="text-900 font-bold text-3xl">gm</div>
-                </div>
-                <div class="col-4 p-4">
-                    <span class="block text-500 font-medium mb-3">Principal Cliente</span>
-                    <div class="text-900 font-bold text-3xl text-500">--</div>
+    <div class="col-12">
+        <div class="grid">
+            <div class="col-12 md:col-4">
+                <div class="card p-4 border-round bg-white text-center surface-100">
+                    <span class="text-500 font-medium block mb-3 uppercase text-xs">Tiempo Total</span>
+                    <div class="text-900 font-bold text-3xl">{{ tiempoTotalFormateado }}</div>
                 </div>
             </div>
-
-            <div class="p-4">
-                <p-chart type="bar" [data]="basicData" [options]="basicOptions" height="250px"></p-chart>
-            </div>
-
-            <div class="grid p-4 m-0 border-top-1 border-200">
-                <div class="col-12 md:col-6 flex flex-column align-items-center justify-content-center">
-                    <p-chart type="doughnut" [data]="doughnutData" [options]="doughnutOptions" height="200px"></p-chart>
+            <div class="col-12 md:col-4">
+                <div class="card p-4 border-round bg-white text-center surface-100">
+                    <span class="text-500 font-medium block mb-3 uppercase text-xs">Proyecto Principal</span>
+                    <div class="text-900 font-bold text-3xl">{{ proyectoPrincipal }}</div>
                 </div>
-                <div class="col-12 md:col-6 pt-5">
-                    <div class="flex justify-content-between align-items-center mb-2">
-                        <div class="flex align-items-center gap-2">
-                            <i class="pi pi-circle-fill text-blue-500"></i>
-                            <span class="text-900 font-medium">gm</span>
-                        </div>
-                        <span class="text-500">00:04:10</span>
-                        <span class="text-900 font-bold">100,00%</span>
-                    </div>
-                    <p-progressBar [value]="100" [showValue]="false" class="mb-4" color="#2196F3"></p-progressBar>
-                    
-                    <div class="flex justify-content-between align-items-center mb-2">
-                        <div class="flex align-items-center gap-2">
-                            <i class="pi pi-circle text-200"></i>
-                            <span class="text-500">Sin proyecto</span>
-                        </div>
-                        <span class="text-500">00:00:00</span>
-                        <span class="text-500">0,00%</span>
-                    </div>
-                    <p-progressBar [value]="0" [showValue]="false" color="#E3F2FD"></p-progressBar>
+            </div>
+            <div class="col-12 md:col-4">
+                <div class="card p-4 border-round bg-white text-center surface-100">
+                    <span class="text-500 font-medium block mb-3 uppercase text-xs">Principal Cliente</span>
+                    <div class="text-900 font-bold text-3xl">--</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-12 md:col-3">
-        <div class="card shadow-2">
-            <h5 class="m-0 mb-4 text-900">Actividades más registradas</h5>
-            <ul class="list-none p-0 m-0">
-                <li class="flex align-items-center justify-content-between py-2 border-bottom-1 border-200">
-                    <div class="flex align-items-center">
-                        <i class="pi pi-square-fill text-blue-500 mr-2 text-xs"></i>
-                        <span class="text-900 font-medium">panel de control</span>
+    <div class="col-12 lg:col-8">
+        <div class="card shadow-1 p-4 border-round bg-white" style="min-height: 400px;">
+            <h5 class="m-0 mb-4 text-500 uppercase text-xs">Tiempo por día</h5>
+            <div style="height: 300px;">
+                <p-chart type="bar" [data]="dataBarras" [options]="opcionesBarras"></p-chart>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 lg:col-4">
+        <div class="card shadow-1 p-0 overflow-hidden border-round bg-white">
+            <div class="p-3 border-bottom-1 surface-border flex justify-content-between align-items-center bg-gray-50">
+                <span class="text-xs font-bold text-500 uppercase">Actividades más registradas</span>
+                <span class="text-xs text-500">Top 10 <i class="pi pi-chevron-down ml-1"></i></span>
+            </div>
+            <div class="p-0">
+                <div *ngFor="let p of proyectos" class="p-3 border-bottom-1 surface-border hover:surface-50 cursor-pointer">
+                    <div class="flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-900 font-medium mb-1">{{ p.nombre }}</div>
+                            <div class="flex align-items-center">
+                                <i class="pi pi-circle-fill mr-2 text-blue-500" style="font-size: 0.5rem"></i>
+                                <span class="text-xs text-500">{{ p.nombre }}</span>
+                            </div>
+                        </div>
+                        <div class="text-900 font-bold">00:00:18</div>
                     </div>
-                    <span class="text-700">00:04:10</span>
-                </li>
-                 <li class="flex align-items-center justify-content-between py-2">
-                    <div class="flex align-items-center pl-3">
-                        <span class="text-700">gm</span>
-                    </div>
-                    <span class="text-400"></span>
-                </li>
-            </ul>
+                </div>
+                <div *ngIf="proyectos.length === 0" class="p-5 text-center text-500 italic">
+                    No hay actividades registradas.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 lg:col-6 mt-4">
+        <div class="card shadow-1 p-4 border-round bg-white">
+            <h5 class="m-0 mb-4 text-500 uppercase text-xs">Distribución por Proyecto</h5>
+            <div class="flex justify-content-center" style="height: 250px;">
+                <p-chart type="doughnut" [data]="dataGrafica" [options]="opcionesGrafica"></p-chart>
+            </div>
         </div>
     </div>
 </div>
