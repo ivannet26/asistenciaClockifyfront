@@ -1,0 +1,231 @@
+<div class="grid p-3 layout-calendario">
+
+  <div class="col-12">
+
+    <div class="calendar-header card">
+
+      <div class="header-toolbar">
+
+        <div class="view-buttons">
+          <span class="titulo-calendario">CALENDARIO</span>
+
+          <p-button
+            label="Semana"
+            size="small"
+            [ngClass]="{ 'activo': vista === 'semana' }"
+            (onClick)="vista = 'semana'">
+          </p-button>
+
+          <p-button
+            label="Día"
+            size="small"
+            [ngClass]="{ 'activo': vista === 'dia' }"
+            (onClick)="vista = 'dia'">
+          </p-button>
+        </div>
+
+        <div class="nav-controls">
+
+          <div class="left-controls">
+            <p-button icon="pi pi-cog" [text]="true"></p-button>
+
+            <p-button
+              label="Compañeros"
+              icon="pi pi-chevron-down"
+              iconPos="right"
+              [outlined]="true"
+              (onClick)="op.toggle($event)">
+            </p-button>
+
+            <p-overlayPanel #op [style]="{ width: '300px' }" styleClass="custom-overlay" appendTo="body">
+              <ng-template pTemplate="content">
+                <div class="p-fluid">
+                  <div class="p-inputgroup mb-3">
+                    <span class="p-inputgroup-addon">
+                      <i class="pi pi-search"></i>
+                    </span>
+                    <input type="text" pInputText placeholder="Buscar compañeros de equipo" />
+                  </div>
+
+                  <div class="mostrar-filter">
+                    <span class="text-secondary text-xs font-bold">MOSTRAR</span>
+                    <div class="cursor-pointer">
+                      <span class="text-sm mr-1">Activo</span>
+                      <i class="pi pi-chevron-down text-xs"></i>
+                    </div>
+                  </div>
+
+                  <hr class="my-2 border-top-1 border-200">
+
+                  <div class="compañero-item cursor-pointer">
+                    <span class="text-sm">UsuarioEjemplo</span>
+                    <i class="pi pi-check text-green-500"></i>
+                  </div>
+                </div>
+              </ng-template>
+            </p-overlayPanel>
+          </div>
+
+          <div class="center-controls">
+
+            <p-button label="Hoy" size="small" (onClick)="irHoy()"></p-button>
+
+            <p-button icon="pi pi-chevron-left" [text]="true" (onClick)="irAnterior()"></p-button>
+            <p-button icon="pi pi-chevron-right" [text]="true" (onClick)="irSiguiente()"></p-button>
+
+            <p-calendar
+              [(ngModel)]="fechaActual"
+              (onSelect)="cambiarFecha($event)"
+              [showIcon]="true"
+              dateFormat="dd M yy"
+              appendTo="body">
+            </p-calendar>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="calendar-body card">
+
+      <p-table [value]="horas" class="custom-table">
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="time-col">
+              <div class="zoom-controls">
+                <button class="zoom-btn" (click)="disminuirZoom()">-</button>
+                <button class="zoom-btn" (click)="aumentarZoom()">+</button>
+              </div>
+            </th>
+
+            <th
+              *ngFor="let dia of diasSemana"
+              class="day-col"
+              [ngClass]="{
+                'oculto': vista === 'dia' && !esHoy(dia.completa),
+                'hoy': esHoy(dia.completa)
+              }">
+
+              <div class="header-day">
+                {{ dia.nombre }}, {{ dia.fecha }}
+                <span class="time-sub">00:00:00</span>
+              </div>
+
+            </th>
+          </tr>
+
+          <tr class="planificado-row">
+            <td class="time-col">Planificado</td>
+
+            <td
+              *ngFor="let dia of diasSemana"
+              class="drop-zone"
+              [ngClass]="{
+                'oculto': vista === 'dia' && !esHoy(dia.completa)
+              }">
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-hora>
+          <tr>
+            <td class="time-col hora-label">{{ hora }}</td>
+
+            <td
+              *ngFor="let dia of diasSemana"
+              class="slot-cell"
+              (click)="onSlotClick(dia, hora)"
+              [ngClass]="{
+                'oculto': vista === 'dia' && !esHoy(dia.completa)
+              }">
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+
+    </div>
+
+  </div>
+
+</div>
+
+<p-dialog
+  header="Añadir entrada de tiempo"
+  [(visible)]="mostrarModal"
+  [modal]="true"
+  [style]="{ width: '650px' }">
+
+  <div class="p-fluid">
+
+    <div class="grid align-items-center mb-3">
+
+      <div class="col-3">
+        <label>Hora</label>
+        <input pInputText [value]="horaSeleccionada" readonly />
+      </div>
+
+      <div class="col-4">
+        <label>Duración</label>
+        <div class="flex gap-2">
+          <input pInputText [value]="duracionInicio" />
+          <input pInputText [value]="duracionFin" />
+        </div>
+      </div>
+
+      <div class="col-5">
+        <label>Fecha</label>
+        <p-calendar
+          [(ngModel)]="fechaSeleccionada"
+          appendTo="body"
+          [showIcon]="true">
+        </p-calendar>
+      </div>
+
+    </div>
+
+    <div class="field mb-3">
+      <label>Descripción</label>
+      <textarea
+        pInputTextarea
+        rows="2"
+        placeholder="¿En qué has trabajado?"
+        autoResize="true">
+      </textarea>
+    </div>
+
+    <div class="field mb-3">
+      <label>Proyecto</label>
+      <p-dropdown
+        [options]="[]"
+        placeholder="Seleccionar Proyecto"
+        appendTo="body">
+      </p-dropdown>
+    </div>
+
+    <div class="field mb-3">
+      <label>Etiquetas</label>
+      <p-multiSelect
+        [options]="[]"
+        placeholder="Añadir etiquetas"
+        appendTo="body">
+      </p-multiSelect>
+    </div>
+
+    <div class="flex align-items-center gap-2 mt-3">
+      <p-inputSwitch [(ngModel)]="facturable"></p-inputSwitch>
+      <label>Facturable</label>
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancelar" (onClick)="mostrarModal=false"></p-button>
+    <p-button label="Añadir"></p-button>
+  </ng-template>
+
+</p-dialog>

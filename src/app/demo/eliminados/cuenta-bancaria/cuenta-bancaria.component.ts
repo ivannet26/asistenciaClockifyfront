@@ -15,7 +15,7 @@ import { CardModule } from 'primeng/card';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { Router } from '@angular/router';
 import { GlobalService } from '../../service/global.service';
-import { verMensajeInformativo } from '../utilities/funciones_utilitarias';
+//import { verMensajeInformativo } from '../utilities/funciones_utilitarias';
 import { DropdownModule } from 'primeng/dropdown';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { MenuItem } from 'primeng/api';
@@ -127,7 +127,7 @@ export class CuentaBancariaComponent implements OnInit {
         this.bancoService.GetBancos().subscribe({
             next: (data) => this.bancoList = data,
             error: (error) => {
-                verMensajeInformativo(this.messageService, 'error', 'Error', 'Error al cargar bancos');
+                //verMensajeInformativo(this.messageService, 'error', 'Error', 'Error al cargar bancos');
             }
         });
     }
@@ -144,10 +144,10 @@ export class CuentaBancariaComponent implements OnInit {
                 next: () => {
                     this.editingBanco = null;
                     this.isEditingAnyRow = false;
-                    verMensajeInformativo(this.messageService, 'success', 'Éxito', 'Registro actualizado');
+                    //verMensajeInformativo(this.messageService, 'success', 'Éxito', 'Registro actualizado');
                 },
                 error: () => {
-                    verMensajeInformativo(this.messageService, 'error', 'Error', 'Error al actualizar');
+                    //verMensajeInformativo(this.messageService, 'error', 'Error', 'Error al actualizar');
                 }
             })
         }
@@ -179,12 +179,12 @@ export class CuentaBancariaComponent implements OnInit {
                     this.isEditing = false;
                     this.isNew = false;
                     this.bancoForm.reset();
-                    verMensajeInformativo(this.messageService, 'success', 'Éxito', 'Registro guardado');
+                    //verMensajeInformativo(this.messageService, 'success', 'Éxito', 'Registro guardado');
                     this.cargarBancos();
                 },
                 error: (err) => {
                     console.error('Error al guardar:', err);
-                    verMensajeInformativo(this.messageService, 'error', 'Error', 'No se pudo guardar el registro');
+                    //verMensajeInformativo(this.messageService, 'error', 'Error', 'No se pudo guardar el registro');
                 },
             })
         }
@@ -211,7 +211,7 @@ export class CuentaBancariaComponent implements OnInit {
                 this.bancoService.EliminarBanco(banco.ban01Empresa, banco.ban01IdBanco).subscribe({
                     next: () => {
                         this.bancoList.splice(index, 1);
-                        verMensajeInformativo(this.messageService, 'success', 'Éxito', 'Registro Eliminado');
+                        //verMensajeInformativo(this.messageService, 'success', 'Éxito', 'Registro Eliminado');
                         this.cargarBancos()
                     }
                 })

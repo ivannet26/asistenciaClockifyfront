@@ -9,11 +9,11 @@ import { ButtonModule } from 'primeng/button';
 import { StyleClassModule } from 'primeng/styleclass';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { DashboardsRoutingModule } from './dashboard-routing.module';
-import { BancoComponent } from '../banco/banco.component';
+import { BancoComponent } from '../../eliminados/banco/banco.component';
 import { RouterModule } from '@angular/router';
 import { LoginCComponent } from '../login-c/login-c.component';
 import { UsuarioComponent } from '../usuario/usuario/usuario.component';
-import { CuentaBancariaComponent } from '../cuenta-bancaria/cuenta-bancaria.component';
+import { CuentaBancariaComponent } from '../../eliminados/cuenta-bancaria/cuenta-bancaria.component';
 @NgModule({
     imports: [RouterModule.forChild([
         { path: '', component: DashboardComponent, canActivate:[] },
