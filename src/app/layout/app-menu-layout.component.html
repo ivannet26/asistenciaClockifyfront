@@ -3,13 +3,10 @@
         <div class="layout-menuitem-root-text" style="font-weight: 700; color: #495057; margin-bottom: 0.5rem;">
             {{item.label}}
         </div>
-        
+
         <ul>
-            <li app-menuitem 
-                *ngFor="let child of item.items; let j = index" 
-                [item]="child" 
-                [index]="j" 
-                [root]="false">
+            <li app-menuitem *ngFor="let child of item.items; let j = index; trackBy: trackByIndex" [item]="child"
+                [index]="j" [root]="false">
             </li>
         </ul>
     </li>

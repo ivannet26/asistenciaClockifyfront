@@ -92,12 +92,14 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.key = this.parentKey ? this.parentKey + '-' + this.index : String(this.index);
+    this.key = this.parentKey 
+        ? this.parentKey + '-' + this.index + '-' + this.item.label
+        : this.index + '-' + this.item.label;
 
-        if (this.item.routerLink) {
-            this.updateActiveStateFromRoute();
-        }
+    if (this.item.routerLink) {
+        this.updateActiveStateFromRoute();
     }
+}
 
     updateActiveStateFromRoute() {
         let activeRoute = this.router.isActive(this.item.routerLink[0], { paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' });

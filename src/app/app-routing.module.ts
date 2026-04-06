@@ -12,6 +12,7 @@ import { EspaciotrabajoComponent } from './demo/components/espaciotrabajo/espaci
 import { PanelComponent } from './demo/components/panel/panel.component';
 import { EquipoComponent } from './demo/components/equipo/equipo.component';
 import { CalendarioComponent } from './demo/components/calendario/calendario.component';
+import { InformesComponent } from './demo/components/informes/informes.component';
 
 @NgModule({
     imports: [
@@ -41,6 +42,7 @@ import { CalendarioComponent } from './demo/components/calendario/calendario.com
                     { path: '', component: RastreadorComponent },
                     { path: 'calendario', component: CalendarioComponent},
                     { path: 'rastreador', component: RastreadorComponent },
+                    { path: 'informes', component: InformesComponent},
                     { path: 'proyectos', component: ProyectosComponent },
                     { path: 'equipo', component: EquipoComponent },
                     { path: 'panel', component: PanelComponent },
