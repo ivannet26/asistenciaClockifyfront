@@ -1,80 +1,113 @@
-<div class="grid p-fluid">
+<div class="grid p-fluid p-4">
     
-    <div class="col-12 flex justify-content-between align-items-center mb-3">
-        <h2 class="m-0 text-900 font-normal">Panel</h2>
-        <div class="flex gap-2">
-            <p-dropdown [options]="[{label:'Proyecto', value:1}]" placeholder="Proyecto" styleClass="w-full md:w-10rem"></p-dropdown>
-            <p-dropdown [options]="[{label:'Solo yo', value:1}]" placeholder="Solo yo" styleClass="w-full md:w-10rem"></p-dropdown>
-            <div class="p-inputgroup w-full md:w-15rem">
-                <span class="p-inputgroup-addon"><i class="pi pi-calendar"></i></span>
-                <input type="text" pInputText placeholder="Esta semana" readonly />
+    <div class="col-12 flex justify-content-end align-items-center mb-4 gap-2">
+        <div class="flex flex-column md:flex-row gap-2">
+            <p-dropdown 
+                [options]="[{label:'Proyecto', value:null}]" 
+                placeholder="Proyecto" 
+                styleClass="w-full md:w-10rem bg-white">
+            </p-dropdown>
+            
+            <p-dropdown 
+                [options]="[{label:'Solo yo', value:null}]" 
+                placeholder="Solo yo" 
+                styleClass="w-full md:w-10rem bg-white">
+            </p-dropdown>
+            
+            <div class="p-inputgroup w-full md:w-20rem">
+                <span class="p-inputgroup-addon bg-white"><i class="pi pi-calendar"></i></span>
+                <input type="text" pInputText placeholder="Esta semana" class="bg-white" readonly />
+                <button type="button" pButton icon="pi pi-chevron-left" class="p-button-secondary p-button-text bg-white border-1 border-300"></button>
+                <button type="button" pButton icon="pi pi-chevron-right" class="p-button-secondary p-button-text bg-white border-1 border-300"></button>
             </div>
         </div>
     </div>
 
-    <div class="col-12">
+    <div class="col-12 mb-4">
         <div class="grid">
             <div class="col-12 md:col-4">
-                <div class="card p-4 border-round bg-white text-center surface-100">
-                    <span class="text-500 font-medium block mb-3 uppercase text-xs">Tiempo Total</span>
-                    <div class="text-900 font-bold text-3xl">{{ tiempoTotalFormateado }}</div>
+                <div class="card-stats shadow-1 border-1 border-300 bg-white">
+                    <span class="stat-label">Tiempo Total</span>
+                    <div class="stat-value">{{ tiempoTotalFormateado }}</div>
                 </div>
             </div>
             <div class="col-12 md:col-4">
-                <div class="card p-4 border-round bg-white text-center surface-100">
-                    <span class="text-500 font-medium block mb-3 uppercase text-xs">Proyecto Principal</span>
-                    <div class="text-900 font-bold text-3xl">{{ proyectoPrincipal }}</div>
+                <div class="card-stats shadow-1 border-1 border-300 bg-white">
+                    <span class="stat-label">Proyecto Principal</span>
+                    <div class="stat-value text-overflow-ellipsis overflow-hidden uppercase">{{ proyectoPrincipal }}</div>
                 </div>
             </div>
             <div class="col-12 md:col-4">
-                <div class="card p-4 border-round bg-white text-center surface-100">
-                    <span class="text-500 font-medium block mb-3 uppercase text-xs">Principal Cliente</span>
-                    <div class="text-900 font-bold text-3xl">--</div>
+                <div class="card-stats shadow-1 border-1 border-300 bg-white">
+                    <span class="stat-label">Principal Cliente</span>
+                    <div class="stat-value">--</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-12 lg:col-8">
-        <div class="card shadow-1 p-4 border-round bg-white" style="min-height: 400px;">
-            <h5 class="m-0 mb-4 text-500 uppercase text-xs">Tiempo por día</h5>
-            <div style="height: 300px;">
+    <div class="col-12 lg:col-9">
+        <div class="card shadow-1 p-4 bg-white border-1 border-300" style="height: 400px;">
+            <div class="flex justify-content-between align-items-center mb-4">
+                <h5 class="m-0 text-500 uppercase text-xs font-bold">Tiempo por día</h5>
+                <span class="text-900 font-bold">{{ tiempoTotalFormateado }}</span>
+            </div>
+            <div style="position: relative; height: 320px;">
                 <p-chart type="bar" [data]="dataBarras" [options]="opcionesBarras"></p-chart>
             </div>
         </div>
     </div>
 
-    <div class="col-12 lg:col-4">
-        <div class="card shadow-1 p-0 overflow-hidden border-round bg-white">
-            <div class="p-3 border-bottom-1 surface-border flex justify-content-between align-items-center bg-gray-50">
-                <span class="text-xs font-bold text-500 uppercase">Actividades más registradas</span>
-                <span class="text-xs text-500">Top 10 <i class="pi pi-chevron-down ml-1"></i></span>
+    <div class="col-12 lg:col-3">
+        <div class="card shadow-1 p-0 overflow-hidden bg-white border-1 border-300 h-full">
+            <div class="p-3 surface-100 border-bottom-1 surface-border flex justify-content-between align-items-center">
+                <span class="text-xs font-bold text-700 uppercase">{{ proyectoPrincipal }}</span>
+                <span class="text-xs text-500">Top 10 <i class="pi pi-chevron-down"></i></span>
             </div>
-            <div class="p-0">
-                <div *ngFor="let p of proyectos" class="p-3 border-bottom-1 surface-border hover:surface-50 cursor-pointer">
-                    <div class="flex justify-content-between align-items-start">
-                        <div>
-                            <div class="text-900 font-medium mb-1">{{ p.nombre }}</div>
-                            <div class="flex align-items-center">
-                                <i class="pi pi-circle-fill mr-2 text-blue-500" style="font-size: 0.5rem"></i>
-                                <span class="text-xs text-500">{{ p.nombre }}</span>
-                            </div>
+            <div style="max-height: 335px; overflow-y: auto;">
+                <div *ngFor="let a of proyectosConTiempo" class="p-3 border-bottom-1 surface-border hover:surface-50 flex justify-content-between align-items-center">
+                    <div class="overflow-hidden">
+                        <div class="text-sm font-bold text-900">{{ a.nombre }}</div>
+                        <div class="flex align-items-center mt-1">
+                            <i class="pi pi-circle-fill mr-2 text-cyan-500" style="font-size: 0.4rem"></i>
+                            <span class="text-xs text-500">{{ a.proyecto }}</span>
                         </div>
-                        <div class="text-900 font-bold">00:00:18</div>
                     </div>
+                    <span class="text-sm font-bold ml-2">{{ a.tiempoFormateado }}</span>
                 </div>
-                <div *ngIf="proyectos.length === 0" class="p-5 text-center text-500 italic">
+                <div *ngIf="proyectosConTiempo.length === 0" class="p-5 text-center text-500 italic">
                     No hay actividades registradas.
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-12 lg:col-6 mt-4">
-        <div class="card shadow-1 p-4 border-round bg-white">
-            <h5 class="m-0 mb-4 text-500 uppercase text-xs">Distribución por Proyecto</h5>
-            <div class="flex justify-content-center" style="height: 250px;">
-                <p-chart type="doughnut" [data]="dataGrafica" [options]="opcionesGrafica"></p-chart>
+    <div class="col-12 mt-4">
+        <div class="card shadow-1 p-5 bg-white border-1 border-300">
+            <h5 class="m-0 text-500 uppercase text-xs font-bold mb-4">Distribución</h5>
+
+            <div class="grid align-items-center">
+                <div class="col-12 md:col-4 relative flex justify-content-center align-items-center">
+                    <div style="width: 260px; height: 260px;">
+                        <p-chart type="doughnut" [data]="dataGrafica" [options]="opcionesGrafica"></p-chart>
+                    </div>
+                    <div class="absolute text-center" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        <span class="text-900 font-bold text-2xl block">{{ tiempoTotalFormateado }}</span>
+                    </div>
+                </div>
+
+                <div class="col-12 md:col-8 p-4">
+                    <div *ngFor="let p of proyectosParaDistribucion" class="grid align-items-center mb-4">
+                        <div class="col-3 text-right text-sm text-600 font-medium">{{ p.nombre }}</div>
+                        <div class="col-2 text-center text-sm font-bold text-900">{{ p.tiempoFormateado }}</div>
+                        <div class="col-5">
+                            <div class="surface-200 border-round overflow-hidden shadow-inset" style="height: 14px;">
+                                <div class="bg-cyan-clock" [style.width]="p.porcentaje + '%'" style="height: 100%;"></div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
             </div>
         </div>
     </div>
