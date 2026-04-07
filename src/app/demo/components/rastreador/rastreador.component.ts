@@ -14,7 +14,7 @@ interface Proyecto {
   cliente?: string | null;
   color: string;
   publico: boolean;
-  plantilla?: 'none' | 'dev' | null;
+  plantilla?: string | null;
 }
 
 interface Registro {
@@ -30,14 +30,8 @@ interface Registro {
   selector: 'app-rastreador',
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
-    InputTextModule,
-    ButtonModule,
-    OverlayPanelModule,
-    DialogModule,
-    DropdownModule,
-    CheckboxModule
+    CommonModule, FormsModule, InputTextModule, ButtonModule,
+    OverlayPanelModule, DialogModule, DropdownModule, CheckboxModule
   ],
   templateUrl: './rastreador.component.html',
   styleUrl: './rastreador.component.css'
@@ -46,13 +40,14 @@ export class RastreadorComponent implements OnInit {
 
   private STORAGE_PROYECTOS = 'proyectos';
   private STORAGE_REGISTROS = 'registros';
+  private STORAGE_CLIENTES = 'clientes';
+
   tareaActual: string = '';
   tiempoTranscurrido: string = '00:00:00';
   esFacturable: boolean = false;
   busquedaProyecto: string = '';
   proyectos: Proyecto[] = [];
   proyectoSeleccionado: Proyecto | null = null;
-
   mostrarModalProyecto: boolean = false;
 
   nuevoProyecto: Proyecto = {
@@ -63,73 +58,93 @@ export class RastreadorComponent implements OnInit {
     plantilla: 'none'
   };
 
-  clientes = [
-    { nombre: 'Cliente A', code: 'A' },
-    { nombre: 'Cliente B', code: 'B' }
-  ];
+  // Esta lista se llenará con los datos del Storage
+  clientes: any[] = [];
 
   plantillas = [
     { nombre: 'Sin plantilla', code: 'none' },
     { nombre: 'Desarrollo Software', code: 'dev' }
   ];
 
-  intervalo!: ReturnType<typeof setInterval>;
+  intervalo!: any;
   corriendo: boolean = false;
-
   inicioTiempo!: Date;
   finTiempo!: Date;
   registros: Registro[] = [];
   modo: 'temporizador' | 'manual' | 'descanso' = 'temporizador';
 
-  cambiarModo(nuevoModo: 'temporizador' | 'manual' | 'descanso') {
-    this.modo = nuevoModo;
-  }
-
   ngOnInit() {
     this.cargarProyectos();
     this.cargarRegistros();
+    this.cargarClientes();
+  }
+
+  cargarClientes() {
+    const data = JSON.parse(localStorage.getItem(this.STORAGE_CLIENTES) || '[]');
+    // Mapeamos para mantener la compatibilidad con tu dropdown
+    this.clientes = data.map((c: any) => ({
+      nombre: c.nombre,
+      code: c.nombre
+    }));
   }
 
   cargarProyectos() {
-    try {
-      const data = JSON.parse(localStorage.getItem(this.STORAGE_PROYECTOS) || '[]');
-      this.proyectos = Array.isArray(data) ? data : [];
-    } catch {
-      this.proyectos = [];
-    }
+    const data = JSON.parse(localStorage.getItem(this.STORAGE_PROYECTOS) || '[]');
+    this.proyectos = data;
   }
 
   guardarProyecto() {
-
-    if (!this.nuevoProyecto.nombre?.trim()) {
-      alert('El nombre del proyecto es obligatorio');
-      return;
-    }
-
-    const proyectosExistentes: Proyecto[] = JSON.parse(
-      localStorage.getItem(this.STORAGE_PROYECTOS) || '[]'
-    );
+    if (!this.nuevoProyecto.nombre?.trim()) return;
 
     const nuevo: Proyecto = {
       ...this.nuevoProyecto,
       id: Date.now()
     };
 
-    proyectosExistentes.push(nuevo);
-    localStorage.setItem(this.STORAGE_PROYECTOS, JSON.stringify(proyectosExistentes));
-    this.cargarProyectos();
-
+    this.proyectos.push(nuevo);
+    localStorage.setItem(this.STORAGE_PROYECTOS, JSON.stringify(this.proyectos));
+    
     this.proyectoSeleccionado = nuevo;
-
-    this.nuevoProyecto = {
-      nombre: '',
-      cliente: null,
-      color: '#5c6bc0',
-      publico: true,
-      plantilla: 'none'
-    };
-
     this.mostrarModalProyecto = false;
+    this.nuevoProyecto = { nombre: '', cliente: null, color: '#5c6bc0', publico: true, plantilla: 'none' };
+  }
+
+  toggleTimer() {
+    if (!this.corriendo) {
+      this.corriendo = true;
+      this.inicioTiempo = new Date();
+      this.intervalo = setInterval(() => {
+        const ahora = new Date();
+        const diff = ahora.getTime() - this.inicioTiempo.getTime();
+        this.tiempoTranscurrido = this.formatearTiempo(diff);
+      }, 1000);
+    } else {
+      this.corriendo = false;
+      clearInterval(this.intervalo);
+      this.finTiempo = new Date();
+      const diffMs = this.finTiempo.getTime() - this.inicioTiempo.getTime();
+
+      const nuevoRegistro: Registro = {
+        descripcion: this.tareaActual?.trim() || 'Sin descripción',
+        proyecto: this.proyectoSeleccionado,
+        inicio: this.inicioTiempo,
+        fin: this.finTiempo,
+        duracion: this.formatearTiempo(diffMs),
+        facturable: this.esFacturable
+      };
+
+      this.registros.unshift(nuevoRegistro);
+      localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(this.registros));
+
+      this.tiempoTranscurrido = '00:00:00';
+      this.tareaActual = '';
+      this.proyectoSeleccionado = null;
+    }
+  }
+
+  abrirModalNuevoProyecto() {
+    this.cargarClientes(); // Actualizar antes de abrir
+    this.mostrarModalProyecto = true;
   }
 
   seleccionarProyecto(proyecto: Proyecto, panel: any) {
@@ -137,138 +152,34 @@ export class RastreadorComponent implements OnInit {
     panel.hide();
   }
 
-  abrirModalNuevoProyecto() {
-    this.mostrarModalProyecto = true;
+  formatearTiempo(ms: number): string {
+    const totalS = Math.floor(ms / 1000);
+    const h = Math.floor(totalS / 3600).toString().padStart(2, '0');
+    const m = Math.floor((totalS % 3600) / 60).toString().padStart(2, '0');
+    const s = (totalS % 60).toString().padStart(2, '0');
+    return `${h}:${m}:${s}`;
   }
 
   cargarRegistros() {
-    try {
-      const data = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
-
-      this.registros = Array.isArray(data)
-        ? data.map((r: any) => ({
-            ...r,
-            inicio: new Date(r.inicio),
-            fin: new Date(r.fin)
-          }))
-        : [];
-    } catch {
-      this.registros = [];
-    }
-  }
-
-  guardarRegistros() {
-    localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(this.registros));
-  }
-
-  toggleTimer() {
-
-    if (!this.corriendo) {
-      this.corriendo = true;
-      this.inicioTiempo = new Date();
-
-      this.intervalo = setInterval(() => {
-        const ahora = new Date();
-        const diff = ahora.getTime() - this.inicioTiempo.getTime();
-        this.tiempoTranscurrido = this.formatearTiempo(diff);
-      }, 1000);
-
-    } else {
-      this.corriendo = false;
-      clearInterval(this.intervalo);
-
-      this.finTiempo = new Date();
-
-      const duracionMs = this.finTiempo.getTime() - this.inicioTiempo.getTime();
-
-      const nuevoRegistro: Registro = {
-        descripcion: this.tareaActual?.trim() || 'Sin descripción',
-        proyecto: this.proyectoSeleccionado,
-        inicio: this.inicioTiempo,
-        fin: this.finTiempo,
-        duracion: this.formatearTiempo(duracionMs),
-        facturable: this.esFacturable
-      };
-
-      this.registros.unshift(nuevoRegistro);
-
-      this.guardarRegistros();
-
-      this.tiempoTranscurrido = '00:00:00';
-      this.tareaActual = '';
-      this.esFacturable = false;
-    }
-  }
-
-  alternarFacturable() {
-    this.esFacturable = !this.esFacturable;
-  }
-
-  formatearTiempo(ms: number): string {
-    const totalSegundos = Math.floor(ms / 1000);
-    const horas = Math.floor(totalSegundos / 3600);
-    const minutos = Math.floor((totalSegundos % 3600) / 60);
-    const segundos = totalSegundos % 60;
-
-    return `${this.pad(horas)}:${this.pad(minutos)}:${this.pad(segundos)}`;
-  }
-
-  pad(num: number): string {
-    return num < 10 ? '0' + num : num.toString();
+    const data = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
+    this.registros = data.map((r: any) => ({
+      ...r,
+      inicio: new Date(r.inicio),
+      fin: new Date(r.fin)
+    }));
   }
 
   formatearHora(fecha: Date): string {
     return fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
+  alternarFacturable() { this.esFacturable = !this.esFacturable; }
+
   get totalHoy(): string {
-    let total = 0;
     const hoy = new Date().toDateString();
-
-    this.registros.forEach(r => {
-      if (new Date(r.inicio).toDateString() === hoy) {
-        total += new Date(r.fin).getTime() - new Date(r.inicio).getTime();
-      }
-    });
-
-    if (this.corriendo && this.inicioTiempo?.toDateString() === hoy) {
-      total += new Date().getTime() - this.inicioTiempo.getTime();
-    }
-
-    return this.formatearTiempo(total);
+    const ms = this.registros
+      .filter(r => r.inicio.toDateString() === hoy)
+      .reduce((acc, r) => acc + (r.fin.getTime() - r.inicio.getTime()), 0);
+    return this.formatearTiempo(ms);
   }
-
-  get totalSemana(): string {
-    let total = 0;
-
-    const hoy = new Date();
-    const inicioSemana = new Date();
-    inicioSemana.setDate(hoy.getDate() - hoy.getDay());
-
-    this.registros.forEach(r => {
-      const fecha = new Date(r.inicio);
-      if (fecha >= inicioSemana) {
-        total += new Date(r.fin).getTime() - fecha.getTime();
-      }
-    });
-
-    if (this.corriendo && this.inicioTiempo >= inicioSemana) {
-      total += new Date().getTime() - this.inicioTiempo.getTime();
-    }
-
-    return this.formatearTiempo(total);
-  }
-
-  onFocusDescripcion(r: Registro) {
-    if (r.descripcion === 'Sin descripción') {
-      r.descripcion = '';
-    }
-  }
-
-  onBlurDescripcion(r: Registro) {
-    if (!r.descripcion || !r.descripcion.trim()) {
-      r.descripcion = 'Sin descripción';
-    }
-  }
-
 }
