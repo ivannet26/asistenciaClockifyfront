@@ -4,7 +4,6 @@
 
     <div class="clientes-contenido">
 
-      <!-- Barra superior -->
       <div class="barra-herramientas" *ngIf="mostrarLista">
         <div class="busqueda-filtros">
           <p-dropdown
@@ -18,6 +17,8 @@
             <input
               type="text"
               pInputText
+              [(ngModel)]="textoBusqueda"
+              (input)="filtrarClientes()"
               placeholder="Buscar por nombre"
               class="input-busqueda" />
           </span>
@@ -27,21 +28,22 @@
           <input
             type="text"
             pInputText
+            [(ngModel)]="nuevoClienteNombre"
             placeholder="Añadir nuevo cliente"
-            class="input-personalizado" />
+            class="input-personalizado" 
+            (keyup.enter)="agregarCliente()"/>
           <button
             pButton
             type="button"
             label="AÑADIR"
             class="boton-personalizado"
-            (click)="mostrarTabla()">
+            (click)="agregarCliente()">
           </button>
         </div>
       </div>
 
       <p-card>
 
-        <!-- Estado vacío -->
         <div class="contenedor-vacio" *ngIf="!mostrarLista">
           <h1 class="titulo-principal">
             Añadir clientes para organizar tus proyectos
@@ -54,21 +56,22 @@
             <input
               type="text"
               pInputText
+              [(ngModel)]="nuevoClienteNombre"
               placeholder="Añadir nuevo cliente"
-              class="input-personalizado" />
+              class="input-personalizado"
+              (keyup.enter)="agregarCliente()" />
             <button
               pButton
               type="button"
               label="AÑADIR"
               class="boton-personalizado"
-              (click)="mostrarTabla()">
+              (click)="agregarCliente()">
             </button>
           </div>
         </div>
 
-        <!-- Tabla -->
         <div class="contenedor-tabla" *ngIf="mostrarLista">
-          <p-table [value]="clientes" class="tabla-personalizada">
+          <p-table [value]="clientesFiltrados" class="tabla-personalizada">
 
             <ng-template pTemplate="header">
               <tr class="cabecera-gris">
@@ -87,7 +90,7 @@
                 <td>
                   <p-checkbox [binary]="true"></p-checkbox>
                 </td>
-                <td>{{ cliente.nombre }}</td>
+                <td class="font-bold">{{ cliente.nombre }}</td>
                 <td>{{ cliente.direccion }}</td>
                 <td>{{ cliente.moneda }}</td>
                 <td class="acciones-celda">
@@ -98,8 +101,9 @@
                   </button>
                   <button
                     pButton
-                    icon="pi pi-ellipsis-v"
-                    class="p-button-text p-button-secondary">
+                    icon="pi pi-trash"
+                    (click)="eliminarCliente(cliente.id)"
+                    class="p-button-text p-button-danger">
                   </button>
                 </td>
               </tr>
