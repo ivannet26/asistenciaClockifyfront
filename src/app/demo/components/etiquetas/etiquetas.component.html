@@ -4,7 +4,6 @@
 
     <div class="etiquetas-contenido">
 
-      <!-- Barra superior -->
       <div class="barra-herramientas" *ngIf="mostrarLista">
         <div class="busqueda-filtros">
           <p-dropdown
@@ -18,6 +17,8 @@
             <input
               type="text"
               pInputText
+              [(ngModel)]="textoBusqueda"
+              (input)="filtrarEtiquetas()"
               placeholder="Buscar por nombre"
               class="input-busqueda" />
           </span>
@@ -27,21 +28,22 @@
           <input
             type="text"
             pInputText
+            [(ngModel)]="nuevaEtiquetaNombre"
             placeholder="Añadir nueva etiqueta"
-            class="input-personalizado" />
+            class="input-personalizado" 
+            (keyup.enter)="agregarEtiqueta()"/>
           <button
             pButton
             type="button"
             label="AÑADIR"
             class="boton-personalizado"
-            (click)="mostrarTabla()">
+            (click)="agregarEtiqueta()">
           </button>
         </div>
       </div>
 
       <p-card>
 
-        <!-- Estado vacío -->
         <div class="contenedor-vacio" *ngIf="!mostrarLista">
           <h1 class="titulo-principal">
             Organiza tus entradas con etiquetas
@@ -54,21 +56,22 @@
             <input
               type="text"
               pInputText
+              [(ngModel)]="nuevaEtiquetaNombre"
               placeholder="Añadir nueva etiqueta"
-              class="input-personalizado" />
+              class="input-personalizado"
+              (keyup.enter)="agregarEtiqueta()" />
             <button
               pButton
               type="button"
               label="AÑADIR"
               class="boton-personalizado"
-              (click)="mostrarTabla()">
+              (click)="agregarEtiqueta()">
             </button>
           </div>
         </div>
 
-        <!-- Tabla -->
         <div class="contenedor-tabla" *ngIf="mostrarLista">
-          <p-table [value]="etiquetas" class="tabla-personalizada">
+          <p-table [value]="etiquetasFiltradas" class="tabla-personalizada">
 
             <ng-template pTemplate="header">
               <tr class="cabecera-gris">
@@ -85,8 +88,8 @@
                 <td>
                   <p-checkbox [binary]="true"></p-checkbox>
                 </td>
-                <td>{{ etiqueta.nombre }}</td>
-                <td class="acciones-celda">
+                <td class="font-bold">{{ etiqueta.nombre }}</td>
+                <td class="acciones-celda text-right">
                   <button
                     pButton
                     icon="pi pi-pencil"
@@ -94,8 +97,9 @@
                   </button>
                   <button
                     pButton
-                    icon="pi pi-ellipsis-v"
-                    class="p-button-text p-button-secondary">
+                    icon="pi pi-trash"
+                    (click)="eliminarEtiqueta(etiqueta.id)"
+                    class="p-button-text p-button-danger">
                   </button>
                 </td>
               </tr>
