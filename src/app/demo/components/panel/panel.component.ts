@@ -95,9 +95,11 @@ export class PanelComponent implements OnInit {
 
   actualizarYFiltrar() {
     if (this.rangoFechas && this.rangoFechas[0]) {
-      // Si solo se selecciona una fecha (inicio), asumimos rango de un día hasta que elija la segunda
-      const inicio = this.rangoFechas[0];
-      const fin = this.rangoFechas[1] || new Date(inicio.getTime() + 86399999);
+      const inicio = new Date(this.rangoFechas[0]);
+      inicio.setHours(0,0,0,0);
+      
+      const fin = this.rangoFechas[1] ? new Date(this.rangoFechas[1]) : new Date(inicio);
+      fin.setHours(23, 59, 59, 999);
       
       const opciones: any = { day: '2-digit', month: '2-digit', year: 'numeric' };
       this.textoRango = `${inicio.toLocaleDateString('es-ES', opciones)} - ${fin.toLocaleDateString('es-ES', opciones)}`;
@@ -134,7 +136,6 @@ export class PanelComponent implements OnInit {
     const inicioFiltro = this.rangoFechas[0];
     const finFiltro = this.rangoFechas[1] || new Date(inicioFiltro.getTime() + 86399999);
 
-    // Calculamos el lunes de la semana del rango para las etiquetas
     const dSemana = inicioFiltro.getDay();
     const diff = (dSemana === 0 ? 6 : dSemana - 1);
     const lunesGrafico = new Date(inicioFiltro);
@@ -144,9 +145,12 @@ export class PanelComponent implements OnInit {
     this.registrosCompletos.forEach(r => {
       if (r.inicio) {
         const fechaReg = new Date(r.inicio);
-        // Filtro de rango
+        
         if (fechaReg >= inicioFiltro && fechaReg <= finFiltro) {
-          const proy = (typeof r.proyecto === 'object') ? r.proyecto.nombre : r.proyecto || 'Sin Proyecto';
+          // PROTECCIÓN CONTRA NULL (Error que te salía antes)
+          const proyObj = r.proyecto;
+          const proyNombre = (proyObj && typeof proyObj === 'object') ? proyObj.nombre : (proyObj || 'Sin Proyecto');
+          
           const desc = r.descripcion || '(Sin descripción)';
           
           let s = 0;
@@ -155,11 +159,10 @@ export class PanelComponent implements OnInit {
             s = (parseInt(p[0]) * 3600) + (parseInt(p[1]) * 60) + parseInt(p[2]);
           }
 
-          tiemposPorProyecto[proy] = (tiemposPorProyecto[proy] || 0) + s;
-          if (!tiemposPorActividad[desc]) tiemposPorActividad[desc] = { segundos: 0, proyecto: proy };
+          tiemposPorProyecto[proyNombre] = (tiemposPorProyecto[proyNombre] || 0) + s;
+          if (!tiemposPorActividad[desc]) tiemposPorActividad[desc] = { segundos: 0, proyecto: proyNombre };
           tiemposPorActividad[desc].segundos += s;
 
-          // Determinamos el índice del día (0 Lunes - 6 Domingo)
           const soloFecha = r.inicio.split('T')[0];
           const fechaLocal = new Date(soloFecha + 'T00:00:00');
           const dayIdx = fechaLocal.getDay();
