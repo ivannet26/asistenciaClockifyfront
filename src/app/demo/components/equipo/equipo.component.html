@@ -5,15 +5,15 @@
         <div class="equipo-contenido">
             <p-card>
 
-                <div class="contenedor-tabla" *ngIf="mostrarLista">
+                <div class="contenedor-tabla" [hidden]="!mostrarLista">
 
                     <p-tabMenu [model]="tabs" [activeItem]="tabactivo" (activeItemChange)="CambioTab($event)" />
 
-                    <div class="m-3" *ngIf="tabactivo?.id === 0">
+                    <div class="m-3" [hidden]="tabactivo?.id !== 0">
 
                         <button pButton icon="pi pi-plus" label="Crear miembro"
                             class="p-button-info px-3 py-2 m-3 font-bold" style="width: auto; border-radius: 4px;"
-                            (click)="showDialog()">
+                            >
                         </button>
 
                         <div class="surface-0 border-y-1 surface-border">
@@ -51,7 +51,7 @@
                             </div>
                         </div>
 
-                        <p-table [value]="equipos" class="tabla-personalizada">
+                        <p-table [value]="miembros" class="tabla-personalizada">
 
                             <ng-template pTemplate="header">
                                 <tr>
@@ -87,8 +87,20 @@
                                     <td>{{ equipo.correo }}</td>
                                     <td>{{ equipo.tarifa }}</td>
                                     <td>{{ equipo.tarifa_coste }}</td>
-                                    <td>{{ equipo.rol }}</td>
-                                    <td>{{ equipo.grupo }}</td>
+                                    <td>
+                                        <ng-container *ngIf="!equipo.rol; else seleccionarRol">
+                                            {{ equipo.rol }}
+                                        </ng-container>
+                                        <ng-template #seleccionarRol>
+                                            <p-dropdown [options]="rolesOptions" [(ngModel)]="equipo.rol"
+                                                (onChange)="guardarCambiosMiembro(equipo)">
+                                            </p-dropdown>
+                                        </ng-template>
+                                    </td>
+                                    <td>
+                                    <td>
+                                        {{ getNombreGrupo(equipo.grupoId) }}
+                                    </td>
                                     <td class="acciones-celda">
                                         <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary">
                                         </button>
@@ -102,7 +114,7 @@
                         </p-table>
                     </div>
 
-                    <div class="m-3" *ngIf="tabactivo?.id === 1">
+                    <div class="m-3" [hidden]="tabactivo?.id !== 1">
 
                         <div class="barra-herramientas" *ngIf="mostrarLista">
                             <div class="busqueda-filtros">
@@ -114,14 +126,14 @@
                             </div>
 
                             <div class="grupo-input-compacto">
-                                <input type="text" pInputText placeholder="Añadir nuevo cliente"
+                                <input type="text" pInputText placeholder="Añadir nuevo grupo"
                                     class="input-personalizado" />
                                 <button pButton type="button" label="AÑADIR" class="boton-personalizado "
-                                    (click)="mostrarTabla()">
+                                    (click)="guardarGrupo()">
                                 </button>
                             </div>
                         </div>
-                        <p-table [value]="grupos" class="tabla-personalizada">
+                        <p-table [value]="gruposConIntegrantes" class="tabla-personalizada">
 
                             <ng-template pTemplate="header">
                                 <tr>
@@ -150,11 +162,22 @@
                                         <p-checkbox [binary]="true"></p-checkbox>
                                     </td>
                                     <td>{{ grupo.nombre }}</td>
-                                    <td>{{ grupo.acceso }}</td>
+                                    <td>
+                                        <ul>
+                                            <li *ngFor="let miembro of grupo.integrantes">
+                                                {{ miembro.nombre }}
+                                            </li>
+                                        </ul>
+
+                                        <p-multiSelect [options]="miembrosOptions" optionLabel="nombre" optionValue="id"
+                                            [(ngModel)]="grupo.miembrosIds" (onChange)="asignarMiembrosAGrupo(grupo)"
+                                            defaultLabel="Añadir miembros">
+                                        </p-multiSelect>
+                                    </td>
                                     <td class="acciones-celda">
                                         <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary">
                                         </button>
-                                        <button pButton icon="pi pi-ellipsis-v"
+                                        <button pButton icon="pi pi-ellipsis-v" (onClick)="showDialog('top')"
                                             class="p-button-text p-button-secondary">
                                         </button>
                                     </td>
@@ -164,8 +187,19 @@
                         </p-table>
                     </div>
 
-                    <div class="m-3" *ngIf="tabactivo?.id === 2">
+                    <div class="m-3" [hidden]="tabactivo?.id !== 2">
+                        <input type="text" [(ngModel)]="nuevoMiembro.nombre" placeholder="Nombre">
+                        <input type="text" [(ngModel)]="nuevoMiembro.correo" placeholder="Correo">
 
+                        <p-dropdown [options]="rolesOptions" [(ngModel)]="nuevoMiembro.rol"
+                            placeholder="Seleccionar rol">
+                        </p-dropdown>
+
+                        <p-dropdown [options]="gruposConIntegrantes" optionLabel="nombre" optionValue="id"
+                            [(ngModel)]="nuevoMiembro.grupoId" placeholder="Seleccionar grupo">
+                        </p-dropdown>
+
+                        <button (click)="guardarMiembro()">Guardar</button>
                     </div>
                 </div>
 
@@ -174,7 +208,7 @@
                         Añadir miembro al equipo para organizar tus proyectos
                     </h1>
                     <p class="subtitulo">
-                        Asignar miembros a proyectos y seguir el progreso de cada cliente.
+                        Asignar miembros a un grupo.
                     </p>
 
                     <div class="grupo-input">
