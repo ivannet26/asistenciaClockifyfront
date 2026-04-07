@@ -2,47 +2,42 @@
     
     <div class="col-12 flex justify-content-end align-items-center mb-4 gap-2">
         <div class="flex flex-column md:flex-row gap-2">
-            <p-dropdown 
-                [options]="[{label:'Proyecto', value:null}]" 
-                placeholder="Proyecto" 
-                styleClass="w-full md:w-10rem bg-white">
-            </p-dropdown>
+            <p-dropdown [options]="[]" placeholder="Facturabilidad" styleClass="w-10rem bg-white"></p-dropdown>
+            <p-dropdown [options]="[]" placeholder="Solo yo" styleClass="w-10rem bg-white"></p-dropdown>
             
-            <p-dropdown 
-                [options]="[{label:'Solo yo', value:null}]" 
-                placeholder="Solo yo" 
-                styleClass="w-full md:w-10rem bg-white">
-            </p-dropdown>
-            
-            <div class="p-inputgroup w-full md:w-20rem">
-                <span class="p-inputgroup-addon bg-white"><i class="pi pi-calendar"></i></span>
-                <input type="text" pInputText placeholder="Esta semana" class="bg-white" readonly />
-                <button type="button" pButton icon="pi pi-chevron-left" class="p-button-secondary p-button-text bg-white border-1 border-300"></button>
-                <button type="button" pButton icon="pi pi-chevron-right" class="p-button-secondary p-button-text bg-white border-1 border-300"></button>
+            <div class="p-inputgroup w-22rem">
+                <span class="p-inputgroup-addon bg-white cursor-pointer" (click)="op.toggle($event)">
+                    <i class="pi pi-calendar"></i>
+                </span>
+                <input type="text" pInputText [value]="textoRango" class="bg-white cursor-pointer" readonly (click)="op.toggle($event)" />
+                <button type="button" pButton icon="pi pi-chevron-left" (click)="cambiarSemana(-1)" class="p-button-secondary p-button-text bg-white border-1 border-300"></button>
+                <button type="button" pButton icon="pi pi-chevron-right" (click)="cambiarSemana(1)" class="p-button-secondary p-button-text bg-white border-1 border-300"></button>
             </div>
         </div>
     </div>
 
+    <p-overlayPanel #op [style]="{width: 'auto'}">
+        <div class="flex">
+            <div class="menu-calendario">
+                <ul>
+                    <li (click)="seleccionarOpcion('hoy')">Hoy</li>
+                    <li (click)="seleccionarOpcion('ayer')">Ayer</li>
+                    <li (click)="seleccionarOpcion('estaSemana')" class="active">Esta semana</li>
+                    <li>La semana pasada</li>
+                    <li>Este mes</li>
+                </ul>
+            </div>
+            <div class="p-2">
+                <p-calendar [(ngModel)]="rangoFechas" selectionMode="range" [inline]="true" [showOtherMonths]="false" (onSelect)="actualizarYFiltrar()"></p-calendar>
+            </div>
+        </div>
+    </p-overlayPanel>
+
     <div class="col-12 mb-4">
         <div class="grid">
-            <div class="col-12 md:col-4">
-                <div class="card-stats shadow-1 border-1 border-300 bg-white">
-                    <span class="stat-label">Tiempo Total</span>
-                    <div class="stat-value">{{ tiempoTotalFormateado }}</div>
-                </div>
-            </div>
-            <div class="col-12 md:col-4">
-                <div class="card-stats shadow-1 border-1 border-300 bg-white">
-                    <span class="stat-label">Proyecto Principal</span>
-                    <div class="stat-value text-overflow-ellipsis overflow-hidden uppercase">{{ proyectoPrincipal }}</div>
-                </div>
-            </div>
-            <div class="col-12 md:col-4">
-                <div class="card-stats shadow-1 border-1 border-300 bg-white">
-                    <span class="stat-label">Principal Cliente</span>
-                    <div class="stat-value">--</div>
-                </div>
-            </div>
+            <div class="col-12 md:col-4"><div class="card-stats shadow-1 border-1 border-300 bg-white"><span class="stat-label">Tiempo Total</span><div class="stat-value">{{ tiempoTotalFormateado }}</div></div></div>
+            <div class="col-12 md:col-4"><div class="card-stats shadow-1 border-1 border-300 bg-white"><span class="stat-label">Proyecto Principal</span><div class="stat-value uppercase">{{ proyectoPrincipal }}</div></div></div>
+            <div class="col-12 md:col-4"><div class="card-stats shadow-1 border-1 border-300 bg-white"><span class="stat-label">Principal Cliente</span><div class="stat-value">--</div></div></div>
         </div>
     </div>
 
@@ -52,31 +47,17 @@
                 <h5 class="m-0 text-500 uppercase text-xs font-bold">Tiempo por día</h5>
                 <span class="text-900 font-bold">{{ tiempoTotalFormateado }}</span>
             </div>
-            <div style="position: relative; height: 320px;">
-                <p-chart type="bar" [data]="dataBarras" [options]="opcionesBarras"></p-chart>
-            </div>
+            <div style="position: relative; height: 320px;"><p-chart type="bar" [data]="dataBarras" [options]="opcionesBarras"></p-chart></div>
         </div>
     </div>
 
     <div class="col-12 lg:col-3">
         <div class="card shadow-1 p-0 overflow-hidden bg-white border-1 border-300 h-full">
-            <div class="p-3 surface-100 border-bottom-1 surface-border flex justify-content-between align-items-center">
-                <span class="text-xs font-bold text-700 uppercase">{{ proyectoPrincipal }}</span>
-                <span class="text-xs text-500">Top 10 <i class="pi pi-chevron-down"></i></span>
-            </div>
+            <div class="p-3 surface-100 border-bottom-1 surface-border flex justify-content-between align-items-center"><span class="text-xs font-bold text-700 uppercase">{{ proyectoPrincipal }}</span><span class="text-xs text-500">Top 10 <i class="pi pi-chevron-down"></i></span></div>
             <div style="max-height: 335px; overflow-y: auto;">
-                <div *ngFor="let a of proyectosConTiempo" class="p-3 border-bottom-1 surface-border hover:surface-50 flex justify-content-between align-items-center">
-                    <div class="overflow-hidden">
-                        <div class="text-sm font-bold text-900">{{ a.nombre }}</div>
-                        <div class="flex align-items-center mt-1">
-                            <i class="pi pi-circle-fill mr-2 text-cyan-500" style="font-size: 0.4rem"></i>
-                            <span class="text-xs text-500">{{ a.proyecto }}</span>
-                        </div>
-                    </div>
-                    <span class="text-sm font-bold ml-2">{{ a.tiempoFormateado }}</span>
-                </div>
-                <div *ngIf="proyectosConTiempo.length === 0" class="p-5 text-center text-500 italic">
-                    No hay actividades registradas.
+                <div *ngFor="let a of proyectosConTiempo" class="p-3 border-bottom-1 surface-border hover:surface-50 flex justify-content-between">
+                    <div class="overflow-hidden"><div class="text-sm font-bold">{{ a.nombre }}</div><div class="text-xs text-500">{{ a.proyecto }}</div></div>
+                    <span class="text-sm font-bold">{{ a.tiempoFormateado }}</span>
                 </div>
             </div>
         </div>
@@ -85,27 +66,16 @@
     <div class="col-12 mt-4">
         <div class="card shadow-1 p-5 bg-white border-1 border-300">
             <h5 class="m-0 text-500 uppercase text-xs font-bold mb-4">Distribución</h5>
-
             <div class="grid align-items-center">
-                <div class="col-12 md:col-4 relative flex justify-content-center align-items-center">
-                    <div style="width: 260px; height: 260px;">
-                        <p-chart type="doughnut" [data]="dataGrafica" [options]="opcionesGrafica"></p-chart>
-                    </div>
-                    <div class="absolute text-center" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                        <span class="text-900 font-bold text-2xl block">{{ tiempoTotalFormateado }}</span>
-                    </div>
+                <div class="col-12 md:col-4 relative flex justify-content-center">
+                    <div style="width: 250px; height: 250px;"><p-chart type="doughnut" [data]="dataGrafica" [options]="opcionesGrafica"></p-chart></div>
+                    <div class="absolute text-center" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"><span class="text-900 font-bold text-2xl block">{{ tiempoTotalFormateado }}</span></div>
                 </div>
-
                 <div class="col-12 md:col-8 p-4">
                     <div *ngFor="let p of proyectosParaDistribucion" class="grid align-items-center mb-4">
-                        <div class="col-3 text-right text-sm text-600 font-medium">{{ p.nombre }}</div>
-                        <div class="col-2 text-center text-sm font-bold text-900">{{ p.tiempoFormateado }}</div>
-                        <div class="col-5">
-                            <div class="surface-200 border-round overflow-hidden shadow-inset" style="height: 14px;">
-                                <div class="bg-cyan-clock" [style.width]="p.porcentaje + '%'" style="height: 100%;"></div>
-                            </div>
-                        </div>
-                        
+                        <div class="col-3 text-right text-sm text-600">{{ p.nombre }}</div>
+                        <div class="col-2 text-center text-sm font-bold">{{ p.tiempoFormateado }}</div>
+                        <div class="col-5"><div class="surface-200 border-round overflow-hidden" style="height: 14px;"><div class="bg-cyan-clock" [style.width]="p.porcentaje + '%'" style="height: 100%;"></div></div></div>
                     </div>
                 </div>
             </div>
