@@ -1,7 +1,54 @@
-.informes-container{
-    display:  flex;
-    flex-direction: column;
-    gap: 10px;
-    background-color: white;
-    padding: 10px 10px 10px 0px;
+.informes-panel{
+  background: var(--surface-card);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  padding: 1.25rem;
+}
+
+.informes-pagina {
+  margin: 0 80px 0 80px;
+  transition: margin 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+  .informes-pagina {
+    margin: 0 25px 0 80px;
+  }
+}
+
+@media (max-width: 992px) {
+  .informes-pagina {
+    margin: auto;
+  }
+}
+
+.menu-fila {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-menu {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.item-menu:hover {
+  background-color: #f1f5f9;
+}
+
+.item-menu i {
+  color: #64748b;
+}
+
+.item-menu.danger {
+  color: #ef4444;
+}
+
+.item-menu.danger i {
+  color: #ef4444;
 }

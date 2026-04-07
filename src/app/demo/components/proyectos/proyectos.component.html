@@ -80,18 +80,73 @@
                             <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
                                 Nombre
                             </th>
-                            <th style="width: 3rem" class="bg-white border-bottom-1 surface-border"></th>
+                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                Cliente
+                            </th>
+                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                Registrado
+                            </th>
+                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                Importe
+                            </th>
+                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                Progreso
+                            </th>
+                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                Acceso
+                            </th>
+                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border"
+                                colspan="2">
+
+                            </th>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-proyecto>
                         <tr class="hover:surface-50">
-                            <td class="text-center border-none"><p-checkbox [binary]="true"></p-checkbox></td>
-                            <td class="flex align-items-center py-3 border-none">
+                            <td class="text-center border-none">
+                                <p-checkbox [binary]="true"></p-checkbox>
+                            </td>
+
+                            <td>
                                 <i class="pi pi-circle-fill text-blue-500 mr-3" style="font-size: 0.5rem"></i>
                                 <span class="text-700 font-medium">{{proyecto.nombre}}</span>
                             </td>
-                            <td class="text-center border-none pr-3">
-                                <i class="pi pi-chevron-down text-400 cursor-pointer"></i>
+                            <td>
+                                <i class="pi pi-circle-fill text-blue-500 mr-3" style="font-size: 0.5rem"></i>
+                                <span class="text-700 font-medium">{{proyecto.nombre}}</span>
+                            </td>
+                            <td>
+                                <i class="pi pi-circle-fill text-blue-500 mr-3" style="font-size: 0.5rem"></i>
+                                <span class="text-700 font-medium">{{proyecto.nombre}}</span>
+                            </td>
+                            <td>
+                                <i class="pi pi-circle-fill text-blue-500 mr-3" style="font-size: 0.5rem"></i>
+                                <span class="text-700 font-medium">{{proyecto.nombre}}</span>
+                            </td>
+                            <td>
+                                <i class="pi pi-circle-fill text-blue-500 mr-3" style="font-size: 0.5rem"></i>
+                                <span class="text-700 font-medium">{{proyecto.nombre}}</span>
+                            </td>
+
+
+                            <td colspan="2">
+                                <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-secondary"
+                                    (click)="menuFila.toggle($event)">
+                                </button>
+
+                                <p-overlayPanel #menuFila [style]="{ width: '200px' }">
+                                    <div class="menu-fila">
+                                        <div class="item-menu" (click)="dividirRegistro(proyecto); menuFila.hide()">
+                                            <i class="pi pi-clone"></i>
+                                            <span>Establecer como plantilla</span>
+                                        </div>
+
+                                        <div class="item-menu" (click)="duplicarRegistro(proyecto); menuFila.hide()">
+                                            <i class="pi pi-copy"></i>
+                                            <span>Archivar</span>
+                                        </div>
+                                    </div>
+                                </p-overlayPanel>
                             </td>
                         </tr>
                     </ng-template>

@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 export class AppMenuLayoutComponent implements OnInit {
 
     model: any[] = [];
-    constructor(private router: Router) {}
+    constructor(private router: Router) { }
 
     ngOnInit() {
         this.model = [
@@ -31,14 +31,21 @@ export class AppMenuLayoutComponent implements OnInit {
                             this.router.navigate(['/menu-layout/informes']);
                         },
                         items: [
-                            { label: 'TIEMPO', separator: true }, // Encabezado pequeño en el submenú
-                            { label: 'Resumido', icon: 'pi pi-fw pi-align-left', routerLink: ['/menu-layout/informes/resumido'] },
-                            { label: 'Detallado', icon: 'pi pi-fw pi-list', routerLink: ['/menu-layout/informes/detallado'] },
-                            { label: 'Semanal', icon: 'pi pi-fw pi-calendar-minus', routerLink: ['/menu-layout/informes/semanal'] },
-                            { label: 'Compartido', icon: 'pi pi-fw pi-share-alt', routerLink: ['/menu-layout/informes/compartido'] },
-                            { label: 'EQUIPO', separator: true },
-                            { label: 'Asistencia', icon: 'pi pi-fw pi-users', routerLink: ['/menu-layout/informes/asistencia'] },
-                            { label: 'Asignaciones', icon: 'pi pi-fw pi-user-plus', routerLink: ['/menu-layout/informes/asignaciones'] }
+                            {
+                                label: 'TIEMPO', separator: true,
+                                items: [
+                                    { label: 'Resumido', icon: 'pi pi-fw pi-align-left', routerLink: ['/menu-layout/informes/resumido'] },
+                                    { label: 'Detallado', icon: 'pi pi-fw pi-list', routerLink: ['/menu-layout/informes/detallado'] },
+                                    { label: 'Semanal', icon: 'pi pi-fw pi-calendar-minus', routerLink: ['/menu-layout/informes/semanal'] },
+                                    { label: 'Compartido', icon: 'pi pi-fw pi-share-alt', routerLink: ['/menu-layout/informes/compartido'] },
+                                ]
+                            }, // Encabezado pequeño en el submenú
+                            {
+                                label: 'EQUIPO', separator: true, items: [
+                                    { label: 'Asistencia', icon: 'pi pi-fw pi-users', routerLink: ['/menu-layout/informes/asistencia'] },
+                                    { label: 'Asignaciones', icon: 'pi pi-fw pi-user-plus', routerLink: ['/menu-layout/informes/asignaciones'] }
+                                ]
+                            }
                         ]
                     }
                 ]

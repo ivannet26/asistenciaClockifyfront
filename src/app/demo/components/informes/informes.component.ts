@@ -1,15 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TabMenuModule } from "primeng/tabmenu";
 import { DropdownModule } from "primeng/dropdown";
 import { CalendarModule } from "primeng/calendar";
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { CardModule } from "primeng/card";
 
 @Component({
   selector: 'app-informes',
   standalone: true,
-  imports: [TabMenuModule, DropdownModule, CalendarModule, TableModule,FormsModule,CommonModule],
+  imports: [TabMenuModule,
+    DropdownModule,
+    CalendarModule,
+    TableModule,
+    FormsModule,
+    CommonModule,
+    CheckboxModule,
+    ButtonModule,
+    OverlayPanelModule, CardModule],
   templateUrl: './informes.component.html',
   styleUrl: './informes.component.css'
 })
