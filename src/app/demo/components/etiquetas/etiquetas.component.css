@@ -92,22 +92,45 @@
   max-width: 400px;
 }
 
-/* Estilos para la Tabla */
+/* --- CORRECCIONES PARA EL SCROLL FIJO --- */
+
 .contenedor-tabla {
   width: 100%;
+  border: 1px solid #f1f5f9;
+  border-radius: 4px;
+  overflow: hidden; /* Mantiene el scroll dentro de los bordes */
 }
 
+/* Forzar que la tabla respete el scrollHeight del HTML */
+:host ::v-deep .p-datatable-wrapper {
+  overflow-y: auto;
+}
+
+/* Scrollbar estética (delgada y gris estilo Clockify) */
+:host ::v-deep .p-datatable-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+:host ::v-deep .p-datatable-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+/* Estilos para la Cabecera */
 :host ::v-deep .cabecera-gris th {
-  background-color: #f1f5f9 !important;
+  background-color: #f8fafc !important; /* Un gris más claro para estandarizar */
   color: #64748b !important;
-  font-size: 0.85rem;
-  font-weight: 600;
-  border: none !important;
-  padding: 1rem;
+  font-size: 0.75rem; /* Más pequeño para que parezca Clockify */
+  font-weight: 700;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 0.75rem 1rem !important;
+  position: sticky; /* Mantiene los títulos arriba mientras haces scroll */
+  top: 0;
+  z-index: 10;
 }
 
 :host ::v-deep .p-datatable .p-datatable-tbody > tr > td {
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid #f1f5f9;
 }
 
@@ -117,53 +140,42 @@
   gap: 0.5rem;
 }
 
-/* Inputs y botones */
+/* --- BOTONES Y INPUTS ESTANDARIZADOS --- */
+
 .input-personalizado {
   flex: 1;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
   border: 1px solid #ced4da;
   padding: 0.75rem;
+  height: 40px; /* Altura fija para alinear con el botón */
 }
 
 .boton-personalizado {
-  /* 1. EL COLOR: Mismo azul de p-button-info */
   background-color: #3B82F6 !important; 
-  
-  /* 2. EL REDONDEO: 4px en todas las esquinas para estandarizar */
   border-radius: 4px !important;
-  
-  /* 3. EL TAMAÑO (MÁS GRANDE): */
-  /* Eliminamos las clases pequeñas (p-button-sm, text-xs) */
-  font-size: 1rem; /* Tamaño de letra estándar (más grande que xs) */
-  
-  /* Aumentamos el padding para darle más altura y ancho */
-  padding: 0.5rem 1.5rem; /* Más alto (0.5rem) y ancho (1.5rem) */
-  
-  /* Opcional: Forzar altura si el padding no es suficiente */
-  /* height: 38px; */ 
-  
-  /* 4. OTROS ESTILOS MANTENIDOS: */
+  /* El lado izquierdo debe ser recto cuando está pegado al input */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
   border: none;
   color: white !important;
   font-weight: bold;
-  width: auto; /* Ancho automático según el texto */
+  font-size: 0.9rem;
+  padding: 0 1.5rem;
+  height: 40px; /* Misma altura que el input */
+  transition: background 0.2s;
+}
+
+.boton-personalizado:hover {
+  background-color: #2563eb !important;
 }
 
 /* MODO PANTALLA PEQUEÑA O MOVIL */
 
 @media (max-width: 768px) {
-
-  .etiquetass-panel {
-    padding: 1rem;
-  }
-
-  .titulo-principal {
-    font-size: 1.4rem;
-  }
-
-  .subtitulo {
-    font-size: 0.9rem;
+  .etiquetas-pagina {
+    margin: 0;
+    padding: 0.5rem;
   }
 
   .barra-herramientas {
@@ -185,23 +197,19 @@
   .grupo-input-compacto {
     flex-direction: column;
     max-width: 100%;
+    gap: 0.5rem;
   }
 
   .input-personalizado {
-    border-radius: 0.5rem;
-    margin-bottom: 0.5rem;
+    border-radius: 4px !important; /* Redondeado total en móvil */
   }
 
   .boton-personalizado {
-    border-radius: 0.5rem;
+    border-radius: 4px !important; /* Redondeado total en móvil */
     width: 100%;
   }
 
-  .contenedor-tabla {
-    overflow-x: auto;
-  }
-
   :host ::v-deep .p-datatable {
-    min-width: 600px;
+    min-width: 100%; /* Ajustado para que no rompa el móvil si hay pocas columnas */
   }
 }
