@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,12 +8,13 @@ import { Router } from '@angular/router';
 export class AppMenuLayoutComponent implements OnInit {
 
     model: any[] = [];
+
     constructor(private router: Router) { }
 
     ngOnInit() {
         this.model = [
             {
-                label: '',
+                label: 'GESTIONAR TIEMPO',
                 items: [
                     { label: 'RASTREADOR', icon: 'pi pi-fw pi-clock', routerLink: ['/menu-layout/rastreador'] },
                     { label: 'CALENDARIO', icon: 'pi pi-fw pi-calendar', routerLink: ['/menu-layout/calendario'] }
@@ -27,23 +27,23 @@ export class AppMenuLayoutComponent implements OnInit {
                     {
                         label: 'INFORMES',
                         icon: 'pi pi-fw pi-chart-bar',
-                        command: (event) => {
-                            this.router.navigate(['/menu-layout/informes']);
-                        },
+                        routerLink: ['/menu-layout/informes'],
+                        
                         items: [
                             {
-                                label: 'TIEMPO', separator: true,
+                                label: 'TIEMPO',
                                 items: [
-                                    { label: 'Resumido', icon: 'pi pi-fw pi-align-left', routerLink: ['/menu-layout/informes/resumido'] },
-                                    { label: 'Detallado', icon: 'pi pi-fw pi-list', routerLink: ['/menu-layout/informes/detallado'] },
-                                    { label: 'Semanal', icon: 'pi pi-fw pi-calendar-minus', routerLink: ['/menu-layout/informes/semanal'] },
-                                    { label: 'Compartido', icon: 'pi pi-fw pi-share-alt', routerLink: ['/menu-layout/informes/compartido'] },
+                                    { label: 'Resumido', icon: 'pi pi-fw pi-align-left', routerLink: ['/menu-layout/informes'], queryParams: { tab: '0' } },
+                                    { label: 'Detallado', icon: 'pi pi-fw pi-list', routerLink: ['/menu-layout/informes'], queryParams: { tab: '1' } },
+                                    { label: 'Semanal', icon: 'pi pi-fw pi-calendar-minus', routerLink: ['/menu-layout/informes'], queryParams: { tab: '2' } },
+                                    { label: 'Compartido', icon: 'pi pi-fw pi-share-alt', routerLink: ['/menu-layout/informes'], queryParams: { tab: '3' } }
                                 ]
-                            }, // Encabezado pequeño en el submenú
+                            },
                             {
-                                label: 'EQUIPO', separator: true, items: [
-                                    { label: 'Asistencia', icon: 'pi pi-fw pi-users', routerLink: ['/menu-layout/informes/asistencia'] },
-                                    { label: 'Asignaciones', icon: 'pi pi-fw pi-user-plus', routerLink: ['/menu-layout/informes/asignaciones'] }
+                                label: 'EQUIPO',
+                                items: [
+                                    { label: 'Asistencia', icon: 'pi pi-fw pi-users', routerLink: ['/menu-layout/informes'], queryParams: { tab: '4' } },
+                                    { label: 'Asignaciones', icon: 'pi pi-fw pi-user-plus', routerLink: ['/menu-layout/informes'], queryParams: { tab: '5' } }
                                 ]
                             }
                         ]

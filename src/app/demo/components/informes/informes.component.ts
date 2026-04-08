@@ -9,11 +9,13 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { CardModule } from "primeng/card";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-informes',
   standalone: true,
-  imports: [TabMenuModule,
+  imports: [
+    TabMenuModule,
     DropdownModule,
     CalendarModule,
     TableModule,
@@ -21,44 +23,77 @@ import { CardModule } from "primeng/card";
     CommonModule,
     CheckboxModule,
     ButtonModule,
-    OverlayPanelModule, CardModule],
+    OverlayPanelModule, 
+    CardModule
+  ],
   templateUrl: './informes.component.html',
   styleUrl: './informes.component.css'
 })
-export class InformesComponent {
+export class InformesComponent implements OnInit {
   selectedDate: Date = new Date();
-  onDateSelect($event: any) {
-    throw new Error('Method not implemented.');
-  }
+  tipoInformeSeleccionado: string = '1';
+
+  // IDs como strings para evitar errores de desaparición
   tabs = [
-    { label: 'Resumido', id: 0 },
-    { label: 'Detallado', id: 1 },
-    { label: 'Semanal', id: 2 },
-    { label: 'Compartido', id: 3 }
+    { label: 'Resumido', id: '0' },
+    { label: 'Detallado', id: '1' },
+    { label: 'Semanal', id: '2' },
+    { label: 'Compartido', id: '3' }
   ];
 
-    equipos = [
-    { nombre: 'miembro equipo', 
+  equipos = [
+    { 
+      nombre: 'miembro equipo', 
       correo: 'miembro@equipo.com', 
       tarifa: '$50/hora', 
       tarifa_coste: '$30/hora', 
       rol: 'propietario', 
-      grupo:'Grupo 1' }
+      grupo: 'Grupo 1' 
+    }
   ];
 
   grupos = [
     { nombre: 'Grupo 1', acceso: 'miembro equipo' },
-  ]
-
-  opcionesFiltro = [
-    { label: 'Mostrar activo', value: 'activo' },
-    { label: 'Mostrar inactivos', value: 'inactivo' }
   ];
 
-  tabactivo = this.tabs[0];
+  opcionesInformes = [
+    { label: 'INFORME DE TIEMPO', value: '1' },
+    { label: 'INFORME DE EQUIPO', value: '2' },
+    { label: 'INFORME DE GASTOS', value: '3' }
+  ];
+
+  tabactivo: any = this.tabs[0];
+
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    // Escuchamos el parámetro 'tab' de la URL enviado por el menú lateral
+    this.route.queryParams.subscribe(params => {
+      const tabId = params['tab'];
+      if (tabId !== undefined) {
+        const encontrado = this.tabs.find(t => t.id === tabId.toString());
+        if (encontrado) {
+          this.tabactivo = encontrado;
+          this.sincronizarDropdown(tabId.toString());
+        }
+      } else {
+        this.tabactivo = this.tabs[0];
+      }
+    });
+  }
 
   CambioTab(event: any) {
     this.tabactivo = event;
+    this.sincronizarDropdown(event.id);
   }
 
+  sincronizarDropdown(id: string) {
+    if (id === '0' || id === '1' || id === '2') {
+      this.tipoInformeSeleccionado = '1';
+    }
+  }
+
+  onDateSelect($event: any) {
+    console.log($event);
+  }
 }

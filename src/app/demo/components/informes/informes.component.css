@@ -1,54 +1,96 @@
-.informes-panel{
-  background: var(--surface-card);
+/* =========================================
+   SIDEBAR: QUITAR CELESTE DE LAS PALABRAS
+   ========================================= */
+
+/* 1. Cambia las palabras que NO están seleccionadas (para que dejen de ser azules) */
+:host ::ng-deep .layout-sidebar .layout-menu ul li a {
+    color: #2c3e50 !important; /* Un gris muy oscuro casi negro */
+    text-decoration: none;
+}
+
+/* 2. Cambia las palabras e iconos cuando pasas el mouse (Hover) */
+:host ::ng-deep .layout-sidebar .layout-menu ul li a:hover {
+    background-color: #f1f5f9 !important;
+    color: #000000 !important;
+}
+
+:host ::ng-deep .layout-sidebar .layout-menu ul li a:hover i,
+:host ::ng-deep .layout-sidebar .layout-menu ul li a:hover span {
+    color: #000000 !important;
+}
+
+/* 3. Cambia la palabra e icono cuando ESTÁ SELECCIONADA (Clase active-route) */
+/* Esto quitará el fondo azul clarito y pondrá el texto en blanco sobre negro */
+:host ::ng-deep .layout-sidebar .layout-menu ul li a.active-route {
+    background-color: #000000 !important; /* Fondo Negro */
+    color: #ffffff !important;           /* Texto Blanco */
+    border-radius: 8px;
+}
+
+/* Forzar que el SPAN (la palabra) sea blanca cuando está activo */
+:host ::ng-deep .layout-sidebar .layout-menu ul li a.active-route span,
+:host ::ng-deep .layout-sidebar .layout-menu ul li a.active-route i {
+    color: #ffffff !important;
+}
+
+/* 4. Quitar el borde/sombra celeste al hacer click (Focus) */
+:host ::ng-deep .layout-sidebar .layout-menu ul li a:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* 5. Títulos de secciones (ANALIZAR, TIEMPO, EQUIPO) */
+:host ::ng-deep .layout-menuitem-root-text,
+:host ::ng-deep .layout-menuitem-text {
+    color: #000000 !important; /* Todo a negro */
+}
+
+/* =========================================
+   ESTRUCTURA DE TU PÁGINA (Márgenes)
+   ========================================= */
+.informes-pagina {
+  margin: 0 40px;
+}
+
+.informes-panel {
+  background: #ffffff;
   border-radius: 0.5rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,.08);
   padding: 1.25rem;
 }
-
-.informes-pagina {
-  margin: 0 80px 0 80px;
-  transition: margin 0.3s ease;
+/* 1. Cambia el color del texto y los iconos de la lista (Resumido, Detallado, etc.) */
+:host ::ng-deep .layout-sidebar .layout-menu ul li a span,
+:host ::ng-deep .layout-sidebar .layout-menu ul li a i {
+    color: #2c3e50 !important; /* Negro o gris oscuro */
 }
 
-@media (max-width: 1024px) {
-  .informes-pagina {
-    margin: 0 25px 0 80px;
-  }
+/* 2. ELIMINA EL BORDE CELESTE redondeado que aparece al abrir "TIEMPO" */
+:host ::ng-deep .layout-sidebar .layout-menu ul li a:focus,
+:host ::ng-deep .layout-sidebar .layout-menu ul li a {
+    outline: none !important;
+    box-shadow: none !important; /* Esto quita el brillo celeste alrededor */
+    border-color: transparent !important;
 }
 
-@media (max-width: 992px) {
-  .informes-pagina {
-    margin: auto;
-  }
+/* 3. Cambia el color cuando pasas el mouse (Hover) */
+:host ::ng-deep .layout-sidebar .layout-menu ul li a:hover {
+    background-color: #f8fafc !important; /* Gris muy suave */
 }
 
-.menu-fila {
-  display: flex;
-  flex-direction: column;
+/* 4. Cuando el ítem está SELECCIONADO (el que le diste click) */
+:host ::ng-deep .layout-sidebar .layout-menu ul li a.active-route {
+    background-color: #000000 !important; /* Fondo negro */
+    color: #ffffff !important;           /* Texto blanco */
+    border-radius: 8px !important;
 }
 
-.item-menu {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.2s;
+/* Forzar que el texto e icono del activo sean blancos */
+:host ::ng-deep .layout-sidebar .layout-menu ul li a.active-route span,
+:host ::ng-deep .layout-sidebar .layout-menu ul li a.active-route i {
+    color: #ffffff !important;
 }
 
-.item-menu:hover {
-  background-color: #f1f5f9;
-}
-
-.item-menu i {
-  color: #64748b;
-}
-
-.item-menu.danger {
-  color: #ef4444;
-}
-
-.item-menu.danger i {
-  color: #ef4444;
+/* 5. Color de la palabra "TIEMPO" y "EQUIPO" en negro */
+:host ::ng-deep .layout-menuitem-root-text,
+:host ::ng-deep .layout-menuitem-text {
+    color: #000000 !important;
 }
