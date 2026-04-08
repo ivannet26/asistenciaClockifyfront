@@ -26,13 +26,6 @@ import { InformesComponent } from './demo/components/informes/informes.component
             {
                 path: 'espaciotrabajo', component: EspaciotrabajoComponent
             },
-            {
-                path: 'Home', component: AppLayoutComponent, //canActivate:[AuthGuard],
-                children: [
-                    { path: '', loadChildren: () => import('./demo/components/dashboard/dashboard.module').then(m => m.DashboardModule) },
-                    { path: 'perfil', component: PerfilComponent },
-                ]
-            },
             // NUEVA RUTA CON MENÚ ESPECIAL
             {
                 path: 'menu-layout', // La ruta que quieres usar

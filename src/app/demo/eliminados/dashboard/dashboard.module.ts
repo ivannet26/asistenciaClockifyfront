@@ -11,14 +11,14 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 import { DashboardsRoutingModule } from './dashboard-routing.module';
 import { BancoComponent } from '../../eliminados/banco/banco.component';
 import { RouterModule } from '@angular/router';
-import { LoginCComponent } from '../login-c/login-c.component';
-import { UsuarioComponent } from '../usuario/usuario/usuario.component';
+//import { LoginCComponent } from '../login-c/login-c.component';
+//import { UsuarioComponent } from '../usuario/usuario/usuario.component';
 import { CuentaBancariaComponent } from '../../eliminados/cuenta-bancaria/cuenta-bancaria.component';
 @NgModule({
     imports: [RouterModule.forChild([
         { path: '', component: DashboardComponent, canActivate:[] },
         { path: 'banco', component: BancoComponent, canActivate:[] },
-        { path: 'usuario', component: UsuarioComponent, canActivate:[] },
+        //{ path: 'usuario', component: UsuarioComponent, canActivate:[] },
         { path: 'cuentas_bancarias', component: CuentaBancariaComponent, canActivate:[]}
         ])], exports:[RouterModule]
     // imports: [
