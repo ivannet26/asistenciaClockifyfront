@@ -29,6 +29,23 @@
   border-radius: 0.5rem;
   box-shadow: 0 1px 4px rgba(0,0,0,.08);
   padding: 1.25rem;
+  min-height: 300px;
+}
+
+.miembros-list{
+  overflow-x: auto;
+}
+
+.miembros-list ul{
+  display: flex;
+  gap: 5px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.miembros-list li{
+  color: #0288d1;
 }
 
 .contenedor-vacio {
@@ -55,9 +72,17 @@
 
 .grupo-input {
   display: flex;
-  gap: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   width: 100%;
   max-width: 500px;
+}
+
+.grupo-input button , .grupo-input input{
+  width: 85%;
+  height: 48px;
 }
 
 :host ::v-deep .p-card-body {
@@ -92,6 +117,11 @@
 /* Estilos para la Tabla */
 .contenedor-tabla {
   width: 100%;
+}
+
+.tabla{
+  display: block;
+  height: 430px;
 }
 
 :host ::v-deep .cabecera-gris th {

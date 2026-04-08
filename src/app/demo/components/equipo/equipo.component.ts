@@ -9,6 +9,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { DialogModule } from 'primeng/dialog';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from "primeng/toast";
+import { MultiSelectModule } from 'primeng/multiselect';
 
 export enum RolNombre {
   OWNER = 'OWNER',
@@ -21,6 +24,7 @@ interface Grupo {
   id: number;
   nombre: string;
   miembros?: Miembros[];
+  miembrosIds?: number[];
 }
 
 interface Miembros {
@@ -28,7 +32,7 @@ interface Miembros {
   nombre: string;
   correo: string;
   rol?: RolNombre | null;
-  grupoId?: number;
+  grupoIds?: number[]
 }
 
 @Component({
@@ -42,10 +46,13 @@ interface Miembros {
     CheckboxModule,
     TabMenuModule,
     InputTextModule,
-    FormsModule],
+    MultiSelectModule,
+    FormsModule, ToastModule],
+  providers: [MessageService],
   templateUrl: './equipo.component.html',
   styleUrl: './equipo.component.css'
 })
+
 export class EquipoComponent {
 
   private STORAGE_GRUPOS = 'grupos';
@@ -54,12 +61,18 @@ export class EquipoComponent {
 
   gruposConIntegrantes: Grupo[] = [];
   miembros: Miembros[] = [];
+  grupos: Grupo[];
+  mostrarLista = false;
 
   ngOnInit() {
     this.miembros = JSON.parse(localStorage.getItem(this.STORAGE_MIEMBROS) || '[]');
     this.gruposConIntegrantes = this.getGruposConIntegrantes();
+    this.mostrarTabla();
     this.cargarDatos();
+    this.cargarOptions();
   }
+
+  constructor(private messageService: MessageService) { }
 
   //temporal solo para el form
   nuevoGrupo: Grupo = {
@@ -71,60 +84,131 @@ export class EquipoComponent {
     nombre: '',
     correo: '',
     rol: undefined,
-    grupoId: undefined
+    grupoIds: undefined
   };
   rolesOptions = Object.values(RolNombre).map(rol => ({
     label: rol,  // lo que se muestra
     value: rol   // lo que se guarda
   }));
+  grupoOptions: { label: string; value: number }[] = [];
+  miembrosOptions: { nombre: string; id: number }[] = [];
+
 
   guardarGrupo() {
-    // 1. Obtener lista actual
+    const nombre = this.nuevoGrupo.nombre?.trim();
+
+    if (!nombre) {
+      this.messageService.add({ severity: 'warn', summary: 'Campo requerido', detail: 'El nombre del grupo es requerido.' });
+      return;
+    }
+
+    const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 ]+$/;
+    if (!soloLetras.test(nombre)) {
+      this.messageService.add({ severity: 'warn', summary: 'Formato inválido', detail: 'Solo puede contener letras, números y espacios.' });
+      return;
+    }
+
+    const MIN = 3, MAX = 30;
+    if (nombre.length < MIN) {
+      this.messageService.add({ severity: 'warn', summary: 'Nombre muy corto', detail: `Debe tener al menos ${MIN} caracteres.` });
+      return;
+    }
+    if (nombre.length > MAX) {
+      this.messageService.add({ severity: 'warn', summary: 'Nombre muy largo', detail: `No puede superar los ${MAX} caracteres.` });
+      return;
+    }
+
     const grupos: Grupo[] = JSON.parse(localStorage.getItem(this.STORAGE_GRUPOS) || '[]');
+    const existe = grupos.some(g => g.nombre.trim().toLowerCase() === nombre.toLowerCase());
+    if (existe) {
+      this.messageService.add({ severity: 'error', summary: 'Duplicado', detail: `Ya existe un grupo con el nombre "${nombre}".` });
+      return;
+    }
 
-    // 2. Generar ID seguro
-    const maxId = grupos.length > 0
-      ? Math.max(...grupos.map(g => g.id))
-      : 0;
-
+    const maxId = grupos.length > 0 ? Math.max(...grupos.map(g => g.id)) : 0;
     this.nuevoGrupo.id = maxId + 1;
-
-    // 3. Agregar copia del objeto
+    this.nuevoGrupo.nombre = nombre;
     grupos.push({ ...this.nuevoGrupo });
-
-    // 4. Guardar en LocalStorage
     localStorage.setItem(this.STORAGE_GRUPOS, JSON.stringify(grupos));
 
-    // 5. Resetear formulario
-    this.nuevoGrupo = {
-      id: 0,
-      nombre: '',
-      miembros: undefined
-    };
+    // Toast de éxito
+    this.messageService.add({ severity: 'success', summary: 'Grupo guardado', detail: `"${nombre}" fue creado correctamente.` });
+
+    this.nuevoGrupo = { id: 0, nombre: '', miembros: undefined };
     this.gruposConIntegrantes = this.getGruposConIntegrantes();
+    this.cargarOptions();
   }
 
   guardarMiembro() {
+    const nombre = this.nuevoMiembro.nombre?.trim();
+    const correo = this.nuevoMiembro.correo?.trim();
+
+    // ── Validaciones nombre ──────────────────────────────────────
+    if (!nombre) {
+      this.messageService.add({ severity: 'warn', summary: 'Campo requerido', detail: 'El nombre del miembro es requerido.' });
+      return;
+    }
+
+    const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/;
+    if (!soloLetras.test(nombre)) {
+      this.messageService.add({ severity: 'warn', summary: 'Formato inválido', detail: 'El nombre solo puede contener letras y espacios.' });
+      return;
+    }
+
+    if (nombre.length < 3) {
+      this.messageService.add({ severity: 'warn', summary: 'Nombre muy corto', detail: 'El nombre debe tener al menos 3 caracteres.' });
+      return;
+    }
+
+    if (nombre.length > 50) {
+      this.messageService.add({ severity: 'warn', summary: 'Nombre muy largo', detail: 'El nombre no puede superar los 50 caracteres.' });
+      return;
+    }
+
+    // ── Validaciones correo ──────────────────────────────────────
+    if (!correo) {
+      this.messageService.add({ severity: 'warn', summary: 'Campo requerido', detail: 'El correo es requerido.' });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(correo)) {
+      this.messageService.add({ severity: 'warn', summary: 'Correo inválido', detail: 'Ingresa un correo electrónico válido.' });
+      return;
+    }
+
+    // ── Sin duplicados ───────────────────────────────────────────
     const miembros: Miembros[] = JSON.parse(localStorage.getItem(this.STORAGE_MIEMBROS) || '[]');
 
-    const maxId = miembros.length > 0
-      ? Math.max(...miembros.map(m => m.id))
-      : 0;
+    const nombreDuplicado = miembros.some(m => m.nombre.trim().toLowerCase() === nombre.toLowerCase());
+    if (nombreDuplicado) {
+      this.messageService.add({ severity: 'error', summary: 'Duplicado', detail: `Ya existe un miembro con el nombre "${nombre}".` });
+      return;
+    }
 
+    const correoDuplicado = miembros.some(m => m.correo.trim().toLowerCase() === correo.toLowerCase());
+    if (correoDuplicado) {
+      this.messageService.add({ severity: 'error', summary: 'Duplicado', detail: `El correo "${correo}" ya está registrado.` });
+      return;
+    }
+
+    // ── Guardar ──────────────────────────────────────────────────
+    const maxId = miembros.length > 0 ? Math.max(...miembros.map(m => m.id)) : 0;
     this.nuevoMiembro.id = maxId + 1;
+    this.nuevoMiembro.nombre = nombre;
+    this.nuevoMiembro.correo = correo;
 
     miembros.push({ ...this.nuevoMiembro });
-
     localStorage.setItem(this.STORAGE_MIEMBROS, JSON.stringify(miembros));
 
-    this.nuevoMiembro = {
-      id: 0,
-      nombre: '',
-      correo: '',
-      rol: undefined,
-    };
+    this.messageService.add({ severity: 'success', summary: 'Miembro guardado', detail: `"${nombre}" fue agregado correctamente.` });
+
+    this.nuevoMiembro = { id: 0, nombre: '', correo: '', rol: undefined };
     this.gruposConIntegrantes = this.getGruposConIntegrantes();
+    this.miembros = JSON.parse(localStorage.getItem(this.STORAGE_MIEMBROS) || '[]');
+    this.mostrarTabla();
   }
+
   guardarCambiosMiembro(miembro: Miembros) {
     const miembros: Miembros[] = JSON.parse(localStorage.getItem(this.STORAGE_MIEMBROS) || '[]');
 
@@ -140,6 +224,27 @@ export class EquipoComponent {
     this.gruposConIntegrantes = this.getGruposConIntegrantes();
   }
 
+  guardarMiembrosAGrupo(grupo: any) {
+    const miembros: Miembros[] = JSON.parse(localStorage.getItem(this.STORAGE_MIEMBROS) || '[]');
+
+    miembros.forEach(m => {
+      if (!m.grupoIds) m.grupoIds = [];
+
+      if (grupo.miembrosIds?.includes(m.id)) {
+        // agregar grupo si no lo tiene ya
+        if (!m.grupoIds.includes(grupo.id)) {
+          m.grupoIds.push(grupo.id);
+        }
+      } else {
+        // quitar solo este grupo, no los demás
+        m.grupoIds = m.grupoIds.filter(gid => gid !== grupo.id);
+      }
+    });
+
+    localStorage.setItem(this.STORAGE_MIEMBROS, JSON.stringify(miembros));
+    this.gruposConIntegrantes = this.getGruposConIntegrantes();
+    this.cargarOptions();
+  }
   getNombreGrupo(grupoId?: number): string {
     const grupo = this.gruposConIntegrantes.find(g => g.id === grupoId);
     return grupo ? grupo.nombre : '';
@@ -149,13 +254,17 @@ export class EquipoComponent {
     const grupos: Grupo[] = JSON.parse(localStorage.getItem('grupos') || '[]');
     const miembros: Miembros[] = JSON.parse(localStorage.getItem('miembros') || '[]');
 
-    return grupos.map(grupo => ({
-      ...grupo,
-      integrantes: miembros.filter(m => m.grupoId === grupo.id)
-    }));
+    return grupos.map(grupo => {
+      const miembrosDelGrupo = miembros.filter(m => m.grupoIds?.includes(grupo.id));
+      return {
+        ...grupo,
+        miembros: miembrosDelGrupo,
+        miembrosIds: miembrosDelGrupo.map(m => m.id)
+      };
+    });
   }
 
-  mostrarLista = true;
+
   tabs = [
     { label: 'Miembros', id: 0 },
     { label: 'Grupos', id: 1 },
@@ -173,15 +282,24 @@ export class EquipoComponent {
     this.gruposConIntegrantes = this.getGruposConIntegrantes();
   }
 
-  opcionesFiltro = [
-    { label: 'Mostrar activo', value: 'activo' },
-    { label: 'Mostrar inactivos', value: 'inactivo' }
-  ];
+  cargarOptions() {
+    const grupos: Grupo[] = JSON.parse(localStorage.getItem(this.STORAGE_GRUPOS) || '[]');
+    const miembros: Miembros[] = JSON.parse(localStorage.getItem(this.STORAGE_MIEMBROS) || '[]');
 
-  filtroSeleccionado = 'activo';
+    this.grupoOptions = grupos.map(g => ({
+      label: g.nombre,
+      value: g.id
+    }));
+
+    this.miembrosOptions = miembros.map(m => ({
+      nombre: m.nombre,
+      id: m.id
+    }));
+  }
 
   mostrarTabla() {
-    this.mostrarLista = true;
+    const miembros: Miembros[] = JSON.parse(localStorage.getItem(this.STORAGE_MIEMBROS) || '[]');
+    this.mostrarLista = miembros.length > 0;
   }
 
 }
