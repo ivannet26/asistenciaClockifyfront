@@ -123,13 +123,27 @@
 }
 
 .boton-personalizado {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  background-color: #0288d1 !important;
+  /* 1. EL COLOR: Mismo azul de p-button-info */
+  background-color: #3B82F6 !important; 
+  
+  /* 2. EL REDONDEO: 4px en todas las esquinas para estandarizar */
+  border-radius: 4px !important;
+  
+  /* 3. EL TAMAÑO (MÁS GRANDE): */
+  /* Eliminamos las clases pequeñas (p-button-sm, text-xs) */
+  font-size: 1rem; /* Tamaño de letra estándar (más grande que xs) */
+  
+  /* Aumentamos el padding para darle más altura y ancho */
+  padding: 0.5rem 1.5rem; /* Más alto (0.5rem) y ancho (1.5rem) */
+  
+  /* Opcional: Forzar altura si el padding no es suficiente */
+  /* height: 38px; */ 
+  
+  /* 4. OTROS ESTILOS MANTENIDOS: */
   border: none;
   color: white !important;
-  padding: 0 2rem;
   font-weight: bold;
+  width: auto; /* Ancho automático según el texto */
 }
 
 @media (max-width: 768px) {
