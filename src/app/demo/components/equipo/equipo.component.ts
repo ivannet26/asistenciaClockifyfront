@@ -47,7 +47,7 @@ interface Miembros {
     TabMenuModule,
     InputTextModule,
     MultiSelectModule,
-    FormsModule, ToastModule],
+    FormsModule, ToastModule, DialogModule],
   providers: [MessageService],
   templateUrl: './equipo.component.html',
   styleUrl: './equipo.component.css'
@@ -55,10 +55,15 @@ interface Miembros {
 
 export class EquipoComponent {
 
+  abrirModalNuevoMiembro() {
+    this.mostrarModalMiembro = true;
+  }
+
   private STORAGE_GRUPOS = 'grupos';
   private STORAGE_MIEMBROS = 'miembros';
   private STORAGE_ROLES = 'roles';
 
+  mostrarModalMiembro: boolean = false;
   gruposConIntegrantes: Grupo[] = [];
   miembros: Miembros[] = [];
   grupos: Grupo[];
@@ -207,6 +212,7 @@ export class EquipoComponent {
     this.gruposConIntegrantes = this.getGruposConIntegrantes();
     this.miembros = JSON.parse(localStorage.getItem(this.STORAGE_MIEMBROS) || '[]');
     this.mostrarTabla();
+    this.mostrarModalMiembro = false;
   }
 
   guardarCambiosMiembro(miembro: Miembros) {
@@ -245,6 +251,7 @@ export class EquipoComponent {
     this.gruposConIntegrantes = this.getGruposConIntegrantes();
     this.cargarOptions();
   }
+
   getNombreGrupo(grupoId?: number): string {
     const grupo = this.gruposConIntegrantes.find(g => g.id === grupoId);
     return grupo ? grupo.nombre : '';
@@ -263,7 +270,6 @@ export class EquipoComponent {
       };
     });
   }
-
 
   tabs = [
     { label: 'Miembros', id: 0 },
@@ -300,6 +306,19 @@ export class EquipoComponent {
   mostrarTabla() {
     const miembros: Miembros[] = JSON.parse(localStorage.getItem(this.STORAGE_MIEMBROS) || '[]');
     this.mostrarLista = miembros.length > 0;
+  }
+
+  //chips para miembros
+  hasOverflow(el: HTMLElement): boolean {
+    return el.scrollWidth > el.clientWidth;
+  }
+
+  isAtEnd(el: HTMLElement): boolean {
+    return el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+  }
+
+  onScroll() {
+    // dispara change detection si usas OnPush
   }
 
 }
