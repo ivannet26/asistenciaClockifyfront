@@ -5,14 +5,13 @@
     <p-card styleClass="shadow-1 border-round">
 
       <div class="flex align-items-center justify-content-between flex-nowrap mb-4 px-2">
+        
         <div class="flex align-items-center gap-3 flex-nowrap">
-          <p-dropdown [options]="opcionesInformes" [(ngModel)]="tipoInformeSeleccionado"
-            styleClass="w-auto font-bold border-none bg-gray-100"></p-dropdown>
-
+          
           <p-tabMenu [model]="tabs" [activeItem]="tabactivo" (activeItemChange)="CambioTab($event)"></p-tabMenu>
         </div>
 
-        <div class="p-inputgroup w-22rem">
+        <div class="p-inputgroup w-22rem" *ngIf="tabactivo?.id !== '3'">
           <span class="p-inputgroup-addon bg-white cursor-pointer" (click)="op.toggle($event)">
             <i class="pi pi-calendar" style="color: #2196F3;"></i>
           </span>
@@ -144,6 +143,10 @@
       </div>
 
       <div class="mx-3" *ngIf="tabactivo?.id === '2'">
+        <div class="surface-100 p-2 border-1 surface-border flex align-items-center px-3 mb-1 bg-gray-50 border-bottom-3" style="border-bottom-color: #2196F3">
+          <span class="text-500 text-xs font-bold mr-3 uppercase">Total Semana:</span>
+          <span class="text-900 font-bold text-xl">{{ tiempoTotalFormateado }}</span>
+        </div>
         <p-table [value]="datosSemanales" styleClass="p-datatable-gridlines p-datatable-sm">
           <ng-template pTemplate="header">
             <tr class="text-xs text-500 uppercase bg-gray-50">
@@ -154,8 +157,8 @@
           </ng-template>
           <ng-template pTemplate="body" let-ds>
             <tr class="text-sm">
-              <td class="font-bold" style="border-left: 4px solid #2196F3">
-                <span style="color:#2196F3" class="mr-2">●</span>{{ ds.proyecto }}
+              <td class="font-bold" style="border-left: 4px solid #00BCD4">
+                <span style="color:#00BCD4" class="mr-2">●</span>{{ ds.proyecto }}
               </td>
               <td *ngFor="let dia of ds.dias" class="text-center text-500">{{ dia }}</td>
               <td class="text-right font-bold bg-gray-50">{{ ds.total }}</td>
@@ -171,12 +174,42 @@
         </p-table>
       </div>
 
-      <div class="mx-3 p-8 flex flex-column align-items-center justify-content-center" *ngIf="tabactivo?.id === '3'">
-        <div class="surface-100 border-circle flex align-items-center justify-content-center mb-4" style="width: 100px; height: 100px;">
-          <i class="pi pi-share-alt text-400" style="font-size: 3rem; color: #2196F3;"></i>
+      <div *ngIf="tabactivo?.id === '3'">
+        
+        <div class="flex align-items-center gap-2 mb-3 px-1">
+          <p-dropdown [options]="[{label: 'Todos los informes', value: 1}]" 
+            placeholder="Todos los informes"
+            styleClass="bg-white border-1 border-300 text-sm w-12rem">
+          </p-dropdown>
+          
+          <div class="p-inputgroup w-18rem">
+            <span class="p-inputgroup-addon bg-white border-right-none border-1 border-300">
+              <i class="pi pi-search text-400"></i>
+            </span>
+            <input type="text" pInputText placeholder="Buscar por nombre" 
+              class="border-left-none border-1 border-300 text-sm" />
+          </div>
         </div>
-        <h3 class="text-900 font-bold mb-2">No hay informes compartidos</h3>
-        <p class="text-600 text-center line-height-3" style="max-width: 20rem;">Intentar compartir un resumen, detallado o informe semanal para verlo aquí.</p>
+
+        <div class="surface-100 border-y-1 surface-border px-4 py-2 mb-4 bg-gray-50 flex align-items-center" style="height: 40px;">
+          <span class="text-500 font-bold text-xs uppercase" style="color: #9aa0a6 !important;">
+            Informes compartidos
+          </span>
+        </div>
+
+        <div class="p-8 flex flex-column align-items-center justify-content-center text-center">
+          <div class="relative mb-4 flex justify-content-center">
+            <div class="surface-50 border-round p-4 relative" style="width: 100px; height: 100px; border: 1px solid #f1f3f4;">
+                <i class="pi pi-list text-300" style="font-size: 3rem; opacity: 0.5;"></i>
+                <span class="absolute border-circle bg-gray-300 text-white flex align-items-center justify-content-center" 
+                      style="width: 24px; height: 24px; top: -8px; right: -8px; font-size: 12px; font-weight: bold; border: 2px solid white;">0</span>
+            </div>
+          </div>
+          <h3 class="text-900 font-bold mb-2">No hay informes compartidos</h3>
+          <p class="text-600 line-height-3" style="max-width: 25rem;">
+            Intentar compartir un resumen, detallado o informe semanal.
+          </p>
+        </div>
       </div>
 
     </p-card>
