@@ -6,89 +6,151 @@
       
       <div class="flex align-items-center justify-content-between flex-nowrap mb-4 px-2">
         <div class="flex align-items-center gap-3 flex-nowrap">
-          
           <p-dropdown 
             [options]="opcionesInformes" 
             [(ngModel)]="tipoInformeSeleccionado" 
-            placeholder="INFORME TIPO" 
-            styleClass="w-auto">
+            styleClass="w-auto font-bold border-none bg-gray-100">
           </p-dropdown>
 
           <p-tabMenu 
             [model]="tabs" 
             [activeItem]="tabactivo" 
-            (activeItemChange)="CambioTab($event)"
-            styleClass="w-auto">
+            (activeItemChange)="CambioTab($event)">
           </p-tabMenu>
         </div>
 
         <p-calendar 
-          view="month" 
           dateFormat="dd/mm/yy" 
           [(ngModel)]="selectedDate"
-          [readonlyInput]="true" 
           [showIcon]="true">
         </p-calendar>
       </div>
 
-      <div class="m-3" *ngIf="tabactivo?.id === '0' || tabactivo?.id === '1' || tabactivo?.id === '2'">
-        
-        <div class="surface-100 border-y-1 surface-border mb-3">
-          <div class="flex align-items-stretch w-full overflow-x-auto bg-white">
+      <div class="mx-3 mb-4" *ngIf="tabactivo?.id !== '3'">
+        <div class="surface-border border-1 border-round overflow-hidden shadow-1">
+          <div class="flex align-items-stretch w-full bg-white overflow-hidden flex-nowrap">
             
-            <div class="flex align-items-center border-right-1 surface-border bg-gray-50 px-3 py-2" 
-                 style="border-right-style: dashed !important; min-width: 100px;">
-              <span class="text-500 font-bold text-xs uppercase">Filtrar</span>
+            <div class="flex align-items-center border-right-1 surface-border bg-gray-50 px-2 py-2" 
+                 style="border-right-style: dashed !important; min-width: 90px;">
+              <span class="text-500 font-bold text-xs uppercase">Filtrar <i class="pi pi-chevron-down ml-1"></i></span>
             </div>
             
-            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important;">
-              <p-dropdown [options]="[{label:'Todo', value:'A'}]" placeholder="Equipo" class="w-full" [style]="{'border':'none', 'background':'transparent'}"></p-dropdown>
+            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 100px;">
+              <p-dropdown [options]="[]" placeholder="Equipo" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
             </div>
             
-            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important;">
-              <p-dropdown [options]="[{label:'Todo', value:'A'}]" placeholder="Cliente" class="w-full" [style]="{'border':'none', 'background':'transparent'}"></p-dropdown>
+            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 100px;">
+              <p-dropdown [options]="[]" placeholder="Cliente" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
             </div>
             
-            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important;">
-              <p-dropdown [options]="[{label:'Todo', value:'A'}]" placeholder="Proyecto" class="w-full" [style]="{'border':'none', 'background':'transparent'}"></p-dropdown>
+            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 100px;">
+              <p-dropdown [options]="[]" placeholder="Proyecto" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
             </div>
 
-            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important;">
-                <p-dropdown [options]="[{label:'Todo', value:'A'}]" placeholder="Tarea" class="w-full" [style]="{'border':'none', 'background':'transparent'}"></p-dropdown>
+            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 100px;">
+                <p-dropdown [options]="[]" placeholder="Tarea" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
             </div>
 
-            <div class="px-3 flex align-items-center">
-              <button pButton label="Aplicar Filtro" class="p-button-info p-button-sm font-bold" style="border-radius: 4px; padding: 10px 20px;"></button>
+            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 100px;">
+              <p-dropdown [options]="[]" placeholder="Etiqueta" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
+            </div>
+
+            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 100px;">
+              <p-dropdown [options]="[]" placeholder="Estado" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
+            </div>
+
+            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 110px;">
+              <p-dropdown [options]="[]" placeholder="Descripción" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
+            </div>
+
+            <div class="px-3 flex align-items-center bg-white">
+              <button pButton label="Aplicar filtro" class="p-button-info p-button-sm font-bold white-space-nowrap" style="border-radius: 4px; font-size: 11px;"></button>
             </div>
           </div>
         </div>
+      </div>
 
+      <div class="mx-3" *ngIf="tabactivo?.id === '0'">
+        
+        <div class="surface-50 p-4 border-round mb-4 border-1 surface-border">
+          <div style="height: 200px;">
+            <p-chart type="bar" [data]="dataBarras" [options]="optionsBarras"></p-chart>
+          </div>
+        </div>
+
+        <div class="flex align-items-center gap-3 p-2 bg-gray-50 border-round-top border-1 surface-border text-xs border-bottom-none">
+          <span class="text-500 ml-2">Agrupar por:</span>
+          <p-dropdown [options]="[{label:'Proyecto', value:'P'}]" placeholder="Proyecto" styleClass="p-inputtext-sm border-none bg-transparent font-bold"></p-dropdown>
+          <p-dropdown [options]="[{label:'Descripción', value:'D'}]" placeholder="Descripción" styleClass="p-inputtext-sm border-none bg-transparent font-bold"></p-dropdown>
+          <div class="flex align-items-center ml-4 gap-2">
+            <p-inputSwitch [(ngModel)]="mostrarEstimacion"></p-inputSwitch>
+            <span class="text-500">Mostrar estimación</span>
+          </div>
+        </div>
+
+        <div class="grid grid-nogutter border-1 surface-border bg-white mb-5">
+          <div class="col-12 md:col-8 border-right-1 surface-border">
+            <p-table [value]="proyectosResumen" styleClass="p-datatable-sm">
+              <ng-template pTemplate="header">
+                <tr class="bg-gray-50">
+                  <th style="width: 3rem"></th>
+                  <th class="text-xs text-500 uppercase">Título</th>
+                  <th class="text-xs text-500 text-right uppercase">Duración</th>
+                  <th class="text-xs text-500 text-right uppercase">Importe</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-p>
+                <tr class="border-bottom-1 surface-border">
+                  <td><i class="pi pi-chevron-down text-blue-400 text-xs"></i></td>
+                  <td>
+                    <span [style.color]="p.color" class="mr-2">●</span>
+                    <span class="font-bold text-xs uppercase">{{p.titulo}}</span>
+                  </td>
+                  <td class="text-right font-bold text-700">{{p.duracion}}</td>
+                  <td class="text-right text-400">{{p.importe}}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+
+          <div class="col-12 md:col-4 flex flex-column align-items-center justify-content-center p-4">
+            <div class="relative" style="width: 180px; height: 180px;">
+              <p-chart type="doughnut" [data]="dataDona" [options]="optionsDona"></p-chart>
+              <div class="absolute text-center" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <span class="block font-bold text-xl text-800">{{ tiempoTotalFormateado }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mx-3" *ngIf="tabactivo?.id === '1' || tabactivo?.id === '2'">
         <p-table [value]="equipos" class="tabla-personalizada" [scrollable]="true" scrollHeight="400px">
           <ng-template pTemplate="header">
             <tr class="cabecera-gris">
               <th style="width: 4rem"><p-checkbox [binary]="true"></p-checkbox></th>
-              <th>NOMBRE</th>
-              <th>CORREO</th>
-              <th>TARIFA</th>
-              <th>TARIFA COSTE</th>
-              <th>ROL</th>
-              <th>GRUPO</th>
+              <th class="text-xs text-500">NOMBRE</th>
+              <th class="text-xs text-500">CORREO</th>
+              <th class="text-xs text-500">TARIFA</th>
+              <th class="text-xs text-500">TARIFA COSTE</th>
+              <th class="text-xs text-500">ROL</th>
+              <th class="text-xs text-500">GRUPO</th>
               <th style="width: 8rem"></th>
             </tr>
           </ng-template>
           
           <ng-template pTemplate="body" let-equipo>
-            <tr>
+            <tr class="border-bottom-1 surface-border">
               <td><p-checkbox [binary]="true"></p-checkbox></td>
-              <td>{{ equipo.nombre }}</td>
-              <td>{{ equipo.correo }}</td>
-              <td>{{ equipo.tarifa }}</td>
-              <td>{{ equipo.tarifa_coste }}</td>
-              <td>{{ equipo.rol }}</td>
-              <td>{{ equipo.grupo }}</td>
-              <td class="acciones-celda text-right">
-                <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary"></button>
-                <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-secondary"></button>
+              <td class="text-sm">{{ equipo.nombre }}</td>
+              <td class="text-sm">{{ equipo.correo }}</td>
+              <td class="text-sm">{{ equipo.tarifa }}</td>
+              <td class="text-sm">{{ equipo.tarifa_coste }}</td>
+              <td class="text-sm">{{ equipo.rol }}</td>
+              <td class="text-sm">{{ equipo.grupo }}</td>
+              <td class="text-right">
+                <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary p-button-sm"></button>
+                <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-secondary p-button-sm"></button>
               </td>
             </tr>
           </ng-template>
