@@ -12,35 +12,48 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from "primeng/card";
 import { ChartModule } from 'primeng/chart';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { CheckboxModule } from 'primeng/checkbox';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { InputTextModule } from 'primeng/inputtext';
 import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-informes',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, TabMenuModule, DropdownModule, 
-    CalendarModule, TableModule, ButtonModule, CardModule, 
-    ChartModule, InputSwitchModule
+    CommonModule, FormsModule, TabMenuModule, DropdownModule,
+    CalendarModule, TableModule, ButtonModule, CardModule,
+    ChartModule, InputSwitchModule, CheckboxModule,
+    OverlayPanelModule, InputTextModule
   ],
   templateUrl: './informes.component.html',
   styleUrl: './informes.component.css'
 })
 export class InformesComponent implements OnInit {
-  // Configuración UI
+
+  // --- UI ---
   selectedDate: Date = new Date();
   tipoInformeSeleccionado: string = '1';
-  tabactivo: MenuItem;
+  tabactivo!: MenuItem;
   mostrarEstimacion: boolean = false;
+  filtroEtiqueta: string = '';
+  registroSeleccionado: any = null;
 
-  // Gráficos y Datos
+  // --- Datos ---
   dataBarras: any;
   optionsBarras: any;
   dataDona: any;
   optionsDona: any;
-  
+
   tiempoTotalFormateado: string = '00:00:00';
   proyectosResumen: any[] = [];
+  registrosDetallados: any[] = [];
+  etiquetasDisponibles: string[] = [];
   
+  // Para vista Semanal
+  datosSemanales: any[] = [];
+  totalesPorDiaSemana: string[] = [];
+
   tabs: MenuItem[] = [
     { label: 'Resumido', id: '0' },
     { label: 'Detallado', id: '1' },
@@ -60,7 +73,8 @@ export class InformesComponent implements OnInit {
 
   ngOnInit() {
     this.configurarGraficos();
-    this.cargarDatosDesdeStorage();
+    this.cargarTodoDesdeStorage();
+    this.cargarEtiquetasDeStorage();
 
     this.route.queryParams.subscribe(params => {
       const tabId = params['tab'];
@@ -71,34 +85,51 @@ export class InformesComponent implements OnInit {
     });
   }
 
+  // --- CONFIGURACIÓN GRÁFICOS ---
   configurarGraficos() {
     this.optionsBarras = {
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
-        x: { grid: { display: false } },
-        y: { beginAtZero: true, ticks: { callback: (v: any) => this.formatearEjeY(v) } }
+        x: { grid: { display: false }, ticks: { color: '#9aa0a6' } },
+        y: { beginAtZero: true, ticks: { color: '#9aa0a6', callback: (v: any) => this.formatearEjeY(v) } }
       }
     };
-
-    this.optionsDona = {
-      cutout: '75%',
-      plugins: { legend: { display: false } }
-    };
+    this.optionsDona = { cutout: '80%', plugins: { legend: { display: false } } };
   }
 
-  cargarDatosDesdeStorage() {
+  // --- CARGA DE DATOS ---
+  cargarEtiquetasDeStorage() {
+    const tags = localStorage.getItem('etiquetas');
+    this.etiquetasDisponibles = tags ? JSON.parse(tags) : ['GM', 'THEOROO', 'DISEÑO', 'MARKETING'];
+  }
+
+  get etiquetasFiltradas() {
+    return this.etiquetasDisponibles.filter(t => t.toLowerCase().includes(this.filtroEtiqueta.toLowerCase()));
+  }
+
+  cargarTodoDesdeStorage() {
     const data = localStorage.getItem('registros');
     if (!data) return;
-
     const registros = JSON.parse(data);
+    this.registrosDetallados = registros.map((r: any) => ({
+      ...r,
+      inicio: r.inicio ? new Date(r.inicio) : null,
+      fin: r.fin ? new Date(r.fin) : null,
+      etiquetas: Array.isArray(r.etiquetas) ? r.etiquetas : []
+    }));
+    this.procesarEstadisticas();
+  }
+
+  // --- PROCESAMIENTO DE ESTADÍSTICAS Y SEMANAL ---
+  procesarEstadisticas() {
     const tiemposPorProyecto: { [key: string]: number } = {};
-    const tiempoPorDia = [0, 0, 0, 0, 0, 0, 0]; // lun-dom
+    const tiempoPorDiaBarras = [0, 0, 0, 0, 0, 0, 0];
+    const agrupacionSemanal: { [key: string]: number[] } = {};
     let totalSegundos = 0;
 
-    registros.forEach((r: any) => {
-      // Lógica de cálculo de segundos (reutilizando tu lógica de Panel)
+    this.registrosDetallados.forEach((r: any) => {
       let s = 0;
       if (r.duracion?.includes(':')) {
         const p = r.duracion.split(':');
@@ -106,54 +137,100 @@ export class InformesComponent implements OnInit {
       }
 
       const proyNombre = (r.proyecto && typeof r.proyecto === 'object') ? r.proyecto.nombre : (r.proyecto || 'Sin Proyecto');
-      
       tiemposPorProyecto[proyNombre] = (tiemposPorProyecto[proyNombre] || 0) + s;
       totalSegundos += s;
 
-      // Distribución por día (asumiendo registros de esta semana)
       if (r.inicio) {
-        const dia = new Date(r.inicio).getDay();
-        const idx = (dia === 0) ? 6 : dia - 1;
-        if (idx >= 0 && idx < 7) tiempoPorDia[idx] += s;
+        const dia = r.inicio.getDay();
+        const idx = (dia === 0) ? 6 : dia - 1; // Ajuste Lunes = 0
+        if (idx >= 0 && idx < 7) {
+          tiempoPorDiaBarras[idx] += s;
+          if (!agrupacionSemanal[proyNombre]) agrupacionSemanal[proyNombre] = [0, 0, 0, 0, 0, 0, 0];
+          agrupacionSemanal[proyNombre][idx] += s;
+        }
       }
     });
 
     this.tiempoTotalFormateado = this.formatearSegundos(totalSegundos);
-
-    // Preparar Tabla de Proyectos
     this.proyectosResumen = Object.keys(tiemposPorProyecto).map(nombre => ({
-      titulo: nombre,
-      duracion: this.formatearSegundos(tiemposPorProyecto[nombre]),
-      importe: '0,00 USD',
-      color: this.generarColor(nombre),
-      segundos: tiemposPorProyecto[nombre]
+      titulo: nombre, duracion: this.formatearSegundos(tiemposPorProyecto[nombre]), color: '#00BCD4'
     }));
 
-    // Data Barras
+    // Mapear datos para la Tab Semanal
+    this.datosSemanales = Object.keys(agrupacionSemanal).map(nombre => ({
+      proyecto: nombre,
+      dias: agrupacionSemanal[nombre].map(seg => seg > 0 ? this.formatearSegundos(seg) : '—'),
+      total: this.formatearSegundos(agrupacionSemanal[nombre].reduce((a, b) => a + b, 0))
+    }));
+    this.totalesPorDiaSemana = tiempoPorDiaBarras.map(seg => this.formatearSegundos(seg));
+
+    // Refrescar Gráficos con nuevas referencias
     this.dataBarras = {
       labels: ['lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.', 'dom.'],
-      datasets: [{
-        data: tiempoPorDia,
-        backgroundColor: '#007ad9', 
-        borderRadius: 4
-      }]
+      datasets: [{ data: [...tiempoPorDiaBarras], backgroundColor: '#00BCD4', borderRadius: 4 }]
     };
-
-    // Data Dona
     this.dataDona = {
       labels: Object.keys(tiemposPorProyecto),
-      datasets: [{
-        data: Object.values(tiemposPorProyecto),
-        backgroundColor: this.proyectosResumen.map(p => p.color)
-      }]
+      datasets: [{ data: Object.values(tiemposPorProyecto), backgroundColor: ['#00BCD4', '#4DD0E1', '#80DEEA', '#B2EBF2'], borderWidth: 0 }]
     };
   }
 
-  private generarColor(nombre: string): string {
-    const colores: any = { 'cajabanco': '#ff4d4d', 'CLOCKIFY': '#00bfff', 'gm': '#007bff' };
-    return colores[nombre] || '#ced4da';
+  // --- ACCIONES DE REGISTRO ---
+  toggleEtiqueta(registro: any, etiqueta: string) {
+    if (!registro.etiquetas) registro.etiquetas = [];
+    const index = registro.etiquetas.indexOf(etiqueta);
+    index > -1 ? registro.etiquetas.splice(index, 1) : registro.etiquetas.push(etiqueta);
+    this.actualizarStorage();
+    this.registrosDetallados = [...this.registrosDetallados];
   }
 
+  eliminarRegistro(registro: any) {
+    this.registrosDetallados = this.registrosDetallados.filter(r => r !== registro);
+    this.actualizarStorage();
+    this.procesarEstadisticas();
+  }
+
+  duplicarRegistro(registro: any) {
+    const copia = { 
+      ...registro, 
+      etiquetas: [...(registro.etiquetas || [])], 
+      inicio: registro.inicio ? new Date(registro.inicio) : null, 
+      fin: registro.fin ? new Date(registro.fin) : null 
+    };
+    this.registrosDetallados.unshift(copia);
+    this.actualizarStorage();
+    this.procesarEstadisticas();
+  }
+
+  actualizarStorage() {
+    localStorage.setItem('registros', JSON.stringify(this.registrosDetallados));
+  }
+
+  // --- MENÚ DE ACCIONES ---
+  abrirMenu(panel: any, event: Event, registro: any) {
+    this.registroSeleccionado = registro;
+    panel.toggle(event);
+  }
+
+  duplicarSeleccionado(panel: any) {
+    if (this.registroSeleccionado) {
+      this.duplicarRegistro(this.registroSeleccionado);
+      panel.hide();
+      this.registroSeleccionado = null;
+    }
+  }
+
+  eliminarSeleccionado(panel: any) {
+    if (this.registroSeleccionado) {
+      if (confirm('¿Seguro que deseas eliminar este registro?')) {
+        this.eliminarRegistro(this.registroSeleccionado);
+        panel.hide();
+        this.registroSeleccionado = null;
+      }
+    }
+  }
+
+  // --- UTILIDADES ---
   private formatearSegundos(t: number): string {
     const h = Math.floor(t / 3600).toString().padStart(2, '0');
     const m = Math.floor((t % 3600) / 60).toString().padStart(2, '0');

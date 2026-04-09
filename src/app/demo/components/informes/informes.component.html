@@ -1,171 +1,157 @@
 <div class="informes-pagina p-5">
   <div class="Informes-panel">
-    <h2 class="titulo-seccion mb-4 ml-2">Informes</h2>
+    <h2 class="titulo-seccion mb-4 ml-2 text-900 font-bold">Informes</h2>
 
     <p-card styleClass="shadow-1 border-round">
-      
+
       <div class="flex align-items-center justify-content-between flex-nowrap mb-4 px-2">
         <div class="flex align-items-center gap-3 flex-nowrap">
-          <p-dropdown 
-            [options]="opcionesInformes" 
-            [(ngModel)]="tipoInformeSeleccionado" 
-            styleClass="w-auto font-bold border-none bg-gray-100">
-          </p-dropdown>
+          <p-dropdown [options]="opcionesInformes" [(ngModel)]="tipoInformeSeleccionado"
+            styleClass="w-auto font-bold border-none bg-gray-100"></p-dropdown>
 
-          <p-tabMenu 
-            [model]="tabs" 
-            [activeItem]="tabactivo" 
-            (activeItemChange)="CambioTab($event)">
-          </p-tabMenu>
+          <p-tabMenu [model]="tabs" [activeItem]="tabactivo" (activeItemChange)="CambioTab($event)"></p-tabMenu>
         </div>
-
-        <p-calendar 
-          dateFormat="dd/mm/yy" 
-          [(ngModel)]="selectedDate"
-          [showIcon]="true">
-        </p-calendar>
+        <p-calendar dateFormat="dd/mm/yy" [(ngModel)]="selectedDate" [showIcon]="true"></p-calendar>
       </div>
 
       <div class="mx-3 mb-4" *ngIf="tabactivo?.id !== '3'">
-        <div class="surface-border border-1 border-round overflow-hidden shadow-1">
-          <div class="flex align-items-stretch w-full bg-white overflow-hidden flex-nowrap">
-            
-            <div class="flex align-items-center border-right-1 surface-border bg-gray-50 px-2 py-2" 
-                 style="border-right-style: dashed !important; min-width: 90px;">
-              <span class="text-500 font-bold text-xs uppercase">Filtrar <i class="pi pi-chevron-down ml-1"></i></span>
-            </div>
-            
-            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 100px;">
-              <p-dropdown [options]="[]" placeholder="Equipo" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
-            </div>
-            
-            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 100px;">
-              <p-dropdown [options]="[]" placeholder="Cliente" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
-            </div>
-            
-            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 100px;">
-              <p-dropdown [options]="[]" placeholder="Proyecto" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
-            </div>
-
-            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 100px;">
-                <p-dropdown [options]="[]" placeholder="Tarea" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
-            </div>
-
-            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 100px;">
-              <p-dropdown [options]="[]" placeholder="Etiqueta" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
-            </div>
-
-            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 100px;">
-              <p-dropdown [options]="[]" placeholder="Estado" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
-            </div>
-
-            <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important; min-width: 110px;">
-              <p-dropdown [options]="[]" placeholder="Descripción" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
-            </div>
-
-            <div class="px-3 flex align-items-center bg-white">
-              <button pButton label="Aplicar filtro" class="p-button-info p-button-sm font-bold white-space-nowrap" style="border-radius: 4px; font-size: 11px;"></button>
-            </div>
+        <div class="surface-border border-1 border-round overflow-hidden shadow-1 flex align-items-stretch bg-white">
+          <div class="flex align-items-center border-right-1 surface-border bg-gray-50 px-2 py-2" style="min-width: 90px; border-right-style: dashed !important;">
+            <span class="text-500 font-bold text-xs uppercase">Filtrar <i class="pi pi-chevron-down ml-1"></i></span>
+          </div>
+          <div *ngFor="let p of ['Equipo','Cliente','Proyecto','Tarea','Etiqueta','Estado','Descripción']" 
+               class="flex-1 border-right-1 surface-border flex align-items-center" style="border-right-style: dashed !important;">
+            <p-dropdown [options]="[]" [placeholder]="p" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
+          </div>
+          <div class="px-3 flex align-items-center bg-white">
+            <button pButton label="Aplicar filtro" style="background-color: #00BCD4; border: none; font-size: 11px;" class="p-button-sm font-bold"></button>
           </div>
         </div>
       </div>
 
       <div class="mx-3" *ngIf="tabactivo?.id === '0'">
-        
         <div class="surface-50 p-4 border-round mb-4 border-1 surface-border">
-          <div style="height: 200px;">
-            <p-chart type="bar" [data]="dataBarras" [options]="optionsBarras"></p-chart>
-          </div>
+          <div style="height: 220px;"><p-chart type="bar" [data]="dataBarras" [options]="optionsBarras"></p-chart></div>
         </div>
-
-        <div class="flex align-items-center gap-3 p-2 bg-gray-50 border-round-top border-1 surface-border text-xs border-bottom-none">
-          <span class="text-500 ml-2">Agrupar por:</span>
-          <p-dropdown [options]="[{label:'Proyecto', value:'P'}]" placeholder="Proyecto" styleClass="p-inputtext-sm border-none bg-transparent font-bold"></p-dropdown>
-          <p-dropdown [options]="[{label:'Descripción', value:'D'}]" placeholder="Descripción" styleClass="p-inputtext-sm border-none bg-transparent font-bold"></p-dropdown>
-          <div class="flex align-items-center ml-4 gap-2">
-            <p-inputSwitch [(ngModel)]="mostrarEstimacion"></p-inputSwitch>
-            <span class="text-500">Mostrar estimación</span>
-          </div>
-        </div>
-
         <div class="grid grid-nogutter border-1 surface-border bg-white mb-5">
           <div class="col-12 md:col-8 border-right-1 surface-border">
             <p-table [value]="proyectosResumen" styleClass="p-datatable-sm">
               <ng-template pTemplate="header">
-                <tr class="bg-gray-50">
-                  <th style="width: 3rem"></th>
-                  <th class="text-xs text-500 uppercase">Título</th>
-                  <th class="text-xs text-500 text-right uppercase">Duración</th>
-                  <th class="text-xs text-500 text-right uppercase">Importe</th>
+                <tr class="bg-gray-50 text-xs text-500">
+                  <th style="width: 3rem"></th><th class="uppercase">Título</th><th class="text-right uppercase">Duración</th><th class="text-right uppercase">Importe</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-p>
-                <tr class="border-bottom-1 surface-border">
+                <tr>
                   <td><i class="pi pi-chevron-down text-blue-400 text-xs"></i></td>
-                  <td>
-                    <span [style.color]="p.color" class="mr-2">●</span>
-                    <span class="font-bold text-xs uppercase">{{p.titulo}}</span>
-                  </td>
-                  <td class="text-right font-bold text-700">{{p.duracion}}</td>
-                  <td class="text-right text-400">{{p.importe}}</td>
+                  <td><span [style.color]="p.color" class="mr-2">●</span><span class="font-bold text-xs uppercase">{{p.titulo}}</span></td>
+                  <td class="text-right font-bold">{{p.duracion}}</td>
+                  <td class="text-right text-400">0,00 USD</td>
                 </tr>
               </ng-template>
             </p-table>
           </div>
-
-          <div class="col-12 md:col-4 flex flex-column align-items-center justify-content-center p-4">
-            <div class="relative" style="width: 180px; height: 180px;">
-              <p-chart type="doughnut" [data]="dataDona" [options]="optionsDona"></p-chart>
-              <div class="absolute text-center" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                <span class="block font-bold text-xl text-800">{{ tiempoTotalFormateado }}</span>
-              </div>
-            </div>
+          <div class="col-12 md:col-4 flex flex-column align-items-center p-4">
+            <div style="width: 180px; height: 180px;"><p-chart type="doughnut" [data]="dataDona" [options]="optionsDona"></p-chart></div>
+            <div class="text-center mt-3 font-bold text-xl text-800">{{ tiempoTotalFormateado }}</div>
           </div>
         </div>
       </div>
 
-      <div class="mx-3" *ngIf="tabactivo?.id === '1' || tabactivo?.id === '2'">
-        <p-table [value]="equipos" class="tabla-personalizada" [scrollable]="true" scrollHeight="400px">
+      <div class="mx-3" *ngIf="tabactivo?.id === '1'">
+        <div class="surface-100 p-2 border-1 surface-border flex justify-content-between align-items-center px-3 mb-1 bg-gray-50">
+          <div class="flex gap-4 align-items-center">
+            <span class="text-500 text-xs uppercase font-bold">Total:</span>
+            <span class="text-900 font-bold text-xl">{{ tiempoTotalFormateado }}</span>
+          </div>
+          <button pButton label="Crear factura" style="background-color: #00BCD4; border: none;" class="p-button-sm font-bold"></button>
+        </div>
+
+        <p-table [value]="registrosDetallados" styleClass="p-datatable-sm tabla-fija-detallado" [style]="{'table-layout': 'fixed', 'width': '100%'}">
           <ng-template pTemplate="header">
-            <tr class="cabecera-gris">
-              <th style="width: 4rem"><p-checkbox [binary]="true"></p-checkbox></th>
-              <th class="text-xs text-500">NOMBRE</th>
-              <th class="text-xs text-500">CORREO</th>
-              <th class="text-xs text-500">TARIFA</th>
-              <th class="text-xs text-500">TARIFA COSTE</th>
-              <th class="text-xs text-500">ROL</th>
-              <th class="text-xs text-500">GRUPO</th>
-              <th style="width: 8rem"></th>
+            <tr class="text-xs text-500 uppercase">
+              <th style="width: 3rem"></th>
+              <th style="width: 35%">Entrada de tiempo</th>
+              <th style="width: 15%" class="text-right">Importe</th>
+              <th style="width: 12%" class="text-center">Usuario</th>
+              <th style="width: 18%" class="text-center">Tiempo</th>
+              <th style="width: 12%" class="text-right">Duración</th>
+              <th style="width: 3rem"></th>
             </tr>
           </ng-template>
-          
-          <ng-template pTemplate="body" let-equipo>
-            <tr class="border-bottom-1 surface-border">
+          <ng-template pTemplate="body" let-r>
+            <tr class="hover:surface-50 border-bottom-1 surface-border">
               <td><p-checkbox [binary]="true"></p-checkbox></td>
-              <td class="text-sm">{{ equipo.nombre }}</td>
-              <td class="text-sm">{{ equipo.correo }}</td>
-              <td class="text-sm">{{ equipo.tarifa }}</td>
-              <td class="text-sm">{{ equipo.tarifa_coste }}</td>
-              <td class="text-sm">{{ equipo.rol }}</td>
-              <td class="text-sm">{{ equipo.grupo }}</td>
-              <td class="text-right">
-                <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary p-button-sm"></button>
-                <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-secondary p-button-sm"></button>
+              <td class="celda-truncate">
+                <span class="font-bold text-sm">{{ r.descripcion || 'Sin descripción' }}</span>
+                <small class="text-500 ml-2">● {{ r.proyecto?.nombre || r.proyecto || 'Sin Proyecto' }}</small>
+              </td>
+              <td class="text-right">0,00 $</td>
+              <td class="text-center text-xs">Alejandra</td>
+              <td class="text-center text-xs">
+                {{ r.inicio | date:'HH:mm' }} - {{ r.fin | date:'HH:mm' }}<br>
+                <small class="text-500">{{ r.inicio | date:'dd/MM/yyyy' }}</small>
+              </td>
+              <td class="text-right font-bold">{{ r.duracion }}</td>
+              <td class="text-center">
+                <i class="pi pi-ellipsis-v text-400 cursor-pointer" (click)="abrirMenu(menuOpciones, $event, r)"></i>
               </td>
             </tr>
           </ng-template>
         </p-table>
       </div>
 
-      <div class="m-3" *ngIf="tabactivo?.id === '3'">
-        <div class="p-8 text-center surface-50 border-round-xl border-1 surface-border">
-            <i class="pi pi-share-alt text-6xl mb-4 text-400"></i>
-            <h3 class="text-900 font-bold text-2xl mb-2">Informes Compartidos</h3>
-            <p class="text-600">Aquí aparecerán los informes programados y compartidos con tu equipo.</p>
-            <button pButton label="Crear primer informe compartido" class="p-button-outlined mt-4"></button>
+      <div class="mx-3" *ngIf="tabactivo?.id === '2'">
+        <div class="surface-100 p-2 border-1 surface-border flex align-items-center px-3 mb-1 bg-gray-50">
+          <span class="text-500 text-xs font-bold mr-3 uppercase">Total Semana:</span>
+          <span class="text-900 font-bold text-xl">{{ tiempoTotalFormateado }}</span>
         </div>
+        <p-table [value]="datosSemanales" styleClass="p-datatable-gridlines p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr class="text-xs text-500 uppercase bg-gray-50">
+              <th style="width: 200px">Proyecto</th>
+              <th class="text-center">Lu</th><th class="text-center">Ma</th><th class="text-center">Mi</th>
+              <th class="text-center">Ju</th><th class="text-center">Vi</th><th class="text-center">Sa</th>
+              <th class="text-center">Do</th>
+              <th class="text-right" style="width: 100px">Total</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-ds>
+            <tr class="text-sm">
+              <td class="font-bold" style="border-left: 4px solid #00BCD4">
+                <span style="color:#00BCD4" class="mr-2">●</span>{{ ds.proyecto }}
+              </td>
+              <td *ngFor="let dia of ds.dias" class="text-center text-500">{{ dia }}</td>
+              <td class="text-right font-bold bg-gray-50">{{ ds.total }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <tr class="bg-gray-100 font-bold text-sm">
+              <td>Total:</td>
+              <td *ngFor="let t of totalesPorDiaSemana" class="text-center">{{ t }}</td>
+              <td class="text-right text-blue-500">{{ tiempoTotalFormateado }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <div class="mx-3 p-8 flex flex-column align-items-center justify-content-center" *ngIf="tabactivo?.id === '3'">
+        <div class="surface-100 border-circle flex align-items-center justify-content-center mb-4" style="width: 100px; height: 100px;">
+          <i class="pi pi-share-alt text-400" style="font-size: 3rem;"></i>
+        </div>
+        <h3 class="text-900 font-bold mb-2">No hay informes compartidos</h3>
+        <p class="text-600 text-center line-height-3" style="max-width: 20rem;">
+          Intentar compartir un resumen, detallado o informe semanal para verlo aquí.
+        </p>
       </div>
 
     </p-card>
   </div>
 </div>
+
+<p-overlayPanel #menuOpciones>
+  <div class="flex flex-column gap-2" style="min-width: 130px;">
+    <button pButton label="Duplicar" icon="pi pi-copy" class="p-button-text text-sm" (click)="duplicarSeleccionado(menuOpciones)"></button>
+    <button pButton label="Eliminar" icon="pi pi-trash" class="p-button-text text-sm text-red-500" (click)="eliminarSeleccionado(menuOpciones)"></button>
+  </div>
+</p-overlayPanel>

@@ -1,96 +1,56 @@
 /* =========================================
-   SIDEBAR: QUITAR CELESTE DE LAS PALABRAS
+   TABLA DETALLADA: FIX DE COLUMNAS
    ========================================= */
 
-/* 1. Cambia las palabras que NO están seleccionadas (para que dejen de ser azules) */
-:host ::ng-deep .layout-sidebar .layout-menu ul li a {
-    color: #2c3e50 !important; /* Un gris muy oscuro casi negro */
-    text-decoration: none;
+/* 1. Obligar a la tabla a usar el ancho total y no deformarse */
+:host ::ng-deep .tabla-fija-detallado {
+    table-layout: fixed !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
 }
 
-/* 2. Cambia las palabras e iconos cuando pasas el mouse (Hover) */
-:host ::ng-deep .layout-sidebar .layout-menu ul li a:hover {
-    background-color: #f1f5f9 !important;
-    color: #000000 !important;
+/* 2. Estilo real para el botón de etiquetas (para que deje de ser negro/gris feo) */
+:host ::ng-deep .btn-etiqueta-detallado {
+    border: 1px solid #dee2e6 !important;
+    background-color: #ffffff !important;
+    color: #9aa0a6 !important;
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    max-width: 130px !important;
+    height: 26px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: inline-block !important;
 }
 
-:host ::ng-deep .layout-sidebar .layout-menu ul li a:hover i,
-:host ::ng-deep .layout-sidebar .layout-menu ul li a:hover span {
-    color: #000000 !important;
+/* 3. Asegurar que las celdas tengan el espacio que les dimos en el HTML */
+:host ::ng-deep .tabla-fija-detallado th, 
+:host ::ng-deep .tabla-fija-detallado td {
+    padding: 12px 8px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
-/* 3. Cambia la palabra e icono cuando ESTÁ SELECCIONADA (Clase active-route) */
-/* Esto quitará el fondo azul clarito y pondrá el texto en blanco sobre negro */
-:host ::ng-deep .layout-sidebar .layout-menu ul li a.active-route {
-    background-color: #000000 !important; /* Fondo Negro */
-    color: #ffffff !important;           /* Texto Blanco */
-    border-radius: 8px;
+/* 4. Evitar que la descripción del tiempo empuje a los demás */
+.celda-truncate {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
-/* Forzar que el SPAN (la palabra) sea blanca cuando está activo */
-:host ::ng-deep .layout-sidebar .layout-menu ul li a.active-route span,
-:host ::ng-deep .layout-sidebar .layout-menu ul li a.active-route i {
-    color: #ffffff !important;
+/* 5. Colores de los textos de tiempo y duración para que resalten */
+.text-700 {
+    color: #374151 !important; /* Gris oscuro profesional */
 }
 
-/* 4. Quitar el borde/sombra celeste al hacer click (Focus) */
-:host ::ng-deep .layout-sidebar .layout-menu ul li a:focus {
-    box-shadow: none !important;
-    outline: none !important;
+/* 6. Color celeste para el icono de dólar y puntos de proyecto */
+.pi-dollar, .text-celeste {
+    color: #00BCD4 !important;
 }
 
-/* 5. Títulos de secciones (ANALIZAR, TIEMPO, EQUIPO) */
-:host ::ng-deep .layout-menuitem-root-text,
-:host ::ng-deep .layout-menuitem-text {
-    color: #000000 !important; /* Todo a negro */
-}
-
-/* =========================================
-   ESTRUCTURA DE TU PÁGINA (Márgenes)
-   ========================================= */
-.informes-pagina {
-  margin: 0 40px;
-}
-
-.informes-panel {
-  background: #ffffff;
-  border-radius: 0.5rem;
-  padding: 1.25rem;
-}
-/* 1. Cambia el color del texto y los iconos de la lista (Resumido, Detallado, etc.) */
-:host ::ng-deep .layout-sidebar .layout-menu ul li a span,
-:host ::ng-deep .layout-sidebar .layout-menu ul li a i {
-    color: #2c3e50 !important; /* Negro o gris oscuro */
-}
-
-/* 2. ELIMINA EL BORDE CELESTE redondeado que aparece al abrir "TIEMPO" */
-:host ::ng-deep .layout-sidebar .layout-menu ul li a:focus,
-:host ::ng-deep .layout-sidebar .layout-menu ul li a {
-    outline: none !important;
-    box-shadow: none !important; /* Esto quita el brillo celeste alrededor */
-    border-color: transparent !important;
-}
-
-/* 3. Cambia el color cuando pasas el mouse (Hover) */
-:host ::ng-deep .layout-sidebar .layout-menu ul li a:hover {
-    background-color: #f8fafc !important; /* Gris muy suave */
-}
-
-/* 4. Cuando el ítem está SELECCIONADO (el que le diste click) */
-:host ::ng-deep .layout-sidebar .layout-menu ul li a.active-route {
-    background-color: #000000 !important; /* Fondo negro */
-    color: #ffffff !important;           /* Texto blanco */
-    border-radius: 8px !important;
-}
-
-/* Forzar que el texto e icono del activo sean blancos */
-:host ::ng-deep .layout-sidebar .layout-menu ul li a.active-route span,
-:host ::ng-deep .layout-sidebar .layout-menu ul li a.active-route i {
-    color: #ffffff !important;
-}
-
-/* 5. Color de la palabra "TIEMPO" y "EQUIPO" en negro */
-:host ::ng-deep .layout-menuitem-root-text,
-:host ::ng-deep .layout-menuitem-text {
-    color: #000000 !important;
+/* 7. Quitar bordes innecesarios que ensucian la vista */
+:host ::ng-deep .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+    border-color: #f3f4f6 !important;
 }
