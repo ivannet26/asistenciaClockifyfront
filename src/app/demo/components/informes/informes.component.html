@@ -21,10 +21,10 @@
           </div>
           <div *ngFor="let p of ['Equipo','Cliente','Proyecto','Tarea','Etiqueta','Estado','Descripción']" 
                class="flex-1 border-right-1 surface-border flex align-items-center" style="border-right-style: dashed !important;">
-            <p-dropdown [options]="[]" [placeholder]="p" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
+            <p-dropdown [options]="[]" [placeholder]="p" [appendTo]="'body'" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
           </div>
           <div class="px-3 flex align-items-center bg-white">
-            <button pButton label="Aplicar filtro" style="background-color: #00BCD4; border: none; font-size: 11px;" class="p-button-sm font-bold"></button>
+            <button pButton label="Aplicar filtro" style="background-color: #2196F3; border: none; font-size: 11px;" class="p-button-sm font-bold"></button>
           </div>
         </div>
       </div>
@@ -64,7 +64,7 @@
             <span class="text-500 text-xs uppercase font-bold">Total:</span>
             <span class="text-900 font-bold text-xl">{{ tiempoTotalFormateado }}</span>
           </div>
-          <button pButton label="Crear factura" style="background-color: #00BCD4; border: none;" class="p-button-sm font-bold"></button>
+          <button pButton label="Crear factura" style="background-color: #2196F3; border: none;" class="p-button-sm font-bold"></button>
         </div>
 
         <p-table [value]="registrosDetallados" styleClass="p-datatable-sm tabla-fija-detallado" [style]="{'table-layout': 'fixed', 'width': '100%'}">
