@@ -4,7 +4,7 @@
             (click)="layoutService.onMenuToggle()">
             <i class="pi pi-bars"></i>
         </button>
-        <p-splitButton  label="Clockify" (onClick)="espaciostrabajo()" [model]="proyectos" size="lg" text>
+        <p-splitButton [appendTo]="'body'"  label="Clockify" (onClick)="espaciostrabajo()" [model]="proyectos" size="lg" text>
             <ng-template pTemplate="content">
                 <span class="flex align-items-center font-bold" class="text-primary-600">
                     <span>Clockify</span>

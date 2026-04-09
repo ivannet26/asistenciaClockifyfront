@@ -8,23 +8,8 @@ import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
 
-interface Proyecto {
-  id?: number;
-  nombre: string;
-  cliente?: string | null;
-  color: string;
-  publico: boolean;
-  plantilla?: string | null;
-}
-
-interface Registro {
-  descripcion: string;
-  proyecto: Proyecto | null;
-  inicio: Date;
-  fin: Date;
-  duracion: string;
-  facturable: boolean;
-}
+import { Proyecto } from '../../model/Proyecto';
+import { Registro } from '../../model/Registro';
 
 @Component({
   selector: 'app-rastreador',

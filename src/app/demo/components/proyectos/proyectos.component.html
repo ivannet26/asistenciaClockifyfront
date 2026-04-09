@@ -167,14 +167,6 @@
     <div class="p-2 text-center py-5 text-500 italic">Todavía no hay clientes</div>
 </p-overlayPanel>
 
-<p-overlayPanel #opAcceso [style]="{width: '350px'}">
-    <div class="p-2">
-        <div class="flex align-items-center p-1">
-            <p-checkbox [binary]="true" label="Alejandra" class="mr-2"></p-checkbox>
-        </div>
-    </div>
-</p-overlayPanel>
-
 <p-dialog header="Crear nuevo Proyecto" [(visible)]="mostrarModalProyecto" [modal]="true" [style]="{ width: '520px' }"
     [closable]="true" [draggable]="false" [resizable]="false">
 
@@ -223,3 +215,12 @@
         </div>
     </ng-template>
 </p-dialog>
+
+<p-overlayPanel #opAcceso [style]="{width: '350px'}">
+    <div class="p-2">
+        <div class="flex align-items-center p-1">
+            <p-checkbox [binary]="true" label="Alejandra" class="mr-2"></p-checkbox>
+        </div>
+    </div>
+</p-overlayPanel>
+

@@ -99,15 +99,10 @@
                                         </ng-template>
                                     </td>
                                     <td>
-                                        <ng-container *ngIf="equipo.grupoId; else seleccionarGrupo">
-                                            {{ getNombreGrupo(equipo.grupoId) }}
-                                        </ng-container>
-                                        <ng-template #seleccionarGrupo>
-                                            <p-dropdown [options]="grupoOptions" [appendTo]="'body'"
-                                                name="grupo_{{equipo.id}}" [(ngModel)]="equipo.grupoId"
-                                                (onChange)="guardarCambiosMiembro(equipo)">
-                                            </p-dropdown>
-                                        </ng-template>
+                                        <p-multiSelect [options]="grupoOptions" [appendTo]="'body'" optionLabel="label"
+                                            optionValue="value" name="grupo_{{equipo.id}}" [(ngModel)]="equipo.grupoIds"
+                                            placeholder="Seleccionar grupos" (onChange)="guardarCambiosMiembro(equipo)">
+                                        </p-multiSelect>
                                     </td>
                                     <td class="acciones-celda">
                                         <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary">
@@ -171,29 +166,11 @@
                                     </td>
                                     <td>{{ grupo.nombre }}</td>
                                     <td class="miembros-cell">
-                                        <ng-container
-                                            *ngIf="grupo.miembros && grupo.miembros.length > 0; else sinMiembros">
-                                            <div class="miembros-scroll-wrapper"
-                                                [class.has-overflow]="hasOverflow(scrollRef)"
-                                                [class.scrolled]="scrollRef.scrollLeft > 4"
-                                                [class.at-end]="isAtEnd(scrollRef)">
-
-                                                <ul class="miembros-list" #scrollRef (scroll)="onScroll()">
-                                                    <li class="miembro-chip" *ngFor="let miembro of grupo.miembros">
-                                                        {{ miembro.nombre }}
-                                                    </li>
-                                                </ul>
-
-                                            </div>
-                                        </ng-container>
-
-                                        <ng-template #sinMiembros>
                                             <p-multiSelect [options]="miembrosOptions" optionLabel="nombre"
                                                 optionValue="id" [appendTo]="'body'" [(ngModel)]="grupo.miembrosIds"
                                                 (onPanelHide)="guardarMiembrosAGrupo(grupo)"
                                                 defaultLabel="Añadir miembros">
                                             </p-multiSelect>
-                                        </ng-template>
                                     </td>
                                     <td class="acciones-celda">
                                         <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary">
@@ -235,8 +212,9 @@
     </div>
 </div>
 
-<p-dialog header="Crear nuevo Miembro" [(visible)]="mostrarModalMiembro" [modal]="true" [style]="{ width: '520px' }"
+<p-dialog header="Crear nuevo Miembro" [(visible)]="mostrarModalMiembro"  [modal]="true" [style]="{ width: '520px' }"
     [closable]="true" [draggable]="false" [resizable]="false">
+    
 
     <div class="grupo-input p-1">
         <input pInputText type="text" [(ngModel)]="nuevoMiembro.nombre" placeholder="Nombre del miembro"

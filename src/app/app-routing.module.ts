@@ -3,7 +3,6 @@ import { Component, NgModule } from '@angular/core';
 import { NotfoundComponent } from './demo/components/notfound/notfound.component';
 import { AppLayoutComponent } from "./layout/app.layout.component";
 import { LoginCComponent } from './demo/components/login-c/login-c.component';
-import { PerfilComponent } from './demo/components/perfil/perfil.component';
 import { RastreadorComponent } from './demo/components/rastreador/rastreador.component';
 import { ClientesComponent } from './demo/components/clientes/clientes.component';
 import { EtiquetasComponent } from './demo/components/etiquetas/etiquetas.component';
@@ -39,7 +38,7 @@ import { InformesComponent } from './demo/components/informes/informes.component
                     { path: 'proyectos', component: ProyectosComponent },
                     { path: 'equipo', component: EquipoComponent },
                     { path: 'panel', component: PanelComponent },
-                    { path: 'clientes', component: ClientesComponent },//CLIENTES EN EL NUEVO MENÚ
+                    { path: 'clientes', component: ClientesComponent },
                     { path: 'etiquetas', component: EtiquetasComponent },
                     
                 ]

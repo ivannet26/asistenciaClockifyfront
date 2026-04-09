@@ -64,9 +64,9 @@
     background: linear-gradient(to left, #ffffff, transparent);
   }
 
-  &.has-overflow::after  { opacity: 1; }
+  &.desbordado::after  { opacity: 1; }
   &.scrolled::before     { opacity: 1; }
-  &.at-end::after        { opacity: 0; }
+  &.alfinal::after        { opacity: 0; }
 }
 
 .miembros-list {

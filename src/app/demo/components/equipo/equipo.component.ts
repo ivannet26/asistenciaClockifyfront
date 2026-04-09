@@ -13,27 +13,9 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from "primeng/toast";
 import { MultiSelectModule } from 'primeng/multiselect';
 
-export enum RolNombre {
-  OWNER = 'OWNER',
-  ADMIN = 'ADMIN',
-  USER = 'USER',
-  SUPERVISOR = 'SUPERVISOR'
-}
-
-interface Grupo {
-  id: number;
-  nombre: string;
-  miembros?: Miembros[];
-  miembrosIds?: number[];
-}
-
-interface Miembros {
-  id: number;
-  nombre: string;
-  correo: string;
-  rol?: RolNombre | null;
-  grupoIds?: number[]
-}
+import { Miembros } from '../../model/Miembro';
+import { RolNombre } from '../../model/Miembro';
+import { Grupo } from '../../model/Grupo';
 
 @Component({
   selector: 'app-equipo',
@@ -309,11 +291,11 @@ export class EquipoComponent {
   }
 
   //chips para miembros
-  hasOverflow(el: HTMLElement): boolean {
+  desbordado(el: HTMLElement): boolean {
     return el.scrollWidth > el.clientWidth;
   }
 
-  isAtEnd(el: HTMLElement): boolean {
+  alfinal(el: HTMLElement): boolean {
     return el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
   }
 

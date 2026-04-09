@@ -69,6 +69,10 @@ $gutter: 1rem; //for primeflex grid system
     margin-left: 0 !important;
 }
 
+.p-dialog {
+    z-index: 10000 !important;
+}
+
 
 @media (max-width: 992px) {
     .layout-wrapper .layout-main-container {
