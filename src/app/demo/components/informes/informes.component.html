@@ -11,8 +11,35 @@
 
           <p-tabMenu [model]="tabs" [activeItem]="tabactivo" (activeItemChange)="CambioTab($event)"></p-tabMenu>
         </div>
-        <p-calendar dateFormat="dd/mm/yy" [(ngModel)]="selectedDate" [showIcon]="true"></p-calendar>
+
+        <div class="p-inputgroup w-22rem">
+          <span class="p-inputgroup-addon bg-white cursor-pointer" (click)="op.toggle($event)">
+            <i class="pi pi-calendar" style="color: #2196F3;"></i>
+          </span>
+          <input type="text" pInputText [value]="textoRango" class="bg-white cursor-pointer text-sm" readonly (click)="op.toggle($event)" />
+          <button type="button" pButton icon="pi pi-chevron-left" (click)="cambiarSemana(-1)" 
+                  class="p-button-secondary p-button-text bg-white border-1 border-300"></button>
+          <button type="button" pButton icon="pi pi-chevron-right" (click)="cambiarSemana(1)" 
+                  class="p-button-secondary p-button-text bg-white border-1 border-300"></button>
+        </div>
       </div>
+
+      <p-overlayPanel #op [style]="{width: 'auto'}">
+        <div class="flex">
+          <div class="menu-calendario">
+            <ul>
+              <li (click)="seleccionarOpcion('hoy')">Hoy</li>
+              <li (click)="seleccionarOpcion('ayer')">Ayer</li>
+              <li (click)="seleccionarOpcion('estaSemana')">Esta semana</li>
+              <li (click)="seleccionarOpcion('mes')">Este mes</li>
+            </ul>
+          </div>
+          <div class="p-2">
+            <p-calendar [(ngModel)]="rangoFechas" selectionMode="range" [inline]="true" 
+                        [showOtherMonths]="false" (onSelect)="actualizarYFiltrar()"></p-calendar>
+          </div>
+        </div>
+      </p-overlayPanel>
 
       <div class="mx-3 mb-4" *ngIf="tabactivo?.id !== '3'">
         <div class="surface-border border-1 border-round overflow-hidden shadow-1 flex align-items-stretch bg-white">
@@ -24,13 +51,36 @@
             <p-dropdown [options]="[]" [placeholder]="p" [appendTo]="'body'" class="w-full" [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
           </div>
           <div class="px-3 flex align-items-center bg-white">
-            <button pButton label="Aplicar filtro" style="background-color: #2196F3; border: none; font-size: 11px;" class="p-button-sm font-bold"></button>
+            <button pButton label="Aplicar filtro" style="background-color: #2196F3; border: none; font-size: 11px;" class="p-button-sm font-bold shadow-none"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mx-3 mb-1 surface-100 border-1 surface-border border-round-top flex justify-content-between align-items-center px-3 py-2 bg-gray-50" 
+           *ngIf="tabactivo?.id !== '3'">
+        <div class="flex align-items-center gap-4">
+          <div class="flex align-items-baseline gap-2">
+            <span class="text-500 text-xs font-bold uppercase">Total:</span>
+            <span class="text-900 font-bold text-xl">{{ tiempoTotalFormateado }}</span>
+          </div>
+          <div class="flex align-items-baseline gap-2 border-left-1 surface-border pl-4" *ngIf="tabactivo?.id === '1'">
+            <span class="text-500 text-xs font-bold uppercase">Importe:</span>
+            <span class="text-900 font-bold text-xl">0,00 USD</span>
+          </div>
+        </div>
+
+        <div class="flex align-items-center gap-3">
+          <button pButton label="Crear factura" class="p-button-sm font-bold p-button-outlined" style="color: #2196F3; border-color: #2196F3;" *ngIf="tabactivo?.id === '1'"></button>
+          <div class="flex align-items-center gap-2 border-left-1 surface-border pl-3">
+            <i class="pi pi-print text-500 cursor-pointer"></i>
+            <i class="pi pi-share-alt text-500 cursor-pointer"></i>
+            <i class="pi pi-download text-500 cursor-pointer"></i>
           </div>
         </div>
       </div>
 
       <div class="mx-3" *ngIf="tabactivo?.id === '0'">
-        <div class="surface-50 p-4 border-round mb-4 border-1 surface-border">
+        <div class="surface-50 p-4 border-round-bottom mb-4 border-1 surface-border border-top-none">
           <div style="height: 220px;"><p-chart type="bar" [data]="dataBarras" [options]="optionsBarras"></p-chart></div>
         </div>
         <div class="grid grid-nogutter border-1 surface-border bg-white mb-5">
@@ -45,7 +95,7 @@
                 <tr>
                   <td><i class="pi pi-chevron-down text-blue-400 text-xs"></i></td>
                   <td><span [style.color]="p.color" class="mr-2">●</span><span class="font-bold text-xs uppercase">{{p.titulo}}</span></td>
-                  <td class="text-right font-bold">{{p.duracion}}</td>
+                  <td class="text-right font-bold text-700">{{p.duracion}}</td>
                   <td class="text-right text-400">0,00 USD</td>
                 </tr>
               </ng-template>
@@ -59,14 +109,6 @@
       </div>
 
       <div class="mx-3" *ngIf="tabactivo?.id === '1'">
-        <div class="surface-100 p-2 border-1 surface-border flex justify-content-between align-items-center px-3 mb-1 bg-gray-50">
-          <div class="flex gap-4 align-items-center">
-            <span class="text-500 text-xs uppercase font-bold">Total:</span>
-            <span class="text-900 font-bold text-xl">{{ tiempoTotalFormateado }}</span>
-          </div>
-          <button pButton label="Crear factura" style="background-color: #2196F3; border: none;" class="p-button-sm font-bold"></button>
-        </div>
-
         <p-table [value]="registrosDetallados" styleClass="p-datatable-sm tabla-fija-detallado" [style]="{'table-layout': 'fixed', 'width': '100%'}">
           <ng-template pTemplate="header">
             <tr class="text-xs text-500 uppercase">
@@ -102,24 +144,18 @@
       </div>
 
       <div class="mx-3" *ngIf="tabactivo?.id === '2'">
-        <div class="surface-100 p-2 border-1 surface-border flex align-items-center px-3 mb-1 bg-gray-50">
-          <span class="text-500 text-xs font-bold mr-3 uppercase">Total Semana:</span>
-          <span class="text-900 font-bold text-xl">{{ tiempoTotalFormateado }}</span>
-        </div>
         <p-table [value]="datosSemanales" styleClass="p-datatable-gridlines p-datatable-sm">
           <ng-template pTemplate="header">
             <tr class="text-xs text-500 uppercase bg-gray-50">
               <th style="width: 200px">Proyecto</th>
-              <th class="text-center">Lu</th><th class="text-center">Ma</th><th class="text-center">Mi</th>
-              <th class="text-center">Ju</th><th class="text-center">Vi</th><th class="text-center">Sa</th>
-              <th class="text-center">Do</th>
+              <th *ngFor="let dia of etiquetasDias" class="text-center">{{ dia }}</th>
               <th class="text-right" style="width: 100px">Total</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-ds>
             <tr class="text-sm">
-              <td class="font-bold" style="border-left: 4px solid #00BCD4">
-                <span style="color:#00BCD4" class="mr-2">●</span>{{ ds.proyecto }}
+              <td class="font-bold" style="border-left: 4px solid #2196F3">
+                <span style="color:#2196F3" class="mr-2">●</span>{{ ds.proyecto }}
               </td>
               <td *ngFor="let dia of ds.dias" class="text-center text-500">{{ dia }}</td>
               <td class="text-right font-bold bg-gray-50">{{ ds.total }}</td>
@@ -129,7 +165,7 @@
             <tr class="bg-gray-100 font-bold text-sm">
               <td>Total:</td>
               <td *ngFor="let t of totalesPorDiaSemana" class="text-center">{{ t }}</td>
-              <td class="text-right text-blue-500">{{ tiempoTotalFormateado }}</td>
+              <td class="text-right" style="color: #2196F3">{{ tiempoTotalFormateado }}</td>
             </tr>
           </ng-template>
         </p-table>
@@ -137,12 +173,10 @@
 
       <div class="mx-3 p-8 flex flex-column align-items-center justify-content-center" *ngIf="tabactivo?.id === '3'">
         <div class="surface-100 border-circle flex align-items-center justify-content-center mb-4" style="width: 100px; height: 100px;">
-          <i class="pi pi-share-alt text-400" style="font-size: 3rem;"></i>
+          <i class="pi pi-share-alt text-400" style="font-size: 3rem; color: #2196F3;"></i>
         </div>
         <h3 class="text-900 font-bold mb-2">No hay informes compartidos</h3>
-        <p class="text-600 text-center line-height-3" style="max-width: 20rem;">
-          Intentar compartir un resumen, detallado o informe semanal para verlo aquí.
-        </p>
+        <p class="text-600 text-center line-height-3" style="max-width: 20rem;">Intentar compartir un resumen, detallado o informe semanal para verlo aquí.</p>
       </div>
 
     </p-card>

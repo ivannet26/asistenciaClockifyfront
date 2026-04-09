@@ -54,3 +54,55 @@
 :host ::ng-deep .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
     border-color: #f3f4f6 !important;
 }
+/* Menú lateral del Calendario Overlay */
+.menu-calendario {
+    width: 160px;
+    border-right: 1px solid #dee2e6;
+}
+
+.menu-calendario ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-calendario li {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #495057;
+    transition: all 0.2s;
+}
+
+.menu-calendario li:hover {
+    background: #f8f9fa;
+    color: #2196F3;
+}
+
+.menu-calendario li.active {
+    background: #e3f2fd;
+    color: #2196F3;
+    border-left: 3px solid #2196F3;
+    font-weight: bold;
+}
+
+/* Blindaje de la Tabla Detallado */
+:host ::ng-deep .tabla-fija-detallado {
+    table-layout: fixed !important;
+}
+
+.celda-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Estilo para los iconos del recuadro gris */
+.pi-print:hover, .pi-share-alt:hover, .pi-download:hover {
+    color: #2196F3 !important;
+}
+
+/* Alineación de los botones del inputgroup */
+:host ::ng-deep .p-inputgroup .p-button {
+    border-left: none !important;
+}

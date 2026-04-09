@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -13,7 +13,7 @@ import { CardModule } from "primeng/card";
 import { ChartModule } from 'primeng/chart';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { CheckboxModule } from 'primeng/checkbox';
-import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { OverlayPanelModule, OverlayPanel } from 'primeng/overlaypanel';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenuItem } from 'primeng/api';
 
@@ -30,13 +30,19 @@ import { MenuItem } from 'primeng/api';
   styleUrl: './informes.component.css'
 })
 export class InformesComponent implements OnInit {
+  @ViewChild('op') op!: OverlayPanel;
 
-  selectedDate: Date = new Date();
-  tipoInformeSeleccionado: string = '1';
+  // --- UI ---
   tabactivo!: MenuItem;
   filtroEtiqueta: string = '';
   registroSeleccionado: any = null;
+  tipoInformeSeleccionado: string = '1';
 
+  // --- Calendario estilo Panel ---
+  rangoFechas: Date[] = [];
+  textoRango: string = '';
+
+  // --- Datos ---
   dataBarras: any;
   optionsBarras: any;
   dataDona: any;
@@ -46,10 +52,9 @@ export class InformesComponent implements OnInit {
   proyectosResumen: any[] = [];
   registrosDetallados: any[] = [];
   etiquetasDisponibles: string[] = [];
-  
   datosSemanales: any[] = [];
   totalesPorDiaSemana: string[] = [];
-  etiquetasDias: string[] = []; // NUEVO: Para guardar "lun., abr. 6", etc.
+  etiquetasDias: string[] = [];
 
   tabs: MenuItem[] = [
     { label: 'Resumido', id: '0' },
@@ -70,8 +75,9 @@ export class InformesComponent implements OnInit {
 
   ngOnInit() {
     this.configurarGraficos();
-    this.cargarTodoDesdeStorage();
     this.cargarEtiquetasDeStorage();
+    // Inicializar con la semana actual como en el Panel
+    this.seleccionarOpcion('estaSemana');
 
     this.route.queryParams.subscribe(params => {
       const tabId = params['tab'];
@@ -82,159 +88,142 @@ export class InformesComponent implements OnInit {
     });
   }
 
-  configurarGraficos() {
-    this.optionsBarras = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: { color: '#9aa0a6' } },
-        y: { beginAtZero: true, ticks: { color: '#9aa0a6', callback: (v: any) => this.formatearEjeY(v) } }
-      }
-    };
-    this.optionsDona = { cutout: '80%', plugins: { legend: { display: false } } };
+  // --- LÓGICA DE CALENDARIO DEL PANEL ---
+  seleccionarOpcion(opcion: string) {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    let inicio = new Date(hoy);
+    let fin = new Date(hoy);
+
+    switch (opcion) {
+      case 'hoy':
+        fin.setHours(23, 59, 59, 999);
+        break;
+      case 'ayer':
+        inicio.setDate(hoy.getDate() - 1);
+        fin.setDate(hoy.getDate() - 1);
+        fin.setHours(23, 59, 59, 999);
+        break;
+      case 'estaSemana':
+        const d = hoy.getDay();
+        const diffAlLunes = (d === 0 ? 6 : d - 1);
+        inicio.setDate(hoy.getDate() - diffAlLunes);
+        fin = new Date(inicio);
+        fin.setDate(inicio.getDate() + 6);
+        fin.setHours(23, 59, 59, 999);
+        break;
+      case 'mes':
+        inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+        fin = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0, 23, 59, 59, 999);
+        break;
+    }
+
+    this.rangoFechas = [inicio, fin];
+    this.actualizarYFiltrar();
+    if (this.op) this.op.hide();
   }
 
-  cargarEtiquetasDeStorage() {
-    const tags = localStorage.getItem('etiquetas');
-    this.etiquetasDisponibles = tags ? JSON.parse(tags) : ['GM', 'THEOROO', 'DISEÑO', 'MARKETING'];
+  actualizarYFiltrar() {
+    if (this.rangoFechas && this.rangoFechas[0]) {
+      const inicio = new Date(this.rangoFechas[0]);
+      const fin = this.rangoFechas[1] ? new Date(this.rangoFechas[1]) : new Date(inicio);
+      
+      const opciones: any = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      this.textoRango = `${inicio.toLocaleDateString('es-ES', opciones)} - ${fin.toLocaleDateString('es-ES', opciones)}`;
+      
+      this.cargarTodoDesdeStorage(inicio, fin);
+    }
   }
 
-  get etiquetasFiltradas() {
-    return this.etiquetasDisponibles.filter(t => t.toLowerCase().includes(this.filtroEtiqueta.toLowerCase()));
+  cambiarSemana(dir: number) {
+    const nuevaFecha = new Date(this.rangoFechas[0]);
+    nuevaFecha.setDate(nuevaFecha.getDate() + (dir * 7));
+    const fin = new Date(nuevaFecha);
+    fin.setDate(nuevaFecha.getDate() + 6);
+    this.rangoFechas = [nuevaFecha, fin];
+    this.actualizarYFiltrar();
   }
 
-  cargarTodoDesdeStorage() {
+  // --- CARGA Y PROCESAMIENTO ---
+  cargarTodoDesdeStorage(inicioF: Date, finF: Date) {
     const data = localStorage.getItem('registros');
     if (!data) return;
     const registros = JSON.parse(data);
-    this.registrosDetallados = registros.map((r: any) => ({
-      ...r,
-      inicio: r.inicio ? new Date(r.inicio) : null,
-      fin: r.fin ? new Date(r.fin) : null,
-      etiquetas: Array.isArray(r.etiquetas) ? r.etiquetas : []
-    }));
-    this.procesarEstadisticas();
+
+    this.registrosDetallados = registros
+      .map((r: any) => ({ ...r, inicio: new Date(r.inicio), fin: new Date(r.fin) }))
+      .filter((r: any) => r.inicio >= inicioF && r.inicio <= new Date(finF.getTime() + 86400000))
+      .sort((a: any, b: any) => b.inicio.getTime() - a.inicio.getTime());
+
+    this.procesarEstadisticas(inicioF);
   }
 
-  // --- LÓGICA PARA FECHAS DINÁMICAS ---
-  generarEtiquetasSemana(fechaReferencia: Date) {
-    const nombresDias = ['dom.', 'lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.'];
-    const nombresMeses = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'sep.', 'oct.', 'nov.', 'dic.'];
-    
-    let tempEtiquetas = [];
-    const diaActual = fechaReferencia.getDay();
-    const lunes = new Date(fechaReferencia);
-    lunes.setDate(fechaReferencia.getDate() - (diaActual === 0 ? 6 : diaActual - 1));
-
-    for (let i = 0; i < 7; i++) {
-      const f = new Date(lunes);
-      f.setDate(lunes.getDate() + i);
-      const etiqueta = `${nombresDias[f.getDay()]}, ${nombresMeses[f.getMonth()]} ${f.getDate()}`;
-      tempEtiquetas.push(etiqueta);
-    }
-    this.etiquetasDias = tempEtiquetas;
-  }
-
-  procesarEstadisticas() {
-    this.generarEtiquetasSemana(this.selectedDate);
-
+  procesarEstadisticas(lunesReferencia: Date) {
     const tiemposPorProyecto: { [key: string]: number } = {};
     const tiempoPorDiaBarras = [0, 0, 0, 0, 0, 0, 0];
     const agrupacionSemanal: { [key: string]: number[] } = {};
-    let totalSegundos = 0;
+    let totalSGlobal = 0;
 
-    this.registrosDetallados.forEach((r: any) => {
+    // Etiquetas dinámicas (lun., 6 abr.)
+    const diasNombres = ['lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.', 'dom.'];
+    this.etiquetasDias = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(lunesReferencia);
+      d.setDate(lunesReferencia.getDate() + i);
+      this.etiquetasDias.push(`${diasNombres[i]}, ${d.getDate()}`);
+    }
+
+    this.registrosDetallados.forEach(r => {
       let s = 0;
       if (r.duracion?.includes(':')) {
         const p = r.duracion.split(':');
         s = (parseInt(p[0]) * 3600) + (parseInt(p[1]) * 60) + parseInt(p[2]);
       }
-
       const proyNombre = (r.proyecto && typeof r.proyecto === 'object') ? r.proyecto.nombre : (r.proyecto || 'Sin Proyecto');
       tiemposPorProyecto[proyNombre] = (tiemposPorProyecto[proyNombre] || 0) + s;
-      totalSegundos += s;
+      totalSGlobal += s;
 
-      if (r.inicio) {
-        const dia = r.inicio.getDay();
-        const idx = (dia === 0) ? 6 : dia - 1; 
-        if (idx >= 0 && idx < 7) {
-          tiempoPorDiaBarras[idx] += s;
-          if (!agrupacionSemanal[proyNombre]) agrupacionSemanal[proyNombre] = [0, 0, 0, 0, 0, 0, 0];
-          agrupacionSemanal[proyNombre][idx] += s;
-        }
+      const dayIdx = r.inicio.getDay();
+      const idx = (dayIdx === 0) ? 6 : dayIdx - 1;
+      if (idx >= 0 && idx < 7) {
+        tiempoPorDiaBarras[idx] += s;
+        if (!agrupacionSemanal[proyNombre]) agrupacionSemanal[proyNombre] = [0, 0, 0, 0, 0, 0, 0];
+        agrupacionSemanal[proyNombre][idx] += s;
       }
     });
 
-    this.tiempoTotalFormateado = this.formatearSegundos(totalSegundos);
-    this.proyectosResumen = Object.keys(tiemposPorProyecto).map(nombre => ({
-      titulo: nombre, duracion: this.formatearSegundos(tiemposPorProyecto[nombre]), color: '#2196F3'
+    this.tiempoTotalFormateado = this.formatearSegundos(totalSGlobal);
+    this.proyectosResumen = Object.keys(tiemposPorProyecto).map(n => ({
+      titulo: n, duracion: this.formatearSegundos(tiemposPorProyecto[n]), color: '#2196F3'
     }));
 
-    this.datosSemanales = Object.keys(agrupacionSemanal).map(nombre => ({
-      proyecto: nombre,
-      dias: agrupacionSemanal[nombre].map(seg => seg > 0 ? this.formatearSegundos(seg) : '—'),
-      total: this.formatearSegundos(agrupacionSemanal[nombre].reduce((a, b) => a + b, 0))
+    this.datosSemanales = Object.keys(agrupacionSemanal).map(n => ({
+      proyecto: n,
+      dias: agrupacionSemanal[n].map(seg => seg > 0 ? this.formatearSegundos(seg) : '—'),
+      total: this.formatearSegundos(agrupacionSemanal[n].reduce((a, b) => a + b, 0))
     }));
     this.totalesPorDiaSemana = tiempoPorDiaBarras.map(seg => this.formatearSegundos(seg));
 
-    // Refrescar Gráficos con etiquetas dinámicas
     this.dataBarras = {
-      labels: this.etiquetasDias, // AQUÍ USA LA NUEVA VARIABLE
-      datasets: [{ data: [...tiempoPorDiaBarras], backgroundColor: '#2196F3', borderRadius: 4 }]
+      labels: this.etiquetasDias,
+      datasets: [{ data: tiempoPorDiaBarras, backgroundColor: '#2196F3', borderRadius: 4 }]
     };
     this.dataDona = {
       labels: Object.keys(tiemposPorProyecto),
-      datasets: [{ data: Object.values(tiemposPorProyecto), backgroundColor: ['#2196F3', '#64B5F6', '#90CAF9', '#BBDEFB'], borderWidth: 0 }]
+      datasets: [{ data: Object.values(tiemposPorProyecto), backgroundColor: ['#2196F3', '#64B5F6', '#90CAF9'], borderWidth: 0 }]
     };
   }
 
-  actualizarStorage() {
-    localStorage.setItem('registros', JSON.stringify(this.registrosDetallados));
-  }
-
-  toggleEtiqueta(registro: any, etiqueta: string) {
-    if (!registro.etiquetas) registro.etiquetas = [];
-    const index = registro.etiquetas.indexOf(etiqueta);
-    index > -1 ? registro.etiquetas.splice(index, 1) : registro.etiquetas.push(etiqueta);
-    this.actualizarStorage();
-    this.registrosDetallados = [...this.registrosDetallados];
-  }
-
-  eliminarRegistro(registro: any) {
-    this.registrosDetallados = this.registrosDetallados.filter(r => r !== registro);
-    this.actualizarStorage();
-    this.procesarEstadisticas();
-  }
-
-  duplicarRegistro(registro: any) {
-    const copia = { ...registro, etiquetas: [...(registro.etiquetas || [])], inicio: registro.inicio ? new Date(registro.inicio) : null, fin: registro.fin ? new Date(registro.fin) : null };
-    this.registrosDetallados.unshift(copia);
-    this.actualizarStorage();
-    this.procesarEstadisticas();
-  }
-
-  abrirMenu(panel: any, event: Event, registro: any) {
-    this.registroSeleccionado = registro;
-    panel.toggle(event);
-  }
-
-  duplicarSeleccionado(panel: any) {
-    if (this.registroSeleccionado) {
-      this.duplicarRegistro(this.registroSeleccionado);
-      panel.hide();
-      this.registroSeleccionado = null;
-    }
-  }
-
-  eliminarSeleccionado(panel: any) {
-    if (this.registroSeleccionado) {
-      if (confirm('¿Seguro que deseas eliminar este registro?')) {
-        this.eliminarRegistro(this.registroSeleccionado);
-        panel.hide();
-        this.registroSeleccionado = null;
+  configurarGraficos() {
+    this.optionsBarras = {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#9aa0a6' } },
+        y: { beginAtZero: true, ticks: { callback: (v: any) => this.formatearSegundos(v) } }
       }
-    }
+    };
+    this.optionsDona = { cutout: '80%', plugins: { legend: { display: false } } };
   }
 
   private formatearSegundos(t: number): string {
@@ -244,9 +233,17 @@ export class InformesComponent implements OnInit {
     return `${h}:${m}:${s}`;
   }
 
-  private formatearEjeY(v: number) {
-    return v >= 3600 ? Math.floor(v / 3600) + 'h' : v + 's';
+  cargarEtiquetasDeStorage() {
+    const tags = localStorage.getItem('etiquetas');
+    this.etiquetasDisponibles = tags ? JSON.parse(tags) : ['GM', 'DISEÑO'];
+  }
+
+  get etiquetasFiltradas() {
+    return this.etiquetasDisponibles.filter(t => t.toLowerCase().includes(this.filtroEtiqueta.toLowerCase()));
   }
 
   CambioTab(event: any) { this.tabactivo = event; }
+  abrirMenu(panel: any, event: Event, r: any) { this.registroSeleccionado = r; panel.toggle(event); }
+  duplicarSeleccionado(p: any) { p.hide(); }
+  eliminarSeleccionado(p: any) { p.hide(); }
 }
