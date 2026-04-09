@@ -118,7 +118,17 @@
   background-color: #dee2e6;
   margin: 0 5px;
 }
+/* Efecto visual de que está grabando */
+.timer-display.corriendo {
+    color: #ef4444; /* Rojo suave o azul #2196F3 */
+    animation: pulse 2s infinite;
+}
 
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
 .timer-display {
   font-family: monospace;
   font-size: 1.4rem;
