@@ -31,15 +31,12 @@ import { MenuItem } from 'primeng/api';
 })
 export class InformesComponent implements OnInit {
 
-  // --- UI ---
   selectedDate: Date = new Date();
   tipoInformeSeleccionado: string = '1';
   tabactivo!: MenuItem;
-  mostrarEstimacion: boolean = false;
   filtroEtiqueta: string = '';
   registroSeleccionado: any = null;
 
-  // --- Datos ---
   dataBarras: any;
   optionsBarras: any;
   dataDona: any;
@@ -52,6 +49,7 @@ export class InformesComponent implements OnInit {
   
   datosSemanales: any[] = [];
   totalesPorDiaSemana: string[] = [];
+  etiquetasDias: string[] = []; // NUEVO: Para guardar "lun., abr. 6", etc.
 
   tabs: MenuItem[] = [
     { label: 'Resumido', id: '0' },
@@ -119,7 +117,28 @@ export class InformesComponent implements OnInit {
     this.procesarEstadisticas();
   }
 
+  // --- LÓGICA PARA FECHAS DINÁMICAS ---
+  generarEtiquetasSemana(fechaReferencia: Date) {
+    const nombresDias = ['dom.', 'lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.'];
+    const nombresMeses = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'sep.', 'oct.', 'nov.', 'dic.'];
+    
+    let tempEtiquetas = [];
+    const diaActual = fechaReferencia.getDay();
+    const lunes = new Date(fechaReferencia);
+    lunes.setDate(fechaReferencia.getDate() - (diaActual === 0 ? 6 : diaActual - 1));
+
+    for (let i = 0; i < 7; i++) {
+      const f = new Date(lunes);
+      f.setDate(lunes.getDate() + i);
+      const etiqueta = `${nombresDias[f.getDay()]}, ${nombresMeses[f.getMonth()]} ${f.getDate()}`;
+      tempEtiquetas.push(etiqueta);
+    }
+    this.etiquetasDias = tempEtiquetas;
+  }
+
   procesarEstadisticas() {
+    this.generarEtiquetasSemana(this.selectedDate);
+
     const tiemposPorProyecto: { [key: string]: number } = {};
     const tiempoPorDiaBarras = [0, 0, 0, 0, 0, 0, 0];
     const agrupacionSemanal: { [key: string]: number[] } = {};
@@ -159,8 +178,9 @@ export class InformesComponent implements OnInit {
     }));
     this.totalesPorDiaSemana = tiempoPorDiaBarras.map(seg => this.formatearSegundos(seg));
 
+    // Refrescar Gráficos con etiquetas dinámicas
     this.dataBarras = {
-      labels: ['lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.', 'dom.'],
+      labels: this.etiquetasDias, // AQUÍ USA LA NUEVA VARIABLE
       datasets: [{ data: [...tiempoPorDiaBarras], backgroundColor: '#2196F3', borderRadius: 4 }]
     };
     this.dataDona = {
