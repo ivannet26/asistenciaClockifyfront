@@ -155,20 +155,22 @@
         </span>
 
         <div class="lista-etiquetas-scroll" style="max-height: 200px; overflow-y: auto;">
-            <div *ngFor="let tag of etiquetasDisponibles" class="flex align-items-center p-2 hover:bg-100 border-round">
+            <div *ngFor="let tag of etiquetasFiltradas" class="flex align-items-center p-2 hover:bg-100 border-round">
                 <p-checkbox [binary]="true" 
                             [ngModel]="etiquetasSeleccionadas.includes(tag.nombre)"
                             (onChange)="toggleEtiqueta(tag.nombre)">
                 </p-checkbox>
                 <label class="ml-2 cursor-pointer w-full" (click)="toggleEtiqueta(tag.nombre)">
-                    {{ tag.nombre }} 
+                    {{ tag.nombre }}
                 </label>
+            </div>
+            
+            <div *ngIf="etiquetasFiltradas.length === 0" class="p-2 text-center text-sm text-500">
+                No se encontraron etiquetas
             </div>
         </div>
         
-        <button pButton label="Crear nueva etiqueta" icon="pi pi-plus" 
-                class="p-button-text p-button-sm w-full p-button-info"></button>
-    </div>
+        </div>
 </p-overlayPanel>
 
 <p-dialog header="Crear nuevo Proyecto" [(visible)]="mostrarModalProyecto" [modal]="true"

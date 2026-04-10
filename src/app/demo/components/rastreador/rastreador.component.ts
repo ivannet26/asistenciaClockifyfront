@@ -43,7 +43,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   mostrarModalProyecto: boolean = false;
 
   // --- NUEVO ESTADO ETIQUETAS ---
-  etiquetasDisponibles: string[] = [];
+  etiquetasDisponibles: any[] = [];
   etiquetasSeleccionadas: string[] = [];
   busquedaEtiqueta: string = '';
 
@@ -101,7 +101,19 @@ toggleEtiqueta(etiquetaNombre: string) {
   } else {
     this.etiquetasSeleccionadas.push(etiquetaNombre);
   }
+  
 }
+get etiquetasFiltradas(): any[] {
+  const busqueda = this.busquedaEtiqueta.toLowerCase().trim();
+  if (!busqueda) {
+    return this.etiquetasDisponibles;
+  }
+  // Añadimos (tag: any) para que no reclame por la propiedad .nombre
+  return this.etiquetasDisponibles.filter((tag: any) => 
+    tag.nombre.toLowerCase().includes(busqueda)
+  );
+}
+
 
   // =============================================
   // LÓGICA DEL CONTADOR (TIMER)
