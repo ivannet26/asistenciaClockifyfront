@@ -1,8 +1,9 @@
 export interface Proyecto {
   id?: number;
   nombre: string;
-  cliente?: string | null;
+  clienteId?: number;
   color: string;
   publico: boolean;
-  plantilla?: string | null;
+  progreso: number;
+  registrado: Date;
 }

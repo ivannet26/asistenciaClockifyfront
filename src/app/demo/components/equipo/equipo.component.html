@@ -5,7 +5,7 @@
 
         <div class="equipo-contenido">
             <p-card class="tabla">
-                <div class="contenedor-tabla" [hidden]="!mostrarLista">
+                <div class="contenedor-tabla" *ngIf="mostrarLista">
 
                     <p-tabMenu [model]="tabs" [activeItem]="tabactivo" (activeItemChange)="CambioTab($event)" />
 
@@ -55,7 +55,7 @@
 
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <th colspan="6" class="">
+                                    <th colspan="4" class="">
                                         <p>Miembros</p>
                                     </th>
                                     <th colspan="3">
@@ -70,8 +70,6 @@
                                     </th>
                                     <th>NOMBRE</th>
                                     <th>CORREO</th>
-                                    <th>TARIFA</th>
-                                    <th>TARIFA COSTE</th>
                                     <th>ROL</th>
                                     <th>GRUPO</th>
                                     <th style="width: 8rem"></th>
@@ -85,30 +83,57 @@
                                     </td>
                                     <td>{{ equipo.nombre }}</td>
                                     <td>{{ equipo.correo }}</td>
-                                    <td>{{ equipo.tarifa }}</td>
-                                    <td>{{ equipo.tarifa_coste }}</td>
                                     <td>
-                                        <ng-container *ngIf="equipo.rol; else seleccionarRol">
-                                            {{ equipo.rol }}
-                                        </ng-container>
-                                        <ng-template #seleccionarRol>
+                                        <ng-container *ngIf="miembroEnEdicion === equipo.id; else verRol">
                                             <p-dropdown [options]="rolesOptions" [appendTo]="'body'"
-                                                name="grupo_{{equipo.id}}" [(ngModel)]="equipo.rol"
-                                                (onChange)="guardarCambiosMiembro(equipo)">
+                                                [(ngModel)]="equipo.rol">
                                             </p-dropdown>
+                                        </ng-container>
+                                        <ng-template #verRol>
+                                            <span *ngIf="equipo.rol; else sinRol">{{ equipo.rol }}</span>
+                                            <ng-template #sinRol>
+                                                <span class="text-400 font-italic">Sin rol</span>
+                                            </ng-template>
                                         </ng-template>
                                     </td>
                                     <td>
-                                        <p-multiSelect [options]="grupoOptions" [appendTo]="'body'" optionLabel="label"
-                                            optionValue="value" name="grupo_{{equipo.id}}" [(ngModel)]="equipo.grupoIds"
-                                            placeholder="Seleccionar grupos" (onChange)="guardarCambiosMiembro(equipo)">
-                                        </p-multiSelect>
+                                        <ng-container *ngIf="miembroEnEdicion === equipo.id; else verGrupos">
+                                            <p-multiSelect [options]="grupoOptions" [appendTo]="'body'"
+                                                optionLabel="label" optionValue="value" [(ngModel)]="equipo.grupoIds"
+                                                placeholder="Seleccionar grupos">
+                                            </p-multiSelect>
+                                        </ng-container>
+                                        <ng-template #verGrupos>
+                                            <ng-container *ngIf="equipo.grupoIds?.length; else sinGrupos">
+                                                <span *ngFor="let gid of equipo.grupoIds">
+                                                    <ng-container
+                                                        *ngIf="getNombreGrupo(gid) as nombre; else grupoEliminado">
+                                                        {{ nombre }}
+                                                    </ng-container>
+                                                    <ng-template #grupoEliminado>
+                                                        <span class="text-400 font-italic">Grupo eliminado</span>
+                                                    </ng-template>
+                                                </span>
+                                            </ng-container>
+                                            <ng-template #sinGrupos>
+                                                <span class="text-400 font-italic">Sin grupo</span>
+                                            </ng-template>
+                                        </ng-template>
                                     </td>
+
                                     <td class="acciones-celda">
-                                        <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary">
-                                        </button>
-                                        <button pButton icon="pi pi-ellipsis-v"
-                                            class="p-button-text p-button-secondary">
+                                        <ng-container *ngIf="miembroEnEdicion === equipo.id; else botonEditar">
+                                            <button pButton icon="pi pi-check" class="p-button-text p-button-success"
+                                                (click)="guardarCambiosMiembro(equipo); miembroEnEdicion = null">
+                                            </button>
+                                        </ng-container>
+                                        <ng-template #botonEditar>
+                                            <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary"
+                                                (click)="editarMiembro(equipo.id)">
+                                            </button>
+                                        </ng-template>
+                                        <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
+                                            (click)="desactivarMiembro(equipo.id)">
                                         </button>
                                     </td>
                                 </tr>
@@ -119,7 +144,7 @@
 
                     <div class="m-3" [hidden]="tabactivo?.id !== 1">
 
-                        <div class="barra-herramientas" *ngIf="mostrarLista">
+                        <div class="barra-herramientas">
                             <div class="busqueda-filtros">
                                 <span class="p-input-icon-left">
                                     <i class="pi pi-search"></i>
@@ -166,25 +191,57 @@
                                     </td>
                                     <td>{{ grupo.nombre }}</td>
                                     <td class="miembros-cell">
+                                        <ng-container *ngIf="grupoEnEdicion === grupo.id; else verMiembros">
                                             <p-multiSelect [options]="miembrosOptions" optionLabel="nombre"
                                                 optionValue="id" [appendTo]="'body'" [(ngModel)]="grupo.miembrosIds"
-                                                (onPanelHide)="guardarMiembrosAGrupo(grupo)"
                                                 defaultLabel="Añadir miembros">
                                             </p-multiSelect>
+                                        </ng-container>
+                                        <ng-template #verMiembros>
+                                            <ng-container *ngIf="grupo.miembros?.length; else sinMiembros">
+                                                <span *ngFor="let m of grupo.miembros; let last = last">
+                                                    <ng-container *ngIf="m.activo; else miembroDesactivado">
+                                                        {{ m.nombre }}<span *ngIf="!last">, </span>
+                                                    </ng-container>
+                                                    <ng-template #miembroDesactivado>
+                                                        <span class="text-400 font-italic">
+                                                            {{ m.nombre }} desactivado<span *ngIf="!last">, </span>
+                                                        </span>
+                                                    </ng-template>
+                                                </span>
+                                            </ng-container>
+                                            <ng-template #sinMiembros>
+                                                <span class="text-400 font-italic">Sin miembros</span>
+                                            </ng-template>
+                                        </ng-template>
                                     </td>
+
                                     <td class="acciones-celda">
-                                        <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary">
-                                        </button>
-                                        <button pButton icon="pi pi-ellipsis-v" (onClick)="showDialog('top')"
-                                            class="p-button-text p-button-secondary">
+                                        <ng-container *ngIf="grupoEnEdicion === grupo.id; else botonEditarGrupo">
+                                            <button pButton icon="pi pi-check" class="p-button-text p-button-success"
+                                                (click)="guardarMiembrosAGrupo(grupo); grupoEnEdicion = null">
+                                            </button>
+                                        </ng-container>
+                                        <ng-template #botonEditarGrupo>
+                                            <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary"
+                                                (click)="editarGrupo(grupo.id)">
+                                            </button>
+                                        </ng-template>
+                                        <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
+                                            (click)="eliminarGrupo(grupo.id)">
                                         </button>
                                     </td>
                                 </tr>
                             </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="4" class="text-center text-400 font-italic p-4">
+                                        No hay grupos. Agrega uno desde el campo superior.
+                                    </td>
+                                </tr>
+                            </ng-template>
                         </p-table>
-                    </div>
 
-                    <div class="" [hidden]="tabactivo?.id !== 2">
                     </div>
                 </div>
 
@@ -192,10 +249,7 @@
                     <h1 class="titulo-principal">
                         Añadir miembro al equipo para organizar tus proyectos
                     </h1>
-                    <p class="subtitulo">
-                        Asignar miembros a un grupo.
-                    </p>
-
+                    <p class="subtitulo">Asignar miembros a un grupo.</p>
                     <div class="grupo-input">
                         <input pInputText type="text" [(ngModel)]="nuevoMiembro.nombre" placeholder="Nombre del miembro"
                             name="nombreMiembro" />
@@ -212,9 +266,9 @@
     </div>
 </div>
 
-<p-dialog header="Crear nuevo Miembro" [(visible)]="mostrarModalMiembro"  [modal]="true" [style]="{ width: '500px' }"
+<p-dialog header="Crear nuevo Miembro" [(visible)]="mostrarModalMiembro" [modal]="true" [style]="{ width: '500px' }"
     [closable]="true" [draggable]="false" [resizable]="false">
-    
+
 
     <div class="grupo-input p-1">
         <input pInputText type="text" [(ngModel)]="nuevoMiembro.nombre" placeholder="Nombre del miembro"
@@ -224,11 +278,11 @@
     </div>
 
     <ng-template pTemplate="footer">
-        <div class="flex justify-content-end gap-2 " >
+        <div class="flex justify-content-end gap-2 ">
             <button pButton label="Cancelar" class="p-button-text" (click)="mostrarModalMiembro = false">
             </button>
-            <button pButton type="button" label="AÑADIR" class="boton-personalizado" icon="pi pi-user-plus" 
-            [style]="{ width: '100px' }"(click)="guardarMiembro()">
+            <button pButton type="button" label="AÑADIR" class="boton-personalizado" icon="pi pi-user-plus"
+                [style]="{ width: '100px' }" (click)="guardarMiembro()">
             </button>
         </div>
     </ng-template>

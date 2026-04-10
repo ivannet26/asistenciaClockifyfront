@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-// Imports de PrimeNG
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -11,14 +10,10 @@ import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 
-interface Proyecto {
-  id?: number;
-  nombre: string;
-  cliente: string | null;
-  color: string;
-  publico: boolean;
-  plantilla: string;
-}
+import { Proyecto } from '../../model/Proyecto';
+import { ProyectosService } from '../../service/proyectos.service';
+import { ClientesService } from '../../service/clientes.service';
+import { Clientes } from '../../model/Clientes';
 
 @Component({
   selector: 'app-proyectos',
@@ -33,87 +28,101 @@ interface Proyecto {
     TableModule,
     InputTextModule,
     DropdownModule,
-
   ],
   templateUrl: './proyectos.component.html',
   styleUrl: './proyectos.component.css'
 })
-
 export class ProyectosComponent implements OnInit {
 
-  // Controla la visibilidad del modal "Crear nuevo Proyecto"
   mostrarModalProyecto: boolean = false;
-  // Color seleccionado por defecto (Azul Clockify)
-  //selectedColor: string = '#03a9f4';
-
-  /* Paleta de colores para el selector (12 colores estilo Clockify)
-  paletaColores: string[] = [
-    '#ff4081', '#3f51b5', '#03a9f4', '#00bcd4',
-    '#009688', '#4caf50', '#8bc34a', '#cddc39',
-    '#ffeb3b', '#ffc107', '#ff9800', '#ff5722'
-  ];*/
-  clientes: any[] = [];
   proyectos: Proyecto[] = [];
   proyectoSeleccionado: Proyecto | null = null;
-  private STORAGE_PROYECTOS = 'proyectos';
 
-  // Datos para los filtros de usuarios (opcional)
-  usuarios = [
-    { nombre: 'Alejandra', seleccionado: false }
-  ];
+  clientes: Clientes[] = [];
 
-  nuevoProyecto: Proyecto = {
-    nombre: '',
-    cliente: null,
-    color: '#5c6bc0',
-    publico: true,
-    plantilla: 'none'
-  };
+  nuevoProyecto: {
+    nombre: string;
+    cliente: Clientes | null;
+    color: string;
+    publico: boolean;
+  } = {
+      nombre: '',
+      cliente: null,
+      color: '#5c6bc0',
+      publico: true
+    };
 
-  plantillas = [
-    { nombre: 'Sin plantilla', code: 'none' },
-    { nombre: 'Desarrollo Software', code: 'dev' }
-  ];
+  constructor(
+    private proyectosService: ProyectosService, private clientesService: ClientesService) { }
 
-  /* Abre el modal
-  showDialog() {
-    this.visible = true;
+  ngOnInit(): void {
+    this.cargarProyectos();
+    this.cargarClientes();
   }
 
-  // Cambia el color del proyecto y cierra el panel de colores
-  selectColor(color: string, panel: any) {
-    this.selectedColor = color;
-    panel.hide();
-  }*/
-
-  ngOnInit() {
-    try {
-      const data = localStorage.getItem('proyectos');
-      this.proyectos = data ? JSON.parse(data) as Proyecto[] : [];
-    } catch (error) {
-      console.error('Error al leer localStorage', error);
-      this.proyectos = [];
-    }
+  cargarProyectos(): void {
+    this.proyectos = this.proyectosService.getProyectos();
   }
 
-  abrirModalNuevoProyecto() {
+  abrirModalNuevoProyecto(): void {
+    this.cargarClientes();
     this.mostrarModalProyecto = true;
   }
 
-  guardarProyecto() {
+  guardarProyecto(): void {
     if (!this.nuevoProyecto.nombre?.trim()) return;
 
-    const nuevo: Proyecto = {
-      ...this.nuevoProyecto,
-      id: Date.now()
-    };
+    const clienteId = this.nuevoProyecto.cliente?.id ?? 0;
 
-    this.proyectos.push(nuevo);
-    localStorage.setItem(this.STORAGE_PROYECTOS, JSON.stringify(this.proyectos));
+    this.proyectos = this.proyectosService.agregarProyecto(
+      this.nuevoProyecto.nombre,
+      clienteId,
+      this.nuevoProyecto.color,
+      this.nuevoProyecto.publico,
+      0
+    );
 
-    this.proyectoSeleccionado = nuevo;
+    this.proyectoSeleccionado = this.proyectos[this.proyectos.length - 1];
     this.mostrarModalProyecto = false;
-    this.nuevoProyecto = { nombre: '', cliente: null, color: '#5c6bc0', publico: true, plantilla: 'none' };
+    this.resetFormulario();
+  }
+
+  actualizarProyecto(id: number, cambios: Partial<Proyecto>): void {
+    this.proyectos = this.proyectosService.actualizarProyecto(id, cambios);
+  }
+
+  eliminarProyecto(id: number): void {
+    this.proyectos = this.proyectosService.eliminarProyecto(id);
+    if (this.proyectoSeleccionado?.id === id) {
+      this.proyectoSeleccionado = null;
+    }
+  }
+
+  dividirRegistro(proyecto: Proyecto): void {
+    console.log('Establecer como plantilla:', proyecto);
+  }
+
+  duplicarRegistro(proyecto: Proyecto): void {
+    console.log('Archivar:', proyecto);
+  }
+
+  private resetFormulario(): void {
+    this.nuevoProyecto = {
+      nombre: '',
+      cliente: null,
+      color: '#5c6bc0',
+      publico: true
+    };
+  }
+
+  cargarClientes(): void {
+    this.clientes = this.clientesService.getClientes();
+  }
+
+  getNombreCliente(clienteId: number): string {
+    if (!clienteId) return 'Sin cliente';
+    const cliente = this.clientes.find(c => c.id === clienteId);
+    return cliente?.nombre ?? 'Sin cliente';
   }
 
 }
