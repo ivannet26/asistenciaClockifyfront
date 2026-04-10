@@ -26,14 +26,12 @@ import { Registro } from '../../model/Registro';
 })
 export class RastreadorComponent implements OnInit, OnDestroy {
 
-  // Claves de LocalStorage
   private STORAGE_PROYECTOS = 'proyectos';
   private STORAGE_REGISTROS = 'registros';
   private STORAGE_CLIENTES = 'clientes';
-  private STORAGE_ETIQUETAS = 'etiquetas'; // Clave para etiquetas
+  private STORAGE_ETIQUETAS = 'etiquetas';
   private STORAGE_TIMER_ACTIVO = 'timer_activo';
 
-  // UI y Estado
   tareaActual: string = '';
   tiempoTranscurrido: string = '00:00:00';
   esFacturable: boolean = false;
@@ -42,18 +40,18 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   proyectoSeleccionado: Proyecto | null = null;
   mostrarModalProyecto: boolean = false;
 
-  // --- NUEVO ESTADO ETIQUETAS ---
   etiquetasDisponibles: any[] = [];
   etiquetasSeleccionadas: string[] = [];
   busquedaEtiqueta: string = '';
 
-  // Lógica de Tiempo
   intervalo: any = null;
   corriendo: boolean = false;
   inicioTiempo!: Date;
   registros: Registro[] = [];
 
-  // Datos para Nuevo Proyecto
+  // 🔥 NUEVO: agrupados
+  registrosAgrupados: any[] = [];
+
   nuevoProyecto: Proyecto = {
     nombre: '',
     cliente: null,
@@ -74,50 +72,113 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     this.cargarProyectos();
     this.cargarRegistros();
     this.cargarClientes();
-    this.cargarEtiquetas(); // Cargar etiquetas al iniciar
+    this.cargarEtiquetas();
     this.verificarTimerPersistente();
+
+    this.agruparRegistros(); // 🔥
   }
 
   ngOnDestroy() {
-    if (this.intervalo) {
-      clearInterval(this.intervalo);
+    if (this.intervalo) clearInterval(this.intervalo);
+  }
+
+  // =========================
+  // 🔥 AGRUPACIÓN OPTIMIZADA
+  // =========================
+
+  agruparRegistros() {
+    const grupos: any[] = [];
+
+    const hoy = new Date();
+    const ayer = new Date();
+    ayer.setDate(hoy.getDate() - 1);
+
+    const mapa = new Map<string, any>();
+
+    this.registros.forEach(reg => {
+      const fecha = new Date(reg.inicio);
+
+      let clave = '';
+      let label = '';
+
+      if (this.esMismaFecha(fecha, hoy)) {
+        clave = 'hoy';
+        label = 'Hoy';
+      } else if (this.esMismaFecha(fecha, ayer)) {
+        clave = 'ayer';
+        label = 'Ayer';
+      } else {
+        clave = fecha.toDateString();
+        label = fecha.toLocaleDateString('es-PE', {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short'
+        });
+      }
+
+      if (!mapa.has(clave)) {
+        mapa.set(clave, {
+          label,
+          fecha: fecha,
+          registros: [],
+          totalMs: 0
+        });
+      }
+
+      const grupo = mapa.get(clave);
+      grupo.registros.push(reg);
+
+      const duracion =
+        new Date(reg.fin).getTime() - new Date(reg.inicio).getTime();
+
+      grupo.totalMs += duracion;
+    });
+
+    mapa.forEach(g => grupos.push(g));
+
+    this.registrosAgrupados = grupos.sort(
+      (a, b) => b.fecha.getTime() - a.fecha.getTime()
+    );
+  }
+
+  esMismaFecha(f1: Date, f2: Date): boolean {
+    return (
+      f1.getFullYear() === f2.getFullYear() &&
+      f1.getMonth() === f2.getMonth() &&
+      f1.getDate() === f2.getDate()
+    );
+  }
+
+  // =========================
+  // ETIQUETAS
+  // =========================
+
+  cargarEtiquetas() {
+    const data = JSON.parse(localStorage.getItem(this.STORAGE_ETIQUETAS) || '[]');
+    this.etiquetasDisponibles = data;
+  }
+
+  toggleEtiqueta(etiquetaNombre: string) {
+    const index = this.etiquetasSeleccionadas.indexOf(etiquetaNombre);
+    if (index > -1) {
+      this.etiquetasSeleccionadas.splice(index, 1);
+    } else {
+      this.etiquetasSeleccionadas.push(etiquetaNombre);
     }
   }
 
-  // =============================================
-  // LÓGICA DE ETIQUETAS
-  // =============================================
+  get etiquetasFiltradas(): any[] {
+    const busqueda = this.busquedaEtiqueta.toLowerCase().trim();
+    if (!busqueda) return this.etiquetasDisponibles;
 
-  cargarEtiquetas() {
-  // Obtenemos los datos. Si vienen de tu otra pantalla, serán objetos.
-  const data = JSON.parse(localStorage.getItem(this.STORAGE_ETIQUETAS) || '[]');
-  this.etiquetasDisponibles = data; // Ahora esto es un array de objetos [{nombre: 'Ale'}, ...]
-}
-
-toggleEtiqueta(etiquetaNombre: string) {
-  const index = this.etiquetasSeleccionadas.indexOf(etiquetaNombre);
-  if (index > -1) {
-    this.etiquetasSeleccionadas.splice(index, 1);
-  } else {
-    this.etiquetasSeleccionadas.push(etiquetaNombre);
+    return this.etiquetasDisponibles.filter((tag: any) =>
+      tag.nombre.toLowerCase().includes(busqueda)
+    );
   }
-  
-}
-get etiquetasFiltradas(): any[] {
-  const busqueda = this.busquedaEtiqueta.toLowerCase().trim();
-  if (!busqueda) {
-    return this.etiquetasDisponibles;
-  }
-  // Añadimos (tag: any) para que no reclame por la propiedad .nombre
-  return this.etiquetasDisponibles.filter((tag: any) => 
-    tag.nombre.toLowerCase().includes(busqueda)
-  );
-}
 
-
-  // =============================================
-  // LÓGICA DEL CONTADOR (TIMER)
-  // =============================================
+  // =========================
+  // TIMER
+  // =========================
 
   verificarTimerPersistente() {
     const guardado = localStorage.getItem(this.STORAGE_TIMER_ACTIVO);
@@ -128,7 +189,7 @@ get etiquetasFiltradas(): any[] {
       this.tareaActual = data.descripcion;
       this.proyectoSeleccionado = data.proyecto;
       this.esFacturable = data.facturable;
-      this.etiquetasSeleccionadas = data.etiquetas || []; // Recuperar etiquetas
+      this.etiquetasSeleccionadas = data.etiquetas || [];
 
       this.iniciarIntervalo();
     }
@@ -144,7 +205,7 @@ get etiquetasFiltradas(): any[] {
 
   iniciarIntervalo() {
     if (this.intervalo) clearInterval(this.intervalo);
-    this.actualizarReloj(); 
+    this.actualizarReloj();
     this.intervalo = setInterval(() => {
       this.actualizarReloj();
     }, 500);
@@ -152,7 +213,6 @@ get etiquetasFiltradas(): any[] {
 
   toggleTimer() {
     if (!this.corriendo) {
-      // --- INICIAR ---
       this.corriendo = true;
       this.inicioTiempo = new Date();
 
@@ -161,18 +221,18 @@ get etiquetasFiltradas(): any[] {
         descripcion: this.tareaActual,
         proyecto: this.proyectoSeleccionado,
         facturable: this.esFacturable,
-        etiquetas: this.etiquetasSeleccionadas // Guardar etiquetas activas
+        etiquetas: this.etiquetasSeleccionadas
       }));
 
       this.iniciarIntervalo();
     } else {
-      // --- DETENER ---
       this.corriendo = false;
+
       if (this.intervalo) {
         clearInterval(this.intervalo);
         this.intervalo = null;
       }
-      
+
       const finTiempo = new Date();
       const diffMs = finTiempo.getTime() - this.inicioTiempo.getTime();
 
@@ -183,25 +243,25 @@ get etiquetasFiltradas(): any[] {
         fin: finTiempo,
         duracion: this.formatearTiempo(diffMs),
         facturable: this.esFacturable,
-        etiquetas: [...this.etiquetasSeleccionadas] // Guardar copia de etiquetas en el historial
+        etiquetas: [...this.etiquetasSeleccionadas]
       };
 
       this.registros.unshift(nuevoRegistro);
       this.actualizarRegistrosStorage();
-      
+      this.agruparRegistros(); // 🔥 CLAVE
+
       localStorage.removeItem(this.STORAGE_TIMER_ACTIVO);
 
-      // Reset Interfaz
       this.tiempoTranscurrido = '00:00:00';
       this.tareaActual = '';
       this.proyectoSeleccionado = null;
-      this.etiquetasSeleccionadas = []; // Limpiar selección
+      this.etiquetasSeleccionadas = [];
     }
   }
 
-  // =============================================
-  // GESTIÓN DE DATOS (STORAGE)
-  // =============================================
+  // =========================
+  // STORAGE
+  // =========================
 
   cargarClientes() {
     const data = JSON.parse(localStorage.getItem(this.STORAGE_CLIENTES) || '[]');
@@ -219,7 +279,7 @@ get etiquetasFiltradas(): any[] {
       ...r,
       inicio: new Date(r.inicio),
       fin: new Date(r.fin),
-      etiquetas: r.etiquetas || [] // Asegurar que existan las etiquetas
+      etiquetas: r.etiquetas || []
     }));
   }
 
@@ -234,12 +294,11 @@ get etiquetasFiltradas(): any[] {
     localStorage.setItem(this.STORAGE_PROYECTOS, JSON.stringify(this.proyectos));
     this.proyectoSeleccionado = nuevo;
     this.mostrarModalProyecto = false;
-    this.nuevoProyecto = { nombre: '', cliente: null, color: '#2196F3', publico: true, plantilla: 'none' };
   }
 
-  // =============================================
-  // UTILIDADES Y UI
-  // =============================================
+  // =========================
+  // UTILIDADES
+  // =========================
 
   formatearTiempo(ms: number): string {
     const totalS = Math.floor(ms / 1000);
@@ -263,14 +322,14 @@ get etiquetasFiltradas(): any[] {
     this.mostrarModalProyecto = true;
   }
 
-  alternarFacturable() { 
-    this.esFacturable = !this.esFacturable; 
+  alternarFacturable() {
+    this.esFacturable = !this.esFacturable;
   }
 
   repetirTarea(r: any) {
     this.tareaActual = r.descripcion;
     this.proyectoSeleccionado = r.proyecto;
-    this.etiquetasSeleccionadas = [...(r.etiquetas || [])]; // Copiar etiquetas al repetir
+    this.etiquetasSeleccionadas = [...(r.etiquetas || [])];
     if (!this.corriendo) this.toggleTimer();
   }
 
@@ -279,10 +338,9 @@ get etiquetasFiltradas(): any[] {
     const msTotal = this.registros
       .filter(r => new Date(r.inicio).toDateString() === hoy)
       .reduce((acc, r) => {
-        const dFin = new Date(r.fin).getTime();
-        const dIni = new Date(r.inicio).getTime();
-        return acc + (dFin - dIni);
+        return acc + (new Date(r.fin).getTime() - new Date(r.inicio).getTime());
       }, 0);
+
     return this.formatearTiempo(msTotal);
   }
 }

@@ -392,3 +392,86 @@
     justify-content: space-between;
   }
 }
+/* --- CONTENEDOR DE ETIQUETAS EN LA BARRA (TRACKER) --- */
+.tags-pill-container {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    max-width: 250px;
+    overflow-x: auto;
+    padding: 2px 0;
+}
+
+/* Estilo para las etiquetas activas (Color azulado como Imagen 3) */
+.tag-badge {
+    background-color: #e3f2fd; /* Fondo azul muy claro */
+    color: #1976d2;            /* Texto azul fuerte */
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid #bbdefb;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+}
+
+/* --- ETIQUETAS EN LA LISTA DE ABAJO (HISTORIAL) --- */
+.registro-tags-display {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    min-width: 100px;
+    justify-content: flex-start;
+    margin: 0 10px;
+}
+
+/* Estilo más discreto para el historial  */
+.tag-badge-small {
+    background-color: #f8fafc;
+    color: #64748b;
+    padding: 1px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    border: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+/* --- ESTADOS Y COLORES --- */
+.icono-activo {
+    color: #2196f3 !important; /* Azul Prime */
+}
+
+.icono-suave {
+    color: #94a3b8; /* Gris para cuando no hay etiquetas */
+}
+
+/* --- PANEL DESPLEGABLE (OVERLAY) --- */
+.lista-etiquetas-scroll {
+    margin-top: 8px;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* Personalización del scrollbar para que se vea fino */
+.lista-etiquetas-scroll::-webkit-scrollbar {
+    width: 5px;
+}
+
+.lista-etiquetas-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+/* Ajuste de los items del filtro */
+.lista-etiquetas-scroll .flex {
+    transition: background 0.2s;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Espaciado para el input de búsqueda dentro del overlay */
+.p-input-icon-left > i {
+    color: #94a3b8;
+}
