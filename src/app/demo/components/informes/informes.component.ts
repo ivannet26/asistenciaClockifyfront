@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
-// PrimeNG
 import { TabMenuModule } from "primeng/tabmenu";
 import { DropdownModule } from "primeng/dropdown";
 import { CalendarModule } from "primeng/calendar";
@@ -33,7 +32,8 @@ export class InformesComponent implements OnInit {
   @ViewChild('op') op!: OverlayPanel;
 
   // --- UI ---
-  tabactivo!: MenuItem;
+  tabactivot!: MenuItem;
+  tabactivoe!: MenuItem;
   filtroEtiqueta: string = '';
   registroSeleccionado: any = null;
   tipoInformeSeleccionado: string = '1';
@@ -56,22 +56,30 @@ export class InformesComponent implements OnInit {
   totalesPorDiaSemana: string[] = [];
   etiquetasDias: string[] = [];
 
-  tabs: MenuItem[] = [
+  tabsT: MenuItem[] = [
     { label: 'Resumido', id: '0' },
     { label: 'Detallado', id: '1' },
     { label: 'Semanal', id: '2' },
     { label: 'Compartido', id: '3' }
   ];
 
-  opcionesInformes = [
-    { label: 'INFORME DE TIEMPO', value: '1' },
-    { label: 'INFORME DE EQUIPO', value: '2' },
-    { label: 'INFORME DE GASTOS', value: '3' }
+  tabsE: MenuItem[] = [
+    { label: 'Asistencia', id: '0' },
+    { label: 'Asignación', id: '1' }
   ];
 
+  opcionesInformes = [
+    { label: 'INFORME DE TIEMPO', value: 1 },
+    { label: 'INFORME DE EQUIPO', value: 2 }
+  ];
+
+  opcionSeleccionada: number = 1;
+
   constructor(private route: ActivatedRoute) {
-    this.tabactivo = this.tabs[0];
+    this.tabactivot = this.tabsT[0];
+    this.tabactivoe = this.tabsE[0];
   }
+
 
   ngOnInit() {
     this.configurarGraficos();
@@ -80,11 +88,27 @@ export class InformesComponent implements OnInit {
     this.seleccionarOpcion('estaSemana');
 
     this.route.queryParams.subscribe(params => {
-      const tabId = params['tab'];
-      if (tabId !== undefined) {
-        const encontrado = this.tabs.find(t => t.id === tabId.toString());
-        if (encontrado) this.tabactivo = encontrado;
+
+      const tipo = params['tipo'];
+      const tab = params['tab']?.toString();
+
+      if (tipo === 'tiempo') {
+        this.opcionSeleccionada = 1;
+
+        if (tab !== undefined) {
+          const encontrado = this.tabsT.find(t => t.id === tab);
+          if (encontrado) this.tabactivot = encontrado;
+        }
+
+      } else if (tipo === 'equipo') {
+        this.opcionSeleccionada = 2;
+
+        if (tab !== undefined) {
+          const encontrado = this.tabsE.find(t => t.id === tab);
+          if (encontrado) this.tabactivoe = encontrado;
+        }
       }
+
     });
   }
 
@@ -127,10 +151,10 @@ export class InformesComponent implements OnInit {
     if (this.rangoFechas && this.rangoFechas[0]) {
       const inicio = new Date(this.rangoFechas[0]);
       const fin = this.rangoFechas[1] ? new Date(this.rangoFechas[1]) : new Date(inicio);
-      
+
       const opciones: any = { day: '2-digit', month: '2-digit', year: 'numeric' };
       this.textoRango = `${inicio.toLocaleDateString('es-ES', opciones)} - ${fin.toLocaleDateString('es-ES', opciones)}`;
-      
+
       this.cargarTodoDesdeStorage(inicio, fin);
     }
   }
@@ -242,7 +266,8 @@ export class InformesComponent implements OnInit {
     return this.etiquetasDisponibles.filter(t => t.toLowerCase().includes(this.filtroEtiqueta.toLowerCase()));
   }
 
-  CambioTab(event: any) { this.tabactivo = event; }
+  CambioTabT(event: any) { this.tabactivot = event; }
+  CambioTabE(event: any) { this.tabactivoe = event; }
   abrirMenu(panel: any, event: Event, r: any) { this.registroSeleccionado = r; panel.toggle(event); }
   duplicarSeleccionado(p: any) { p.hide(); }
   eliminarSeleccionado(p: any) { p.hide(); }

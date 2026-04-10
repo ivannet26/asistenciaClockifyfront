@@ -33,17 +33,17 @@ export class AppMenuLayoutComponent implements OnInit {
                             {
                                 label: 'TIEMPO',
                                 items: [
-                                    { label: 'Resumido', icon: 'pi pi-fw pi-align-left', routerLink: ['/menu-layout/informes'], queryParams: { tab: '0' } },
-                                    { label: 'Detallado', icon: 'pi pi-fw pi-list', routerLink: ['/menu-layout/informes'], queryParams: { tab: '1' } },
-                                    { label: 'Semanal', icon: 'pi pi-fw pi-calendar-minus', routerLink: ['/menu-layout/informes'], queryParams: { tab: '2' } },
-                                    { label: 'Compartido', icon: 'pi pi-fw pi-share-alt', routerLink: ['/menu-layout/informes'], queryParams: { tab: '3' } }
+                                    { label: 'Resumido', icon: 'pi pi-fw pi-align-left', routerLink: ['/menu-layout/informes'], queryParams: { tipo:'tiempo', tab: '0' } },
+                                    { label: 'Detallado', icon: 'pi pi-fw pi-list', routerLink: ['/menu-layout/informes'], queryParams: { tipo:'tiempo' , tab: '1' } },
+                                    { label: 'Semanal', icon: 'pi pi-fw pi-calendar-minus', routerLink: ['/menu-layout/informes'], queryParams: { tipo:'tiempo' , tab: '2' } },
+                                    { label: 'Compartido', icon: 'pi pi-fw pi-share-alt', routerLink: ['/menu-layout/informes'], queryParams: { tipo:'tiempo' ,tab: '3' } }
                                 ]
                             },
                             {
                                 label: 'EQUIPO',
                                 items: [
-                                    { label: 'Asistencia', icon: 'pi pi-fw pi-users', routerLink: ['/menu-layout/informes'], queryParams: { tab: '4' } },
-                                    { label: 'Asignaciones', icon: 'pi pi-fw pi-user-plus', routerLink: ['/menu-layout/informes'], queryParams: { tab: '5' } }
+                                    { label: 'Asistencia', icon: 'pi pi-fw pi-users', routerLink: ['/menu-layout/informes'], queryParams: { tipo:'equipo' , tab: '0' } },
+                                    { label: 'Asignaciones', icon: 'pi pi-fw pi-user-plus', routerLink: ['/menu-layout/informes'], queryParams: { tipo:'equipo' , tab: '1' } }
                                 ]
                             }
                         ]
