@@ -27,7 +27,18 @@
             </div>
 
             <div class="acciones-seccion">
-                <button pButton icon="pi pi-tag" class="p-button-text"></button>
+                <div class="flex align-items-center gap-2">
+                    <button pButton icon="pi pi-tag" class="p-button-text" 
+                            [ngClass]="{'icono-activo': etiquetasSeleccionadas.length > 0}"
+                            (click)="panelEtiquetas.toggle($event)">
+                    </button>
+                    
+                    <div class="tags-pill-container" *ngIf="etiquetasSeleccionadas.length > 0">
+                        <span *ngFor="let tag of etiquetasSeleccionadas" class="tag-badge">
+                            {{ tag }}
+                        </span>
+                    </div>
+                </div>
 
                 <div class="divisor-vertical"></div>
                 
@@ -76,7 +87,12 @@
                         {{ r.proyecto?.nombre || 'Sin proyecto' }}
                     </span>
 
-                    <i class="pi pi-tag icono-suave"></i>
+                    <div class="registro-tags-display">
+                        <span *ngFor="let tag of r.etiquetas" class="tag-badge-small">
+                            {{ tag }}
+                        </span>
+                        <i *ngIf="!r.etiquetas || r.etiquetas.length === 0" class="pi pi-tag icono-suave"></i>
+                    </div>
 
                     <i class="pi pi-dollar" [ngClass]="r.facturable ? 'icono-activo' : 'icono-inactivo'"></i>
 
@@ -90,7 +106,7 @@
                 </div>
 
                 <div class="registro-derecha">
-                    <button pButton icon="pi pi-play" class="p-button-text"></button>
+                    <button pButton icon="pi pi-play" class="p-button-text" (click)="repetirTarea(r)"></button>
                     <button pButton icon="pi pi-ellipsis-v" class="p-button-text"></button>
                 </div>
 
@@ -127,6 +143,31 @@
         <button pButton label="Crear nuevo Proyecto" icon="pi pi-plus-circle" class="p-button-text p-button-info w-full"
             (click)="panelProyectos.hide(); abrirModalNuevoProyecto()">
         </button>
+    </div>
+</p-overlayPanel>
+
+<p-overlayPanel #panelEtiquetas [style]="{ width: '250px' }">
+    <div class="flex flex-column gap-2">
+        <span class="p-input-icon-left w-full">
+            <i class="pi pi-search"></i>
+            <input type="text" pInputText placeholder="Añadir/Buscar etiquetas" 
+                   [(ngModel)]="busquedaEtiqueta" class="w-full p-inputtext-sm" />
+        </span>
+
+        <div class="lista-etiquetas-scroll" style="max-height: 200px; overflow-y: auto;">
+            <div *ngFor="let tag of etiquetasDisponibles" class="flex align-items-center p-2 hover:bg-100 border-round">
+                <p-checkbox [binary]="true" 
+                            [ngModel]="etiquetasSeleccionadas.includes(tag.nombre)"
+                            (onChange)="toggleEtiqueta(tag.nombre)">
+                </p-checkbox>
+                <label class="ml-2 cursor-pointer w-full" (click)="toggleEtiqueta(tag.nombre)">
+                    {{ tag.nombre }} 
+                </label>
+            </div>
+        </div>
+        
+        <button pButton label="Crear nueva etiqueta" icon="pi pi-plus" 
+                class="p-button-text p-button-sm w-full p-button-info"></button>
     </div>
 </p-overlayPanel>
 
@@ -181,11 +222,11 @@
 
 <p-overlayPanel #menuModos [style]="{ width: '220px' }">
     <div class="flex flex-column">
-        <div class="p-2 hover:bg-100 cursor-pointer flex align-items-center gap-2">
+        <div class="p-2 hover:bg-100 cursor-pointer flex align-items-center gap-2 border-round">
             <i class="pi pi-clock"></i>
             <span>Modo temporizador</span>
         </div>
-        <div class="p-2 hover:bg-100 cursor-pointer flex align-items-center gap-2">
+        <div class="p-2 hover:bg-100 cursor-pointer flex align-items-center gap-2 border-round">
             <i class="pi pi-pencil"></i>
             <span>Modo manual</span>
         </div>

@@ -6,4 +6,5 @@ export interface Registro {
     fin: Date;
     duracion: string;
     facturable: boolean;
+    etiquetas?: string[];
 }

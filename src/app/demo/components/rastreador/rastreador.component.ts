@@ -30,6 +30,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   private STORAGE_PROYECTOS = 'proyectos';
   private STORAGE_REGISTROS = 'registros';
   private STORAGE_CLIENTES = 'clientes';
+  private STORAGE_ETIQUETAS = 'etiquetas'; // Clave para etiquetas
   private STORAGE_TIMER_ACTIVO = 'timer_activo';
 
   // UI y Estado
@@ -40,6 +41,11 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   proyectos: Proyecto[] = [];
   proyectoSeleccionado: Proyecto | null = null;
   mostrarModalProyecto: boolean = false;
+
+  // --- NUEVO ESTADO ETIQUETAS ---
+  etiquetasDisponibles: string[] = [];
+  etiquetasSeleccionadas: string[] = [];
+  busquedaEtiqueta: string = '';
 
   // Lógica de Tiempo
   intervalo: any = null;
@@ -68,19 +74,37 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     this.cargarProyectos();
     this.cargarRegistros();
     this.cargarClientes();
-    // Recuperar el timer si quedó activo al navegar o refrescar
+    this.cargarEtiquetas(); // Cargar etiquetas al iniciar
     this.verificarTimerPersistente();
   }
 
   ngOnDestroy() {
-    // Evita fugas de memoria y procesos en segundo plano innecesarios
     if (this.intervalo) {
       clearInterval(this.intervalo);
     }
   }
 
   // =============================================
-  // LÓGICA DEL CONTADOR (TIMER) SIN RETRASO
+  // LÓGICA DE ETIQUETAS
+  // =============================================
+
+  cargarEtiquetas() {
+  // Obtenemos los datos. Si vienen de tu otra pantalla, serán objetos.
+  const data = JSON.parse(localStorage.getItem(this.STORAGE_ETIQUETAS) || '[]');
+  this.etiquetasDisponibles = data; // Ahora esto es un array de objetos [{nombre: 'Ale'}, ...]
+}
+
+toggleEtiqueta(etiquetaNombre: string) {
+  const index = this.etiquetasSeleccionadas.indexOf(etiquetaNombre);
+  if (index > -1) {
+    this.etiquetasSeleccionadas.splice(index, 1);
+  } else {
+    this.etiquetasSeleccionadas.push(etiquetaNombre);
+  }
+}
+
+  // =============================================
+  // LÓGICA DEL CONTADOR (TIMER)
   // =============================================
 
   verificarTimerPersistente() {
@@ -92,6 +116,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
       this.tareaActual = data.descripcion;
       this.proyectoSeleccionado = data.proyecto;
       this.esFacturable = data.facturable;
+      this.etiquetasSeleccionadas = data.etiquetas || []; // Recuperar etiquetas
 
       this.iniciarIntervalo();
     }
@@ -107,11 +132,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
 
   iniciarIntervalo() {
     if (this.intervalo) clearInterval(this.intervalo);
-    
-    // Ejecutamos una vez inmediatamente para eliminar el retraso de 1s
     this.actualizarReloj(); 
-
-    // Usamos 500ms para que el segundero se sienta más fluido al navegar
     this.intervalo = setInterval(() => {
       this.actualizarReloj();
     }, 500);
@@ -127,7 +148,8 @@ export class RastreadorComponent implements OnInit, OnDestroy {
         inicio: this.inicioTiempo,
         descripcion: this.tareaActual,
         proyecto: this.proyectoSeleccionado,
-        facturable: this.esFacturable
+        facturable: this.esFacturable,
+        etiquetas: this.etiquetasSeleccionadas // Guardar etiquetas activas
       }));
 
       this.iniciarIntervalo();
@@ -149,7 +171,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
         fin: finTiempo,
         duracion: this.formatearTiempo(diffMs),
         facturable: this.esFacturable,
-        
+        etiquetas: [...this.etiquetasSeleccionadas] // Guardar copia de etiquetas en el historial
       };
 
       this.registros.unshift(nuevoRegistro);
@@ -161,6 +183,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
       this.tiempoTranscurrido = '00:00:00';
       this.tareaActual = '';
       this.proyectoSeleccionado = null;
+      this.etiquetasSeleccionadas = []; // Limpiar selección
     }
   }
 
@@ -183,7 +206,8 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     this.registros = data.map((r: any) => ({
       ...r,
       inicio: new Date(r.inicio),
-      fin: new Date(r.fin)
+      fin: new Date(r.fin),
+      etiquetas: r.etiquetas || [] // Asegurar que existan las etiquetas
     }));
   }
 
@@ -234,6 +258,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   repetirTarea(r: any) {
     this.tareaActual = r.descripcion;
     this.proyectoSeleccionado = r.proyecto;
+    this.etiquetasSeleccionadas = [...(r.etiquetas || [])]; // Copiar etiquetas al repetir
     if (!this.corriendo) this.toggleTimer();
   }
 
