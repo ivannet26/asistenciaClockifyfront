@@ -62,13 +62,13 @@
 
 .input-tarea {
   width: 100%;
+  max-width: 380px; /*clave */
   border: none !important;
   font-size: 1.1rem;
   box-shadow: none !important;
   outline: none;
   background: transparent;
 }
-
 .proyecto-seccion {
   display: flex;
   align-items: center;
@@ -154,7 +154,8 @@
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  padding: 15px 20px;
+  padding: 0;
+  overflow: hidden;
 }
 
 .cabecera-tiempo {
@@ -166,9 +167,7 @@
 }
 
 .registro-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  
   padding: 12px 10px;
   border-bottom: 1px solid #e5e7eb;
 }
@@ -474,4 +473,26 @@
 /* Espaciado para el input de búsqueda dentro del overlay */
 .p-input-icon-left > i {
     color: #94a3b8;
+}
+.cabecera-tiempo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f2f6f8; 
+    
+    /* El espacio de los textos lo damos aquí adentro */
+    padding: 12px 20px; 
+    
+    /* Ocupa el 100% del ancho disponible */
+    width: 100%; 
+    box-sizing: border-box;
+    
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }

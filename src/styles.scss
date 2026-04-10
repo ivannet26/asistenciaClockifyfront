@@ -72,7 +72,22 @@ $gutter: 1rem; //for primeflex grid system
 .p-dialog {
     z-index: 10000 !important;
 }
+.layout-wrapper {
+    height: 100vh;
+    overflow: hidden; /* <--- Esto evita que la página entera ruede */
+}
 
+.layout-main-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; 
+    overflow: hidden; /* <--- El contenedor principal tampoco debe rodar */
+}
+
+.layout-main {
+    flex: 1;
+    overflow-y: auto; /* <--- SOLO aquí adentro (donde está tu rastreador) se permite scroll */
+}
 
 @media (max-width: 992px) {
     .layout-wrapper .layout-main-container {

@@ -41,11 +41,9 @@
                     </div>
                 </div>
 
-                <div class="divisor-vertical"></div>
+                
 
-                <button pButton class="p-button-text boton-dolar" (click)="alternarFacturable()">
-                    <i class="pi pi-dollar" [ngClass]="esFacturable ? 'icono-activo' : 'icono-inactivo'"></i>
-                </button>
+                
 
                 <div class="divisor-vertical"></div>
 
@@ -68,7 +66,7 @@
 
     <div style="height: 20px;"></div>
 
-    <!-- 🔥 LISTA AGRUPADA -->
+    <!-- LISTA AGRUPADA -->
     <div *ngIf="registros.length > 0" class="contenedor-lista">
 
         <div *ngFor="let grupo of registrosAgrupados">
@@ -103,8 +101,7 @@
                                 class="pi pi-tag icono-suave"></i>
                         </div>
 
-                        <i class="pi pi-dollar"
-                            [ngClass]="r.facturable ? 'icono-activo' : 'icono-inactivo'"></i>
+                        
 
                         <span class="hora-rango">
                             {{ formatearHora(r.inicio) }} - {{ formatearHora(r.fin) }}
