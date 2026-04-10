@@ -170,8 +170,6 @@
     gap: 8px;
 }
 
-
-
 /* agregado para responsividad */
 @media (max-width: 430px) {
     .contenedor-filtros span {

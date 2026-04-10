@@ -1,6 +1,7 @@
 .layout-topbar {
     position: fixed;
     height: 5rem;
+    z-index: 0;
     left: 0;
     top: 0;
     width: 100%;
@@ -85,7 +86,11 @@
     }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 990px) {
+    .layout-topbar{
+        z-index: 10;
+    }
+
     .layout-topbar {
         justify-content: space-between;
 

@@ -8,6 +8,10 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 
+import { ClientesService } from '../../service/clientes.service';
+import { Clientes } from '../../model/Clientes';
+import { Monedas } from '../../model/Monedas';
+
 @Component({
   selector: 'app-clientes',
   standalone: true,
@@ -24,90 +28,75 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './clientes.component.html',
   styleUrls: ['./clientes.component.css']
 })
+
 export class ClientesComponent implements OnInit {
-  
-  // --- VARIABLES DE ESTADO ---
-  clientes: any[] = [];
-  clientesFiltrados: any[] = [];
-  mostrarLista: boolean = false;
-  
-  // --- VARIABLES DE MODELO ---
+
+  clientes: Clientes[] = [];
+  clientesFiltrados: Clientes[] = [];
   nuevoClienteNombre: string = '';
+  monedas = Monedas;
   textoBusqueda: string = '';
-  
-  // --- CONFIGURACIÓN ---
   opcionesFiltro = [
-    { label: 'Mostrar activo', value: 'activo' },
+    { label: 'Mostrar activos', value: 'activo' },
     { label: 'Mostrar inactivos', value: 'inactivo' }
   ];
   filtroSeleccionado: string = 'activo';
+  clienteEnEdicion: Clientes | null = null;
+
+  constructor(private clientesService: ClientesService) { }
+
+  get mostrarLista(): boolean {
+    return this.clientes.length > 0;
+  }
 
   ngOnInit() {
-    this.cargarDesdeStorage();
+
+    this.clientes = this.clientesService.getClientes();
+    this.clientesFiltrados = [...this.clientes];
+
   }
 
-  // Cargar datos al iniciar
-  cargarDesdeStorage() {
-    const data = localStorage.getItem('clientes');
-    if (data) {
-      this.clientes = JSON.parse(data);
-      this.clientesFiltrados = [...this.clientes];
-      // Si hay clientes, mostramos la tabla directamente
-      this.mostrarLista = this.clientes.length > 0;
-    }
-  }
-
-  // Función principal para añadir
   agregarCliente() {
     if (!this.nuevoClienteNombre.trim()) return;
-
-    const nuevo = {
-      id: Date.now(), // Generamos un ID único
-      nombre: this.nuevoClienteNombre,
-      direccion: 'Lima', // Valor por defecto
-      moneda: 'USD'
-    };
-
-    // Agregamos al arreglo principal
-    this.clientes.push(nuevo);
-    
-    // Guardamos y actualizamos vista
-    this.guardarYRefrescar();
-    
-    // Limpiar input y asegurar que se vea la tabla
+    this.clientes = this.clientesService.agregarCliente(this.nuevoClienteNombre);
+    this.clientesFiltrados = [...this.clientes];
     this.nuevoClienteNombre = '';
-    this.mostrarLista = true;
   }
 
-  // Función para borrar clientes
+  actualizarCliente(id: number, cambios: Partial<Clientes>) {
+    this.clientes = this.clientesService.actualizarCliente(id, cambios);
+    this.clientesFiltrados = [...this.clientes];
+  }
+
   eliminarCliente(id: number) {
-    this.clientes = this.clientes.filter(c => c.id !== id);
-    this.guardarYRefrescar();
-    
-    // Si borramos todos, volvemos al estado vacío
-    if (this.clientes.length === 0) {
-      this.mostrarLista = false;
-    }
+    this.clientes = this.clientesService.eliminarCliente(id);
+    this.clientesFiltrados = [...this.clientes];
   }
 
-  // Lógica de búsqueda reactiva
   filtrarClientes() {
-    if (!this.textoBusqueda.trim()) {
-      this.clientesFiltrados = [...this.clientes];
-    } else {
-      this.clientesFiltrados = this.clientes.filter(c => 
-        c.nombre.toLowerCase().includes(this.textoBusqueda.toLowerCase())
-      );
-    }
+    this.clientesFiltrados = this.clientes.filter(c => {
+      const coincideNombre = !this.textoBusqueda.trim() ||
+        c.nombre.toLowerCase().includes(this.textoBusqueda.toLowerCase());
+      return coincideNombre;
+    });
   }
 
-  private guardarYRefrescar() {
-    localStorage.setItem('clientes', JSON.stringify(this.clientes));
-    this.filtrarClientes();
+  editarCliente(cliente: Clientes) {
+    this.clienteEnEdicion = { ...cliente };
   }
 
-  // Este método reemplaza a tu antiguo mostrarTabla()
-  mostrarTabla() {
-    this.agregarCliente();
+  guardarEdicion() {
+    if (!this.clienteEnEdicion) return;
+    this.actualizarCliente(this.clienteEnEdicion.id, {
+      nombre: this.clienteEnEdicion.nombre,
+      direccion: this.clienteEnEdicion.direccion,
+      moneda: this.clienteEnEdicion.moneda
+    });
+    this.clienteEnEdicion = null;
   }
+
+  cancelarEdicion() {
+    this.clienteEnEdicion = null;
+  }
+
 }

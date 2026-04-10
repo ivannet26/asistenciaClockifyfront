@@ -3,77 +3,48 @@
     <h2 class="titulo-seccion">Etiquetas</h2>
 
     <div class="etiquetas-contenido">
-      
+
       <div class="barra-herramientas" *ngIf="mostrarLista">
         <div class="busqueda-filtros">
-          <p-dropdown 
-            [options]="opcionesFiltro" 
-            [(ngModel)]="filtroSeleccionado" 
-            placeholder="Mostrar activo">
+          <p-dropdown [options]="opcionesFiltro" [(ngModel)]="filtroSeleccionado" placeholder="Mostrar activo">
           </p-dropdown>
 
           <span class="p-input-icon-left">
             <i class="pi pi-search"></i>
-            <input 
-              type="text" 
-              pInputText 
-              [(ngModel)]="textoBusqueda" 
-              (input)="filtrarEtiquetas()"
-              placeholder="Buscar por nombre" 
-              class="input-busqueda" />
+            <input type="text" pInputText [(ngModel)]="textoBusqueda" (input)="filtrarEtiquetas()"
+              placeholder="Buscar por nombre" class="input-busqueda" />
           </span>
         </div>
 
         <div class="grupo-input-compacto">
-          <input 
-            type="text" 
-            pInputText 
-            [(ngModel)]="nuevaEtiquetaNombre" 
-            placeholder="Añadir nueva etiqueta"
-            class="input-personalizado" 
-            (keyup.enter)="agregarEtiqueta()" />
-          <button 
-            pButton 
-            type="button" 
-            label="Añadir" 
-            class="boton-personalizado" 
-            (click)="agregarEtiqueta()">
+          <input type="text" pInputText [(ngModel)]="nuevaEtiquetaNombre" placeholder="Añadir nueva etiqueta"
+            class="input-personalizado" (keyup.enter)="agregarEtiqueta()" />
+          <button pButton type="button" label="Añadir" class="boton-personalizado" (click)="agregarEtiqueta()">
           </button>
         </div>
       </div>
 
       <p-card styleClass="card-tabla-estandar">
-        
+
+        <!-- Estado vacío -->
         <div class="contenedor-vacio" *ngIf="!mostrarLista">
           <h1 class="titulo-principal">Organiza tus entradas con etiquetas</h1>
           <p class="subtitulo">
-            Usa etiquetas para añadir información adicional a las entradas de tiempo y obtener más información sobre los datos con informes.
+            Usa etiquetas para añadir información adicional a las entradas de tiempo y obtener más información sobre los
+            datos con informes.
           </p>
           <div class="grupo-input">
-            <input 
-              type="text" 
-              pInputText 
-              [(ngModel)]="nuevaEtiquetaNombre" 
-              placeholder="Añadir nueva etiqueta"
-              class="input-personalizado" 
-              (keyup.enter)="agregarEtiqueta()" />
-            <button 
-              pButton 
-              type="button" 
-              label="AÑADIR" 
-              class="boton-personalizado" 
-              (click)="agregarEtiqueta()">
+            <input type="text" pInputText [(ngModel)]="nuevaEtiquetaNombre" placeholder="Añadir nueva etiqueta"
+              class="input-personalizado" (keyup.enter)="agregarEtiqueta()" />
+            <button pButton type="button" label="AÑADIR" class="boton-personalizado" (click)="agregarEtiqueta()">
             </button>
           </div>
         </div>
 
+        <!-- Tabla con lista -->
         <div class="contenedor-tabla" *ngIf="mostrarLista">
-          <p-table 
-            [value]="etiquetasFiltradas" 
-            [scrollable]="true" 
-            scrollHeight="450px" 
-            class="tabla-personalizada">
-            
+          <p-table [value]="etiquetasFiltrados" [scrollable]="true" scrollHeight="450px" class="tabla-personalizada">
+
             <ng-template pTemplate="header">
               <tr class="cabecera-gris">
                 <th style="width: 4rem">
@@ -89,22 +60,44 @@
                 <td style="width: 4rem">
                   <p-checkbox [binary]="true"></p-checkbox>
                 </td>
-                <td class="font-bold">{{ etiqueta.nombre }}</td>
+
+                <!-- Modo visualización -->
+                <td class="font-bold" *ngIf="etiquetaEnEdicion?.id !== etiqueta.id">
+                  {{ etiqueta.nombre }}
+                </td>
+
+                <!-- Modo edición inline -->
+                <td *ngIf="etiquetaEnEdicion?.id === etiqueta.id">
+                  <input type="text" pInputText [(ngModel)]="etiquetaEnEdicion!.nombre" (keyup.enter)="guardarEdicion()"
+                    (keyup.escape)="cancelarEdicion()" class="input-personalizado" />
+                </td>
+
                 <td style="width: 10rem" class="acciones-celda text-right">
-                  <button 
-                    pButton 
-                    icon="pi pi-pencil" 
-                    class="p-button-text p-button-secondary">
-                  </button>
-                  <button 
-                    pButton 
-                    icon="pi pi-trash" 
-                    (click)="eliminarEtiqueta(etiqueta.id)"
-                    class="p-button-text p-button-danger">
-                  </button>
+
+                  <!-- Acciones en modo visualización -->
+                  <ng-container *ngIf="etiquetaEnEdicion?.id !== etiqueta.id">
+                    <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary"
+                      (click)="editarEtiqueta(etiqueta)">
+                    </button>
+                    <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
+                      (click)="eliminarEtiqueta(etiqueta.id)">
+                    </button>
+                  </ng-container>
+
+                  <!-- Acciones en modo edición -->
+                  <ng-container *ngIf="etiquetaEnEdicion?.id === etiqueta.id">
+                    <button pButton icon="pi pi-check" class="p-button-text p-button-success"
+                      (click)="guardarEdicion()">
+                    </button>
+                    <button pButton icon="pi pi-times" class="p-button-text p-button-secondary"
+                      (click)="cancelarEdicion()">
+                    </button>
+                  </ng-container>
+
                 </td>
               </tr>
             </ng-template>
+
           </p-table>
         </div>
 

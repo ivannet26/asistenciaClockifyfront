@@ -8,6 +8,9 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 
+import { Etiquetas } from '../../model/Etiquetas';
+import { EtiquetasService } from '../../service/etiquetas.service';
+
 @Component({
   selector: 'app-etiquetas',
   standalone: true,
@@ -25,83 +28,69 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './etiquetas.component.css'
 })
 export class EtiquetasComponent implements OnInit {
-  
-  // --- VARIABLES DE ESTADO ---
-  etiquetas: any[] = [];
-  etiquetasFiltradas: any[] = [];
-  mostrarLista: boolean = false;
 
-  // --- VARIABLES DE MODELO ---
+  etiquetas: Etiquetas[] = [];
+  etiquetasFiltrados: Etiquetas[] = [];
   nuevaEtiquetaNombre: string = '';
   textoBusqueda: string = '';
-
-  // --- CONFIGURACIÓN ---
   opcionesFiltro = [
-    { label: 'Mostrar activo', value: 'activo' },
+    { label: 'Mostrar activos', value: 'activo' },
     { label: 'Mostrar inactivos', value: 'inactivo' }
   ];
   filtroSeleccionado: string = 'activo';
+  etiquetaEnEdicion: Etiquetas | null = null;
+
+  constructor(private etiquetasService: EtiquetasService) { }
+
+  get mostrarLista(): boolean {
+    return this.etiquetas.length > 0;
+  }
 
   ngOnInit() {
-    this.cargarDesdeStorage();
+
+    this.etiquetas = this.etiquetasService.getEtiquetas();
+    this.etiquetasFiltrados = [...this.etiquetas];
+
   }
 
-  // Carga las etiquetas guardadas al iniciar el componente
-  cargarDesdeStorage() {
-    const data = localStorage.getItem('etiquetas');
-    if (data) {
-      this.etiquetas = JSON.parse(data);
-      this.etiquetasFiltradas = [...this.etiquetas];
-      this.mostrarLista = this.etiquetas.length > 0;
-    }
-  }
-
-  // Función para añadir una etiqueta nueva
   agregarEtiqueta() {
     if (!this.nuevaEtiquetaNombre.trim()) return;
-
-    const nueva = {
-      id: Date.now(),
-      nombre: this.nuevaEtiquetaNombre
-    };
-
-    this.etiquetas.push(nueva);
-    this.guardarYRefrescar();
-    
-    // Limpieza de campos
+    this.etiquetas = this.etiquetasService.agregarEtiqueta(this.nuevaEtiquetaNombre);
+    this.etiquetasFiltrados = [...this.etiquetas];
     this.nuevaEtiquetaNombre = '';
-    this.mostrarLista = true;
   }
 
-  // Elimina una etiqueta por su ID
+  actualizarEtiqueta(id: number, cambios: Partial<Etiquetas>) {
+    this.etiquetas = this.etiquetasService.actualizarEtiqueta(id, cambios);
+    this.etiquetasFiltrados = [...this.etiquetas];
+  }
+
   eliminarEtiqueta(id: number) {
-    this.etiquetas = this.etiquetas.filter(e => e.id !== id);
-    this.guardarYRefrescar();
-    
-    if (this.etiquetas.length === 0) {
-      this.mostrarLista = false;
-    }
+    this.etiquetas = this.etiquetasService.eliminarEtiqueta(id);
+    this.etiquetasFiltrados = [...this.etiquetas];
   }
 
-  // Lógica de búsqueda reactiva (se llama desde el HTML con el evento input)
   filtrarEtiquetas() {
-    if (!this.textoBusqueda.trim()) {
-      this.etiquetasFiltradas = [...this.etiquetas];
-    } else {
-      this.etiquetasFiltradas = this.etiquetas.filter(e => 
-        e.nombre.toLowerCase().includes(this.textoBusqueda.toLowerCase())
-      );
-    }
+    this.etiquetasFiltrados = this.etiquetas.filter(c => {
+      const coincideNombre = !this.textoBusqueda.trim() ||
+        c.nombre.toLowerCase().includes(this.textoBusqueda.toLowerCase());
+      return coincideNombre;
+    });
   }
 
-  // Centraliza el guardado en Storage y la actualización de la lista visible
-  private guardarYRefrescar() {
-    localStorage.setItem('etiquetas', JSON.stringify(this.etiquetas));
-    this.filtrarEtiquetas();
+  editarEtiqueta(etiqueta: Etiquetas) {
+    this.etiquetaEnEdicion = { ...etiqueta };
   }
 
-  
-  mostrarTabla() {
-    this.agregarEtiqueta();
+  guardarEdicion() {
+    if (!this.etiquetaEnEdicion) return;
+    this.actualizarEtiqueta(this.etiquetaEnEdicion.id, {
+      nombre: this.etiquetaEnEdicion.nombre
+    });
+    this.etiquetaEnEdicion = null;
+  }
+
+  cancelarEdicion() {
+    this.etiquetaEnEdicion = null;
   }
 }

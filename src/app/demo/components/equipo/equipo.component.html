@@ -212,7 +212,7 @@
     </div>
 </div>
 
-<p-dialog header="Crear nuevo Miembro" [(visible)]="mostrarModalMiembro"  [modal]="true" [style]="{ width: '520px' }"
+<p-dialog header="Crear nuevo Miembro" [(visible)]="mostrarModalMiembro"  [modal]="true" [style]="{ width: '500px' }"
     [closable]="true" [draggable]="false" [resizable]="false">
     
 
@@ -224,11 +224,11 @@
     </div>
 
     <ng-template pTemplate="footer">
-        <div class="flex justify-content-end gap-2">
+        <div class="flex justify-content-end gap-2 " >
             <button pButton label="Cancelar" class="p-button-text" (click)="mostrarModalMiembro = false">
             </button>
-            <button pButton type="button" label="AÑADIR" class="boton-personalizado" icon="pi pi-user-plus"
-                (click)="guardarMiembro()">
+            <button pButton type="button" label="AÑADIR" class="boton-personalizado" icon="pi pi-user-plus" 
+            [style]="{ width: '100px' }"(click)="guardarMiembro()">
             </button>
         </div>
     </ng-template>

@@ -1,11 +1,8 @@
-export enum Moneda {
-    USD = 'USD',
-    SOLES = 'SOLES',
-}
+import { Monedas } from './Monedas';
 
 export interface Clientes {
     id: number;
     nombre: string;
-    Direccion: string | null;
-    Moneda: Moneda | null;
+    direccion: string | null;
+    moneda: Monedas | null;
 }

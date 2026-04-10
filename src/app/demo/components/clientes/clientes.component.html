@@ -6,38 +6,21 @@
 
       <div class="barra-herramientas" *ngIf="mostrarLista">
         <div class="busqueda-filtros">
-          <p-dropdown
-            [options]="opcionesFiltro"
-            [(ngModel)]="filtroSeleccionado"
+          <p-dropdown [options]="opcionesFiltro" [(ngModel)]="filtroSeleccionado" (onChange)="filtrarClientes()"
             placeholder="Mostrar activo">
           </p-dropdown>
 
           <span class="p-input-icon-left">
             <i class="pi pi-search"></i>
-            <input
-              type="text"
-              pInputText
-              [(ngModel)]="textoBusqueda"
-              (input)="filtrarClientes()"
-              placeholder="Buscar por nombre"
-              class="input-busqueda" />
+            <input type="text" pInputText [(ngModel)]="textoBusqueda" (input)="filtrarClientes()"
+              placeholder="Buscar por nombre" class="input-busqueda" />
           </span>
         </div>
 
         <div class="grupo-input-compacto">
-          <input
-            type="text"
-            pInputText
-            [(ngModel)]="nuevoClienteNombre"
-            placeholder="Añadir nuevo cliente"
-            class="input-personalizado" 
-            (keyup.enter)="agregarCliente()"/>
-          <button
-            pButton
-            type="button"
-            label="Añadir"
-            class="boton-personalizado"
-            (click)="agregarCliente()">
+          <input type="text" pInputText [(ngModel)]="nuevoClienteNombre" placeholder="Añadir nuevo cliente"
+            class="input-personalizado" (keyup.enter)="agregarCliente()" />
+          <button pButton type="button" label="Añadir" class="boton-personalizado" (click)="agregarCliente()">
           </button>
         </div>
       </div>
@@ -53,19 +36,9 @@
           </p>
 
           <div class="grupo-input">
-            <input
-              type="text"
-              pInputText
-              [(ngModel)]="nuevoClienteNombre"
-              placeholder="Añadir nuevo cliente"
-              class="input-personalizado"
-              (keyup.enter)="agregarCliente()" />
-            <button
-              pButton
-              type="button"
-              label="AÑADIR"
-              class="boton-personalizado"
-              (click)="agregarCliente()">
+            <input type="text" pInputText [(ngModel)]="nuevoClienteNombre" placeholder="Añadir nuevo cliente"
+              class="input-personalizado" (keyup.enter)="agregarCliente()" />
+            <button pButton type="button" label="AÑADIR" class="boton-personalizado" (click)="agregarCliente()">
             </button>
           </div>
         </div>
@@ -87,25 +60,44 @@
 
             <ng-template pTemplate="body" let-cliente>
               <tr>
-                <td>
-                  <p-checkbox [binary]="true"></p-checkbox>
-                </td>
-                <td class="font-bold">{{ cliente.nombre }}</td>
-                <td>{{ cliente.direccion }}</td>
-                <td>{{ cliente.moneda }}</td>
-                <td class="acciones-celda">
-                  <button
-                    pButton
-                    icon="pi pi-pencil"
-                    class="p-button-text p-button-secondary">
-                  </button>
-                  <button
-                    pButton
-                    icon="pi pi-trash"
-                    (click)="eliminarCliente(cliente.id)"
-                    class="p-button-text p-button-danger">
-                  </button>
-                </td>
+                <td><p-checkbox [binary]="true"></p-checkbox></td>
+
+                <ng-container *ngIf="clienteEnEdicion?.id !== cliente.id">
+                  <td class="font-bold">{{ cliente.nombre }}</td>
+                  <td>{{ cliente.direccion || '-' }}</td>
+                  <td>{{ cliente.moneda || '-' }}</td>
+                  <td class="acciones-celda">
+                    <button pButton icon="pi pi-pencil" class="p-button-text p-button-secondary"
+                      (click)="editarCliente(cliente)">
+                    </button>
+                    <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
+                      (click)="eliminarCliente(cliente.id)">
+                    </button>
+                  </td>
+                </ng-container>
+
+                <ng-container *ngIf="clienteEnEdicion?.id === cliente.id">
+                  <td>
+                    <input pInputText [(ngModel)]="clienteEnEdicion!.nombre" />
+                  </td>
+                  <td>
+                    <input pInputText [(ngModel)]="clienteEnEdicion!.direccion" placeholder="Escribe la dirección" />
+                  </td>
+                  <td>
+                    <p-dropdown appendTo="body" [options]="monedas" [(ngModel)]="clienteEnEdicion!.moneda"
+                      placeholder="Seleccionar moneda">
+                    </p-dropdown>
+                  </td>
+                  <td class="acciones-celda">
+                    <button pButton icon="pi pi-check" class="p-button-text p-button-success"
+                      (click)="guardarEdicion()">
+                    </button>
+                    <button pButton icon="pi pi-times" class="p-button-text p-button-secondary"
+                      (click)="cancelarEdicion()">
+                    </button>
+                  </td>
+                </ng-container>
+
               </tr>
             </ng-template>
 
