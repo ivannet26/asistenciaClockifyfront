@@ -1,3 +1,4 @@
+/* --- CONFIGURACIÓN GLOBAL --- */
 :host {
   display: block;
   position: relative;
@@ -8,491 +9,169 @@
 
 .rastreador-pagina {
   margin: 0 80px;
-  transition: margin-left 0.3s ease;
 }
 
-@media (max-width: 1024px) {
-  .rastreador-pagina {
-    margin: 0 25px 0 80px;
-  }
-}
-
-@media (max-width: 992px) {
-  .rastreador-pagina {
-    margin: auto;
-  }
-}
-
+/* --- PANEL SUPERIOR (RESTAURADO) --- */
 .rastreador-panel {
   background: var(--surface-card);
   border-radius: 0.5rem;
   box-shadow: 0 1px 4px rgba(0,0,0,.08);
   padding: 1.25rem;
+  margin-bottom: 20px;
 }
 
 .barra-rastreador {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-
+  justify-content: space-between; /* Mantiene la tarea a la izq y el timer a la der */
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
-
   padding: 10px 15px;
   gap: 10px;
-  margin-bottom: 20px;
 }
 
 .tarea-proyecto-seccion {
   display: flex;
   align-items: center;
   gap: 15px;
-  flex-grow: 1;
+  flex: 1; /* Ocupa el espacio sobrante */
   min-width: 0;
 }
 
 .input-seccion {
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-  min-width: 0;
+  flex: 1;
 }
 
 .input-tarea {
   width: 100%;
-  max-width: 380px; /*clave */
+  max-width: 380px;
   border: none !important;
   font-size: 1.1rem;
-  box-shadow: none !important;
   outline: none;
   background: transparent;
 }
+
 .proyecto-seccion {
-  display: flex;
-  align-items: center;
-  padding-left: 10px;
   border-left: 1px solid #e2e8f0;
+  padding-left: 10px;
 }
 
-.boton-proyecto {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #0ea5e9 !important;
-  font-weight: 500;
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.4rem;
-}
-
-.boton-proyecto:hover {
-  background-color: #f1f5f9 !important;
-}
-
-.icono-proyecto {
-  font-size: 0.9rem;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0ea5e9;
-}
-
-.texto-proyecto {
-  font-size: 0.95rem;
-  white-space: nowrap;
-}
-
+/* SECCIÓN ACCIONES (TIMER Y BOTÓN) */
 .acciones-seccion {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 15px;
+  flex-shrink: 0;
 }
 
-.divisor-vertical {
-  width: 1px;
-  height: 30px;
-  background-color: #dee2e6;
-  margin: 0 5px;
-}
-/* Efecto visual de que está grabando */
-.timer-display.corriendo {
-    color: #ef4444; /* Rojo suave o azul #2196F3 */
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.7; }
-    100% { opacity: 1; }
-}
 .timer-display {
   font-family: monospace;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #1e293b;
-  margin: 0 10px;
 }
 
-.botones-control {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.boton-dolar {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
+/* --- LISTADO HISTORIAL (EL DE ABAJO) --- */
 .contenedor-lista {
   margin-top: 25px;
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  padding: 0;
   overflow: hidden;
 }
 
 .cabecera-tiempo {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
+  background-color: #f2f6f8;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.85rem;
   color: #64748b;
-  margin-bottom: 8px;
+  font-weight: 500;
 }
 
 .registro-item {
-  
-  padding: 12px 10px;
+  padding: 10px 20px;
   border-bottom: 1px solid #e5e7eb;
 }
 
-.registro-item:last-child {
-  border-bottom: none;
-}
-
-.registro-item:hover {
-  background-color: #f8fafc;
-  border-radius: 6px;
-  transition: 0.2s;
-}
+.registro-item:hover { background-color: #f8fafc; }
 
 .registro-contenido {
-  display: grid;
-  grid-template-columns: 1.5fr 2fr auto;
+  display: flex;
+  justify-content: space-between; /* Separa descripción de datos de tiempo */
   align-items: center;
-  gap: 15px;
   width: 100%;
 }
 
 .registro-izquierda {
-  display: flex;
-  align-items: center;
+  flex: 1;
+  min-width: 0;
+  padding-right: 20px;
 }
 
-.input-descripcion {
-  width: 100%;
-  border: none !important;
-  box-shadow: none !important;
-  font-size: 0.95rem;
-}
-
+/* SECCIÓN DERECHA DEL REGISTRO (TODO AGRUPADO) */
 .registro-centro {
   display: flex;
   align-items: center;
-  gap: 18px;
-  flex-wrap: wrap;
-  color: #475569;
+  gap: 20px;
+  justify-content: flex-end;
 }
 
-.proyecto-nombre {
-  font-weight: 500;
-  color: #0ea5e9;
-}
-
-.icono-suave {
-  color: #94a3b8;
-  font-size: 0.9rem;
-}
-
-.hora-rango {
-  font-size: 0.85rem;
-  color: #64748b;
-}
-
-.duracion {
-  font-size: 0.95rem;
-  color: #1e293b;
-}
-
-.registro-derecha {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-/* COLOR PROYECTO */
-.color-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.input-full {
-  width: 100%;
-}
-
-.color-box {
-  display: flex;
-  align-items: center;
-}
-
-.color-box input {
-  width: 40px;
-  height: 35px;
-  border: none;
-  cursor: pointer;
-}
-
-.publico-box {
+.proyecto-label {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.menu-fila {
-  display: flex;
-  flex-direction: column;
-}
-
-.item-menu {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.2s;
-}
-
-.item-menu:hover {
-  background-color: #f1f5f9;
-}
-
-.item-menu i {
-  color: #64748b;
-}
-
-.item-menu.danger {
-  color: #ef4444;
-}
-
-.item-menu.danger i {
-  color: #ef4444;
-}
-
-.icono-inactivo {
-  color: #9ca3af;
-}
-
-.icono-activo {
+.proyecto-nombre {
   color: #0ea5e9;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-:host ::ng-deep .p-overlaypanel-content {
-  padding: 1rem;
+.hora-rango {
+  font-size: 0.85rem;
+  color: #64748b;
+  min-width: 120px;
+  text-align: center;
 }
 
-:host ::ng-deep .p-input-icon-left > .pi {
-  color: #94a3b8;
+.duracion {
+  font-weight: 700;
+  font-size: 1rem;
+  min-width: 80px;
+  text-align: right;
+  font-family: monospace;
 }
 
-:host ::ng-deep .p-overlaypanel {
-  position: relative;
-}
+.icono-suave { color: #cbd5e1; }
+.color-dot { width: 8px; height: 8px; border-radius: 50%; }
 
-:host ::ng-deep .p-overlaypanel::after {
-  content: '';
-  position: absolute;
-  bottom: 4px;
-  right: 4px;
-  width: 10px;
-  height: 10px;
-  background-image: linear-gradient(
-    135deg,
-    transparent 50%,
-    #cbd5e1 50%,
-    #cbd5e1 60%,
-    transparent 60%,
-    transparent 70%,
-    #cbd5e1 70%
-  );
-  opacity: 0.5;
-}
-
-:host ::ng-deep .p-dialog-header {
-  padding: 1.5rem 1.5rem 1rem 1.5rem;
-}
-
-:host ::ng-deep .p-dialog-content {
-  padding: 0 1.5rem 2rem 1.5rem;
-}
-
-:host ::ng-deep .p-button-info {
-  background-color: #03a9f4;
-  border-radius: 4px;
-}
-
-:host ::ng-deep .p-dropdown,
-:host ::ng-deep .p-inputtext {
-  border-color: #cbd5e1;
-}
-
-:host ::ng-deep .p-dropdown-panel {
-  max-height: 200px !important;
-  overflow-y: auto !important;
-}
-
+/* RESPONSIVO */
 @media (max-width: 768px) {
-
-  .rastreador-panel {
-    padding: 1rem;
-  }
-
-  .barra-rastreador {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .acciones-seccion {
-    justify-content: space-between;
-    width: 100%;
-  }
-
-  .timer-display {
-    font-size: 1.2rem;
-    margin: 10px 0;
-  }
-
-  .botones-control {
-    width: 100%;
-    justify-content: space-between;
-  }
+  .barra-rastreador { flex-direction: column; }
+  .registro-contenido { flex-direction: column; align-items: flex-start; }
 }
-/* --- CONTENEDOR DE ETIQUETAS EN LA BARRA (TRACKER) --- */
-.tags-pill-container {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    max-width: 250px;
-    overflow-x: auto;
-    padding: 2px 0;
+/* --- ESTILO PARA EL INPUT DE LA LISTA (MÁS LARGO E INVISIBLE) --- */
+.input-descripcion {
+    width: 100%;             /* Se estira todo lo que puede */
+    border: none !important; /* Quita el borde gris */
+    background: transparent !important; /* Quita el fondo blanco */
+    box-shadow: none !important; /* Quita la sombra azul al hacer clic */
+    outline: none;
+    font-size: 0.95rem;
+    color: #1e293b;
+    padding: 5px 0;
+    cursor: text;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
-/* Estilo para las etiquetas activas (Color azulado como Imagen 3) */
-.tag-badge {
-    background-color: #e3f2fd; /* Fondo azul muy claro */
-    color: #1976d2;            /* Texto azul fuerte */
-    padding: 3px 10px;
+/* Opcional: que se note un poquito el fondo solo al pasar el mouse */
+.input-descripcion:hover {
+    background-color: #f1f5f9 !important;
     border-radius: 4px;
-    font-size: 13px;
-    font-weight: 500;
-    border: 1px solid #bbdefb;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-}
-
-/* --- ETIQUETAS EN LA LISTA DE ABAJO (HISTORIAL) --- */
-.registro-tags-display {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    min-width: 100px;
-    justify-content: flex-start;
-    margin: 0 10px;
-}
-
-/* Estilo más discreto para el historial  */
-.tag-badge-small {
-    background-color: #f8fafc;
-    color: #64748b;
-    padding: 1px 8px;
-    border-radius: 3px;
-    font-size: 11px;
-    border: 1px solid #e2e8f0;
-    white-space: nowrap;
-}
-
-/* --- ESTADOS Y COLORES --- */
-.icono-activo {
-    color: #2196f3 !important; /* Azul Prime */
-}
-
-.icono-suave {
-    color: #94a3b8; /* Gris para cuando no hay etiquetas */
-}
-
-/* --- PANEL DESPLEGABLE (OVERLAY) --- */
-.lista-etiquetas-scroll {
-    margin-top: 8px;
-    border-top: 1px solid #f1f5f9;
-}
-
-/* Personalización del scrollbar para que se vea fino */
-.lista-etiquetas-scroll::-webkit-scrollbar {
-    width: 5px;
-}
-
-.lista-etiquetas-scroll::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 10px;
-}
-
-/* Ajuste de los items del filtro */
-.lista-etiquetas-scroll .flex {
-    transition: background 0.2s;
-}
-
-.cursor-pointer {
-    cursor: pointer;
-}
-
-/* Espaciado para el input de búsqueda dentro del overlay */
-.p-input-icon-left > i {
-    color: #94a3b8;
-}
-.cabecera-tiempo {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f2f6f8; 
-    
-    /* El espacio de los textos lo damos aquí adentro */
-    padding: 12px 20px; 
-    
-    /* Ocupa el 100% del ancho disponible */
-    width: 100%; 
-    box-sizing: border-box;
-    
-    border-bottom: 1px solid #e2e8f0;
-    font-size: 0.85rem;
-    color: #64748b;
-    font-weight: 500;
-
-    position: sticky;
-    top: 0;
-    z-index: 10;
 }
