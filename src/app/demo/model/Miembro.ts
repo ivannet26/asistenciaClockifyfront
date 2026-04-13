@@ -11,5 +11,6 @@ export interface Miembros {
     nombre: string;
     correo: string;
     rol?: RolNombre | null;
-    grupoIds?: number[]
+    grupoIds?: number[];
+    activo: boolean;
 }
