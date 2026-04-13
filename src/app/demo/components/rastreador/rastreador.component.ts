@@ -97,7 +97,9 @@ export class RastreadorComponent implements OnInit, OnDestroy {
       clienteId,
       this.nuevoProyecto.color,
       this.nuevoProyecto.publico,
-      0
+      0,
+      new Date(),
+      true
     );
 
     this.proyectoSeleccionado = this.proyectos[this.proyectos.length - 1];

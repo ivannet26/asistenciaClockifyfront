@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { CheckboxModule } from 'primeng/checkbox';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { TableModule } from 'primeng/table';
+import { TableModule, Table } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 
@@ -14,6 +14,7 @@ import { Proyecto } from '../../model/Proyecto';
 import { ProyectosService } from '../../service/proyectos.service';
 import { ClientesService } from '../../service/clientes.service';
 import { Clientes } from '../../model/Clientes';
+import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
 
 @Component({
   selector: 'app-proyectos',
@@ -29,11 +30,13 @@ import { Clientes } from '../../model/Clientes';
     InputTextModule,
     DropdownModule,
   ],
+  providers: [DatePipe],
   templateUrl: './proyectos.component.html',
   styleUrl: './proyectos.component.css'
 })
 export class ProyectosComponent implements OnInit {
 
+  @ViewChild('dt') dt!: Table;
   mostrarModalProyecto: boolean = false;
   proyectos: Proyecto[] = [];
   proyectosFiltrados: Proyecto[] = [];
@@ -63,12 +66,23 @@ export class ProyectosComponent implements OnInit {
     nombre: '',
     cliente: null as Clientes | null,
     color: '#5c6bc0',
-    publico: true
+    publico: true,
   };
 
+  proyectoEditandoId: number | null = null;
+  editBuffer: {
+    nombre: string;
+    cliente: Clientes | null;
+    publico: boolean;
+    progreso: number;
+  } = { nombre: '', cliente: null, publico: true, progreso: 0 };
+
+
+
   constructor(
-    private proyectosService: ProyectosService, 
-    private clientesService: ClientesService
+    private proyectosService: ProyectosService,
+    private clientesService: ClientesService,
+    private datepipe: DatePipe
   ) { }
 
   ngOnInit(): void {
@@ -85,17 +99,17 @@ export class ProyectosComponent implements OnInit {
     this.proyectosFiltrados = this.proyectos.filter(p => {
       // Usamos 'as any' para leer 'activo' aunque no esté en la interfaz
       const estadoProyecto = (p as any).activo !== undefined ? (p as any).activo : true;
-      
-      const cumpleEstado = this.filtroEstado === 'Todos' || 
-                           (this.filtroEstado === 'Activo' ? estadoProyecto : !estadoProyecto);
+
+      const cumpleEstado = this.filtroEstado === 'Todos' ||
+        (this.filtroEstado === 'Activo' ? estadoProyecto : !estadoProyecto);
 
       const cumpleCliente = !this.filtroCliente || p.clienteId === this.filtroCliente.id;
 
-      const cumpleAcceso = this.filtroAcceso === 'Todos' || 
-                           (this.filtroAcceso === 'Público' ? p.publico : !p.publico);
+      const cumpleAcceso = this.filtroAcceso === 'Todos' ||
+        (this.filtroAcceso === 'Público' ? p.publico : !p.publico);
 
-      const cumpleNombre = !this.filtroNombre || 
-                           p.nombre.toLowerCase().includes(this.filtroNombre.toLowerCase());
+      const cumpleNombre = !this.filtroNombre ||
+        p.nombre.toLowerCase().includes(this.filtroNombre.toLowerCase());
 
       return cumpleEstado && cumpleCliente && cumpleAcceso && cumpleNombre;
     });
@@ -115,7 +129,9 @@ export class ProyectosComponent implements OnInit {
       clienteId,
       this.nuevoProyecto.color,
       this.nuevoProyecto.publico,
-      0
+      0,
+      new Date(),
+      true,
     );
 
     this.mostrarModalProyecto = false;
@@ -148,9 +164,55 @@ export class ProyectosComponent implements OnInit {
   }
 
   dividirRegistro(proyecto: Proyecto): void { console.log('Plantilla:', proyecto); }
-  
-  duplicarRegistro(proyecto: Proyecto): void {
-    // Aquí usamos el casteo para evitar el error de la propiedad 'activo'
+
+  archivarRegistro(proyecto: Proyecto): void {
     this.actualizarProyecto(proyecto.id!, { activo: false } as any);
   }
+
+  activarRegistro(proyecto: Proyecto): void {
+    this.actualizarProyecto(proyecto.id!, { activo: true } as any);
+  }
+
+  exportar(): void {
+    ExtraccionExcel.desdeTabla(
+      this.dt,
+      (p, i) => ({
+        'N°': i + 1,
+        'Nombre del Proyecto': p.nombre,
+        'Cliente': this.getNombreCliente(p.clienteId),
+        'Progreso': p.progreso + '%',
+        'Registrado': this.datepipe.transform(p.registrado, 'dd/MM/yyyy HH:mm'),
+        'Acceso': p.publico ? 'Público' : 'Privado',
+        'Estado': p.activo ? 'Activo' : 'Archivado'
+      }),
+      'Proyectos'
+    );
+  }
+
+  //edicion
+
+  iniciarEdicion(proyecto: Proyecto): void {
+    this.proyectoEditandoId = proyecto.id!;
+    this.editBuffer = {
+      nombre: proyecto.nombre,
+      cliente: this.clientes.find(c => c.id === proyecto.clienteId) ?? null,
+      publico: proyecto.publico,
+      progreso: proyecto.progreso
+    };
+  }
+
+  guardarEdicion(proyecto: Proyecto): void {
+    this.actualizarProyecto(proyecto.id!, {
+      nombre: this.editBuffer.nombre,
+      clienteId: this.editBuffer.cliente?.id ?? 0,
+      publico: this.editBuffer.publico,
+      progreso: this.editBuffer.progreso
+    });
+    this.proyectoEditandoId = null;
+  }
+
+  cancelarEdicion(): void {
+    this.proyectoEditandoId = null;
+  }
+
 }

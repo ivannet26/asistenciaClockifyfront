@@ -16,15 +16,17 @@
                         <span class="text-500 font-bold text-xs uppercase">Filtrar</span>
                     </div>
 
-                    <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important;">
+                    <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                        style="border-right-style: dashed !important;">
                         <p-dropdown [options]="opcionesEstado" [(ngModel)]="filtroEstado" (onChange)="aplicarFiltros()"
                             [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
                             class="w-full"></p-dropdown>
                     </div>
 
-                    <div class="flex-1 flex align-items-center border-right-1 surface-border" style="border-right-style: dashed !important;">
-                        <p-dropdown [options]="clientes" optionLabel="nombre" [(ngModel)]="filtroCliente" [showClear]="true"
-                            (onChange)="aplicarFiltros()" placeholder="Cliente"
+                    <div class="flex-1 flex align-items-center border-right-1 surface-border"
+                        style="border-right-style: dashed !important;">
+                        <p-dropdown [options]="clientes" optionLabel="nombre" [(ngModel)]="filtroCliente"
+                            [showClear]="true" (onChange)="aplicarFiltros()" placeholder="Cliente"
                             [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
                             class="w-full"></p-dropdown>
                     </div>
@@ -45,50 +47,95 @@
                         <input type="text" pInputText placeholder="Buscar por nombre" [(ngModel)]="filtroNombre"
                             (input)="aplicarFiltros()" class="border-none w-full shadow-none py-2 text-sm">
                     </div>
-                    <button pButton label="Aplicar" (click)="aplicarFiltros()" class="p-button-info p-button-sm text-xs py-2 px-4 w-auto"
+                    <button pButton label="Aplicar" (click)="aplicarFiltros()"
+                        class="p-button-info p-button-sm text-xs py-2 px-4 w-auto"
                         style="height: 38px; border-radius: 4px; font-weight: bold;"></button>
                 </div>
             </div>
 
             <div class="m-3 border-1 surface-border border-round overflow-hidden">
-                <div class="surface-100 p-2 flex justify-content-between align-items-center border-bottom-1 surface-border">
+                <div
+                    class="surface-100 p-2 flex justify-content-between align-items-center border-bottom-1 surface-border">
                     <span class="text-xs font-bold text-500 ml-2 uppercase">Proyectos</span>
-                    <button pButton label="Exportar" icon="pi pi-chevron-down" iconPos="right"
-                        class="p-button-info p-button-sm text-xs py-1 px-3 w-auto"
-                        style="border-radius: 4px; font-weight: bold;"></button>
+                    <p-button class="p-button-text p-button-danger" label="Exportar" icon="pi pi-file-excel"
+                        (onClick)="exportar()">
+                    </p-button>
                 </div>
 
-                <p-table [value]="proyectosFiltrados" class="p-datatable-sm">
+                <p-table #dt [value]="proyectosFiltrados" class="p-datatable-sm">
                     <ng-template pTemplate="header">
                         <tr>
-                            <th style="width: 3rem" class="text-center bg-white border-bottom-1 surface-border"><p-checkbox [binary]="true"></p-checkbox></th>
-                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Nombre</th>
-                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Cliente</th>
-                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Registrado</th>
-                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Progreso</th>
-                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Acceso</th>
-                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border" colspan="2"></th>
+                            <th style="width: 3rem" class="text-center bg-white border-bottom-1 surface-border">
+                                <p-checkbox [binary]="true"></p-checkbox>
+                            </th>
+                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                Nombre</th>
+                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                Cliente</th>
+                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                Registrado</th>
+                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                Progreso</th>
+                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                Acceso</th>
+                            <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                            </th>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-proyecto>
                         <tr class="hover:surface-50">
                             <td class="text-center border-none"><p-checkbox [binary]="true"></p-checkbox></td>
                             <td class="flex align-items-center border-none">
-                                <div [style.background]="proyecto.color" style="width:10px; height:10px; margin: 15px 5px; border-radius:30px;"></div>
-                                <span class="text-700 font-medium">{{proyecto.nombre}}</span>
+                                <div [style.background]="proyecto.color"
+                                    style="width:10px; height:10px; margin: 15px 5px; border-radius:30px;"></div>
+                                <input *ngIf="proyectoEditandoId === proyecto.id" pInputText
+                                    [(ngModel)]="editBuffer.nombre" class="text-sm py-1 px-2" style="width: 140px;" />
+                                <span *ngIf="proyectoEditandoId !== proyecto.id"
+                                    class="text-700 font-medium">{{proyecto.nombre}}</span>
                             </td>
-                            <td class="border-none"><span class="text-700 font-medium">{{ getNombreCliente(proyecto.clienteId) }}</span></td>
-                            <td class="border-none"><span class="text-700 font-medium">0,00h</span></td>
-                            <td class="border-none"><span class="text-700 font-medium">{{ proyecto.progreso }}%</span></td>
-                            <td class="border-none"><span class="text-700 font-medium">{{ proyecto.publico ? 'Público' : 'Privado' }}</span></td>
-                            <td colspan="2" class="border-none">
-                                <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-secondary" (click)="menuFila.toggle($event)"></button>
-                                <p-overlayPanel #menuFila [style]="{ width: '200px' }">
-                                    <div class="menu-fila">
-                                        <div class="item-menu" (click)="dividirRegistro(proyecto); menuFila.hide()"><i class="pi pi-clone"></i> <span>Establecer como plantilla</span></div>
-                                        <div class="item-menu" (click)="duplicarRegistro(proyecto); menuFila.hide()"><i class="pi pi-copy"></i> <span>Archivar</span></div>
-                                    </div>
-                                </p-overlayPanel>
+                            <td class="border-none">
+                                <p-dropdown *ngIf="proyectoEditandoId === proyecto.id" [options]="clientes"
+                                    optionLabel="nombre" [(ngModel)]="editBuffer.cliente" placeholder="Cliente"
+                                    appendTo="body" [style]="{'font-size':'0.85rem', 'width':'130px'}"></p-dropdown>
+                                <span *ngIf="proyectoEditandoId !== proyecto.id" class="text-700 font-medium">
+                                    {{ getNombreCliente(proyecto.clienteId) }}
+                                </span>
+                            </td>
+
+                            <td class="border-none"><span class="text-700 font-medium">{{ proyecto.registrado |
+                                    date:'dd/MM/yyyy HH:mm' }}</span></td>
+                            <td class="border-none">
+                                <input *ngIf="proyectoEditandoId === proyecto.id" pInputText type="number"
+                                    [(ngModel)]="editBuffer.progreso" min="0" max="100" class="text-sm py-1 px-2"
+                                    style="width: 70px;" />
+                                <span *ngIf="proyectoEditandoId !== proyecto.id" class="text-700 font-medium">{{
+                                    proyecto.progreso }}%</span>
+                            </td>
+                            <td class="border-none">
+                                <p-checkbox *ngIf="proyectoEditandoId === proyecto.id" [(ngModel)]="editBuffer.publico"
+                                    [binary]="true" label="Público"></p-checkbox>
+                                <span *ngIf="proyectoEditandoId !== proyecto.id" class="text-700 font-medium">
+                                    {{ proyecto.publico ? 'Público' : 'Privado' }}
+                                </span>
+                            </td>
+                            <td class="border-none" style="white-space: nowrap;">
+                                <ng-container *ngIf="proyectoEditandoId !== proyecto.id; else modoEdicion">
+                                    <button style="margin: 0 1rem;" pButton icon="pi pi-pencil"
+                                        class="p-button-text p-button-secondary p-button-sm"
+                                        (click)="iniciarEdicion(proyecto)" pTooltip="Editar"></button>
+                                    <button pButton [icon]="proyecto.activo ? 'pi pi-folder' : 'pi pi-refresh'"
+                                        [class]="proyecto.activo ? 'p-button-text p-button-sm' : 'p-button-text p-button-sm'"
+                                        [style]="{'color': proyecto.activo ? '#ef4444' : '#3b82f6'}"
+                                        (click)="proyecto.activo ? archivarRegistro(proyecto) : activarRegistro(proyecto)"
+                                        [pTooltip]="proyecto.activo ? 'Archivar' : 'Activar'"></button>
+                                </ng-container>
+                                <ng-template #modoEdicion>
+                                    <button style="margin:0 1rem;" pButton icon="pi pi-check"
+                                        class="p-button-text p-button-success p-button-sm"
+                                        (click)="guardarEdicion(proyecto)" pTooltip="Guardar"></button>
+                                    <button pButton icon="pi pi-times" class="p-button-text p-button-danger p-button-sm"
+                                        (click)="cancelarEdicion()" pTooltip="Cancelar"></button>
+                                </ng-template>
                             </td>
                         </tr>
                     </ng-template>
@@ -101,7 +148,8 @@
 <p-dialog header="Crear nuevo Proyecto" [(visible)]="mostrarModalProyecto" [modal]="true" [style]="{ width: '450px' }">
     <div class="form-grid flex flex-column gap-3 mt-2">
         <input pInputText placeholder="Introduce el nombre de Proyecto" [(ngModel)]="nuevoProyecto.nombre" />
-        <p-dropdown [options]="clientes" optionLabel="nombre" [(ngModel)]="nuevoProyecto.cliente" placeholder="Seleccionar cliente" appendTo="body"></p-dropdown>
+        <p-dropdown [options]="clientes" optionLabel="nombre" [(ngModel)]="nuevoProyecto.cliente"
+            placeholder="Seleccionar cliente" appendTo="body"></p-dropdown>
         <div class="flex align-items-center gap-2">
             <input type="color" [(ngModel)]="nuevoProyecto.color" />
             <label>Color del proyecto</label>

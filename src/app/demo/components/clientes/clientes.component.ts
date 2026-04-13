@@ -110,7 +110,7 @@ export class ClientesComponent implements OnInit {
         'N°': i + 1,
         'Nombre': p.nombre,
         'Dirección': p.direccion,
-        'Moneda': p.Modena,
+        'Moneda': p.moneda? 'Activo' : 'No activo',
       }),
       'Clientes'
     );

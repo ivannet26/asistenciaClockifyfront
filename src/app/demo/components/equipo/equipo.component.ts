@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
+import { TableModule, Table } from 'primeng/table';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
@@ -17,6 +17,9 @@ import { GruposService } from '../../service/grupos.service';
 import { MiembrosService } from '../../service/miembros.service';
 import { Miembros, RolNombre } from '../../model/Miembro';
 import { Grupo } from '../../model/Grupo';
+import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
+
+
 
 @Component({
   selector: 'app-equipo',
@@ -32,9 +35,10 @@ import { Grupo } from '../../model/Grupo';
 })
 export class EquipoComponent implements OnInit {
 
+  @ViewChild('dt') dt!: Table;
+  @ViewChild('dts') dts!: Table;
   mostrarModalMiembro = false;
   mostrarLista = false;
-
   grupos: Grupo[] = [];
   gruposConIntegrantes: Grupo[] = [];
   miembros: Miembros[] = [];
@@ -42,9 +46,9 @@ export class EquipoComponent implements OnInit {
   // Lógica de Filtrado
   miembrosFiltrados: Miembros[] = [];
   gruposFiltrados: Grupo[] = [];
-  
+
   // Modelos de Filtro
-  filtroTodo: string = 'todos'; 
+  filtroTodo: string = 'todos';
   filtroRol: RolNombre | null = null;
   filtroGrupo: number | null = null;
   filtroBusquedaGrupo: string = '';
@@ -86,7 +90,7 @@ export class EquipoComponent implements OnInit {
     this.grupos = this.gruposService.getGrupos();
     this.gruposConIntegrantes = this.getGruposConIntegrantes();
     this.mostrarLista = this.miembros.length > 0;
-    
+
     this.aplicarFiltrosMiembros();
     this.aplicarFiltrosGrupos();
     this.cargarOptions();
@@ -117,7 +121,7 @@ export class EquipoComponent implements OnInit {
   }
 
   aplicarFiltrosGrupos() {
-    this.gruposFiltrados = this.gruposConIntegrantes.filter(g => 
+    this.gruposFiltrados = this.gruposConIntegrantes.filter(g =>
       !this.filtroBusquedaGrupo || g.nombre.toLowerCase().includes(this.filtroBusquedaGrupo.toLowerCase())
     );
   }
@@ -196,4 +200,34 @@ export class EquipoComponent implements OnInit {
 
   getNombreGrupo = (id?: number) => this.grupos.find(g => g.id === id)?.nombre || '';
   CambioTab(event: any) { this.tabactivo = event; }
+
+  exportarMiembros(): void {
+    ExtraccionExcel.desdeTabla(
+      this.dt,
+      (p, i) => ({
+        'N°': i + 1,
+        'Nombre': p.nombre,
+        'Correo': p.correo,
+        'Rol': p.rol,
+        'Grupo': (p.grupoIds || [])
+          .map((id: number) => this.getNombreGrupo(id))
+          .join(', '),
+      }),
+      'Equipo-Miembros'
+    );
+  }
+  exportarGrupos(): void {
+    ExtraccionExcel.desdeTabla(
+      this.dts,
+      (p, i) => ({
+        'N°': i + 1,
+        'Nombre': p.nombre,
+        'Miembros': (p.miembros || [])
+          .map((m: any) => m.nombre)
+          .join(', '),
+      }),
+      'Equipo-Grupos'
+    );
+  }
+
 }

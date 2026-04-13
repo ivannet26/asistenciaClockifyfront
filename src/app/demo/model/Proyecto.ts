@@ -6,4 +6,5 @@ export interface Proyecto {
   publico: boolean;
   progreso: number;
   registrado: Date;
+  activo: boolean;
 }
