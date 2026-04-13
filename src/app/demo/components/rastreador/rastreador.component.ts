@@ -49,7 +49,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   inicioTiempo!: Date;
   registros: Registro[] = [];
 
-  // 🔥 NUEVO: agrupados
+  //  NUEVO: agrupados
   registrosAgrupados: any[] = [];
 
   nuevoProyecto: Proyecto = {
@@ -83,7 +83,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   }
 
   // =========================
-  // 🔥 AGRUPACIÓN OPTIMIZADA
+  //  AGRUPACIÓN OPTIMIZADA
   // =========================
 
   agruparRegistros() {
