@@ -74,9 +74,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     this.verificarTimerPersistente();
     this.agruparRegistros();
   }
-  cargarProyectos() {
-    throw new Error('Method not implemented.');
-  }
+  
 
   ngOnDestroy() {
     if (this.intervalo) clearInterval(this.intervalo);
@@ -85,6 +83,32 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   // =========================
   //  AGRUPACIÓN OPTIMIZADA
   // =========================
+  cargarProyectos(): void {
+    this.proyectos = this.proyectosService.getProyectos();
+  }
+
+  guardarProyecto(): void {
+    if (!this.nuevoProyecto.nombre?.trim()) return;
+
+    const clienteId = this.nuevoProyecto.cliente?.id ?? 0;
+
+    this.proyectos = this.proyectosService.agregarProyecto(
+      this.nuevoProyecto.nombre,
+      clienteId,
+      this.nuevoProyecto.color,
+      this.nuevoProyecto.publico,
+      0
+    );
+
+    this.proyectoSeleccionado = this.proyectos[this.proyectos.length - 1];
+    this.mostrarModalProyecto = false;
+    this.nuevoProyecto = { nombre: '', cliente: null, color: '#2196F3', publico: true };
+  }
+
+  abrirModalNuevoProyecto() {
+    this.cargarClientes();
+    this.mostrarModalProyecto = true;
+  }
 
   agruparRegistros() {
     const grupos: any[] = [];
