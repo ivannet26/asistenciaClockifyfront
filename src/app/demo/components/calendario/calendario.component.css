@@ -252,3 +252,19 @@
   opacity: 1 !important;
 }
 
+.event-block {
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+
+.event-block:hover {
+    filter: brightness(0.9); /* Se oscurece un poquito al pasar el mouse */
+}
+
+/* Estilo personalizado para el fondo del tooltip si lo deseas más oscuro */
+::ng-deep .p-tooltip .p-tooltip-text {
+    background: #333333 !important;
+    color: #ffffff !important;
+    font-size: 0.8rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
