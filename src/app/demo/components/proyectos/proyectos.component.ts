@@ -36,32 +36,69 @@ export class ProyectosComponent implements OnInit {
 
   mostrarModalProyecto: boolean = false;
   proyectos: Proyecto[] = [];
+  proyectosFiltrados: Proyecto[] = [];
   proyectoSeleccionado: Proyecto | null = null;
-
   clientes: Clientes[] = [];
 
-  nuevoProyecto: {
-    nombre: string;
-    cliente: Clientes | null;
-    color: string;
-    publico: boolean;
-  } = {
-      nombre: '',
-      cliente: null,
-      color: '#5c6bc0',
-      publico: true
-    };
+  // Modelos para Filtros
+  filtroNombre: string = '';
+  filtroEstado: string = 'Activo';
+  filtroCliente: Clientes | null = null;
+  filtroAcceso: string = 'Todos';
+
+  // Opciones Dropdowns
+  opcionesEstado = [
+    { label: 'Activo', value: 'Activo' },
+    { label: 'Archivado', value: 'Archivado' },
+    { label: 'Todos', value: 'Todos' }
+  ];
+
+  opcionesAcceso = [
+    { label: 'Todos', value: 'Todos' },
+    { label: 'Público', value: 'Público' },
+    { label: 'Privado', value: 'Privado' }
+  ];
+
+  nuevoProyecto = {
+    nombre: '',
+    cliente: null as Clientes | null,
+    color: '#5c6bc0',
+    publico: true
+  };
 
   constructor(
-    private proyectosService: ProyectosService, private clientesService: ClientesService) { }
+    private proyectosService: ProyectosService, 
+    private clientesService: ClientesService
+  ) { }
 
   ngOnInit(): void {
-    this.cargarProyectos();
     this.cargarClientes();
+    this.cargarProyectos();
   }
 
   cargarProyectos(): void {
     this.proyectos = this.proyectosService.getProyectos();
+    this.aplicarFiltros();
+  }
+
+  aplicarFiltros(): void {
+    this.proyectosFiltrados = this.proyectos.filter(p => {
+      // Usamos 'as any' para leer 'activo' aunque no esté en la interfaz
+      const estadoProyecto = (p as any).activo !== undefined ? (p as any).activo : true;
+      
+      const cumpleEstado = this.filtroEstado === 'Todos' || 
+                           (this.filtroEstado === 'Activo' ? estadoProyecto : !estadoProyecto);
+
+      const cumpleCliente = !this.filtroCliente || p.clienteId === this.filtroCliente.id;
+
+      const cumpleAcceso = this.filtroAcceso === 'Todos' || 
+                           (this.filtroAcceso === 'Público' ? p.publico : !p.publico);
+
+      const cumpleNombre = !this.filtroNombre || 
+                           p.nombre.toLowerCase().includes(this.filtroNombre.toLowerCase());
+
+      return cumpleEstado && cumpleCliente && cumpleAcceso && cumpleNombre;
+    });
   }
 
   abrirModalNuevoProyecto(): void {
@@ -71,7 +108,6 @@ export class ProyectosComponent implements OnInit {
 
   guardarProyecto(): void {
     if (!this.nuevoProyecto.nombre?.trim()) return;
-
     const clienteId = this.nuevoProyecto.cliente?.id ?? 0;
 
     this.proyectos = this.proyectosService.agregarProyecto(
@@ -82,37 +118,23 @@ export class ProyectosComponent implements OnInit {
       0
     );
 
-    this.proyectoSeleccionado = this.proyectos[this.proyectos.length - 1];
     this.mostrarModalProyecto = false;
     this.resetFormulario();
+    this.aplicarFiltros();
   }
 
-  actualizarProyecto(id: number, cambios: Partial<Proyecto>): void {
+  actualizarProyecto(id: number, cambios: any): void {
     this.proyectos = this.proyectosService.actualizarProyecto(id, cambios);
+    this.aplicarFiltros();
   }
 
   eliminarProyecto(id: number): void {
     this.proyectos = this.proyectosService.eliminarProyecto(id);
-    if (this.proyectoSeleccionado?.id === id) {
-      this.proyectoSeleccionado = null;
-    }
-  }
-
-  dividirRegistro(proyecto: Proyecto): void {
-    console.log('Establecer como plantilla:', proyecto);
-  }
-
-  duplicarRegistro(proyecto: Proyecto): void {
-    console.log('Archivar:', proyecto);
+    this.aplicarFiltros();
   }
 
   private resetFormulario(): void {
-    this.nuevoProyecto = {
-      nombre: '',
-      cliente: null,
-      color: '#5c6bc0',
-      publico: true
-    };
+    this.nuevoProyecto = { nombre: '', cliente: null, color: '#5c6bc0', publico: true };
   }
 
   cargarClientes(): void {
@@ -125,4 +147,10 @@ export class ProyectosComponent implements OnInit {
     return cliente?.nombre ?? 'Sin cliente';
   }
 
+  dividirRegistro(proyecto: Proyecto): void { console.log('Plantilla:', proyecto); }
+  
+  duplicarRegistro(proyecto: Proyecto): void {
+    // Aquí usamos el casteo para evitar el error de la propiedad 'activo'
+    this.actualizarProyecto(proyecto.id!, { activo: false } as any);
+  }
 }
