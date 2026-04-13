@@ -285,7 +285,7 @@
               style="min-width: 90px; border-right-style: dashed !important;">
               <span class="text-500 font-bold text-xs uppercase">Filtrar <i class="pi pi-chevron-down ml-1"></i></span>
             </div>
-            <div *ngFor="let p of ['Equipo','Inicio','Fin','Descanzo','Trabajo','Capacidad','Horas extra','Bajas']"
+            <div *ngFor="let p of ['Equipo','Inicio','Fin','Trabajo','Horas extra','Bajas']"
               class="flex-1 border-right-1 surface-border flex align-items-center"
               style="border-right-style: dashed !important;">
               <p-dropdown [options]="[]" [placeholder]="p" [appendTo]="'body'" class="w-full"
@@ -304,9 +304,7 @@
                 <th style="width: 10%" class="text-center"> Fecha</th>
                 <th style="width: 12%" class="text-center"> Inicio</th>
                 <th style="width: 18%" class="text-center"> Fin</th>
-                <th style="width: 12%" class="text-center"> Descanso</th>
                 <th style="width: 20%" class="text-center"> Trabajo</th>
-                <th style="width: 20%" class="text-center"> Capacidad</th>
                 <th style="width: 20%" class="text-center"> Horas Extra</th>
                 <th style="width: 20%" class="text-center"> Bajas</th>
               </tr>
@@ -323,12 +321,10 @@
                   {{ r.fin | date:'HH:mm' }}<br>
                   <small class="text-500">{{ r.inicio | date:'dd/MM/yyyy' }}</small>
                 </td>
-                <td>-</td>
                 <td class="celda-truncate">
                   <span class="font-bold text-sm">{{ r.descripcion || 'Sin descripción' }}</span>
                   <small class="text-500 ml-2">● {{ r.proyecto?.nombre || r.proyecto || 'Sin Proyecto' }}</small>
                 </td>
-                <td>-</td>
                 <td class="text-right font-bold">{{ r.duracion }}</td>
                 <td class="text-center">
                   <i class="pi pi-ellipsis-v text-400 cursor-pointer" (click)="abrirMenu(menuOpciones, $event, r)"></i>
@@ -360,11 +356,10 @@
             <ng-template pTemplate="header">
               <tr class="text-xs text-500 uppercase">
                 <th style="width: 35%">Titulo</th>
-                <th style="width: 15%" class="text-right">Programado</th>
+                <th style="width: 15%" class="text-center">Programado</th>
                 <th style="width: 12%" class="text-center">Registrado</th>
                 <th style="width: 18%" class="text-center">Diferencia</th>
-                <th style="width: 12%" class="text-right">Estado</th>
-                <th style="width: 3rem"></th>
+                <th style="width: 12%" class="text-center">Estado</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-r>
@@ -380,9 +375,6 @@
                 </td>
                 <td class="text-right">0,00 $</td>
                 <td class="text-right font-bold">Pendiente</td>
-                <td class="text-center">
-                  <i class="pi pi-ellipsis-v text-400 cursor-pointer" (click)="abrirMenu(menuOpciones, $event, r)"></i>
-                </td>
               </tr>
             </ng-template>
           </p-table>
@@ -393,12 +385,3 @@
 
   </div>
 </div>
-
-<p-overlayPanel #menuOpciones>
-  <div class="flex flex-column gap-2" style="min-width: 130px;">
-    <button pButton label="Duplicar" icon="pi pi-copy" class="p-button-text text-sm"
-      (click)="duplicarSeleccionado(menuOpciones)"></button>
-    <button pButton label="Eliminar" icon="pi pi-trash" class="p-button-text text-sm text-red-500"
-      (click)="eliminarSeleccionado(menuOpciones)"></button>
-  </div>
-</p-overlayPanel>

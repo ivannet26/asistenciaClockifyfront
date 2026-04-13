@@ -43,7 +43,8 @@
 
         <!-- Tabla con lista -->
         <div class="contenedor-tabla" *ngIf="mostrarLista">
-          <p-table [value]="etiquetasFiltrados" [scrollable]="true" scrollHeight="450px" class="tabla-personalizada">
+          <p-table #dt [value]="etiquetasFiltrados" [scrollable]="true" scrollHeight="450px"
+            class="tabla-personalizada">
 
             <ng-template pTemplate="header">
               <tr class="cabecera-gris">
@@ -51,7 +52,11 @@
                   <p-checkbox [binary]="true"></p-checkbox>
                 </th>
                 <th>NOMBRE</th>
-                <th style="width: 10rem"></th>
+                <th style="width: 10rem">
+                  <p-button class="p-button-text p-button-danger" label="Exportar" icon="pi pi-file-excel"
+                    (onClick)="exportar()">
+                  </p-button>
+                </th>
               </tr>
             </ng-template>
 

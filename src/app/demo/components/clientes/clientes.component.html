@@ -44,7 +44,7 @@
         </div>
 
         <div class="contenedor-tabla" *ngIf="mostrarLista">
-          <p-table [value]="clientesFiltrados" class="tabla-personalizada">
+          <p-table #dt [value]="clientesFiltrados" class="tabla-personalizada">
 
             <ng-template pTemplate="header">
               <tr class="cabecera-gris">
@@ -54,7 +54,11 @@
                 <th>NOMBRE</th>
                 <th>DIRECCIÓN</th>
                 <th>MONEDA</th>
-                <th style="width: 8rem"></th>
+                <th style="width: 8rem">
+                  <p-button class="p-button-text p-button-danger" label="Exportar" icon="pi pi-file-excel"
+                    (onClick)="exportar()">
+                  </p-button>
+                </th>
               </tr>
             </ng-template>
 

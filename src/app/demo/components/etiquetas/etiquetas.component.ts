@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
+import { TableModule ,Table} from 'primeng/table';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 
 import { Etiquetas } from '../../model/Etiquetas';
 import { EtiquetasService } from '../../service/etiquetas.service';
+
+import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
 
 @Component({
   selector: 'app-etiquetas',
@@ -29,6 +31,7 @@ import { EtiquetasService } from '../../service/etiquetas.service';
 })
 export class EtiquetasComponent implements OnInit {
 
+  @ViewChild('dt') dt!: Table;
   etiquetas: Etiquetas[] = [];
   etiquetasFiltrados: Etiquetas[] = [];
   nuevaEtiquetaNombre: string = '';
@@ -93,4 +96,16 @@ export class EtiquetasComponent implements OnInit {
   cancelarEdicion() {
     this.etiquetaEnEdicion = null;
   }
+
+exportar(): void {
+  ExtraccionExcel.desdeTabla(
+    this.dt,
+    (p,i) => ({
+      'N°':  i + 1,
+      'Etiqueta': p.nombre,
+    }),
+    'Etiquetas'
+  );
+}
+
 }

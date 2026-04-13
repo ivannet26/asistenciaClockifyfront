@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
+import { TableModule, Table } from 'primeng/table';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
@@ -11,6 +11,8 @@ import { FormsModule } from '@angular/forms';
 import { ClientesService } from '../../service/clientes.service';
 import { Clientes } from '../../model/Clientes';
 import { Monedas } from '../../model/Monedas';
+
+import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
 
 @Component({
   selector: 'app-clientes',
@@ -31,6 +33,7 @@ import { Monedas } from '../../model/Monedas';
 
 export class ClientesComponent implements OnInit {
 
+  @ViewChild('dt') dt!: Table;
   clientes: Clientes[] = [];
   clientesFiltrados: Clientes[] = [];
   nuevoClienteNombre: string = '';
@@ -97,6 +100,20 @@ export class ClientesComponent implements OnInit {
 
   cancelarEdicion() {
     this.clienteEnEdicion = null;
+  }
+
+
+  exportar(): void {
+    ExtraccionExcel.desdeTabla(
+      this.dt,
+      (p, i) => ({
+        'N°': i + 1,
+        'Nombre': p.nombre,
+        'Dirección': p.direccion,
+        'Moneda': p.Modena,
+      }),
+      'Clientes'
+    );
   }
 
 }
