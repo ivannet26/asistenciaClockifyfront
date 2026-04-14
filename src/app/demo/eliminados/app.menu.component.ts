@@ -1,12 +1,12 @@
 import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
-import { LayoutService } from '../demo/components/service/app.layout.service';
+/*import { LayoutService } from '../demo/components/service/app.layout.service';
 import { PermisosxPerfil } from '../demo/model/permisosxperfil';
 import { LoginService } from '../demo/service/login.service';
 import { MenuxPerfil } from '../demo/model/MenuxPerfil';
 import { GlobalService } from '../demo/service/global.service';
 import { ConfigService } from '../demo/service/config.service';
-
+*/
 @Component({
     selector: 'app-menu',
     templateUrl: './app.menu.component.html',
@@ -16,21 +16,21 @@ export class AppMenuComponent implements OnInit {
     codigoModulo: string = '';
     selectedDate: Date = new Date();
     model: any[] = [];
-    permisos: MenuxPerfil;
+    //permisos: MenuxPerfil;
 
     constructor(
-        public permisosService: LoginService,
+        /* public permisosService: LoginService,
         layoutService: LayoutService,
         public gS: GlobalService,
-        configService: ConfigService
+        configService: ConfigService*/
     ) {
         this.selectedDate = new Date();
-        this.codigoModulo = configService.getCodigoModulo();
-        this.codigoPerfil = gS.getCodigoPerfil();
+        /*this.codigoModulo = configService.getCodigoModulo();
+        this.codigoPerfil = gS.getCodigoPerfil();*/
     }
 
     ngOnInit() {
-        this.permisosService
+        /*this.permisosService
             .TraerMenuxPerfil(this.codigoPerfil, this.codigoModulo)
             .subscribe({
                 next: (data) => {
@@ -41,14 +41,14 @@ export class AppMenuComponent implements OnInit {
                 error: (error) => {
                     
                 },
-            });
+            });*/
     }
 
     onDateSelect(date: Date) {
-        this.gS.updateSelectedDate(date);
+        //this.gS.updateSelectedDate(date);
     }
 
-    loadMenu(menuAsignados: PermisosxPerfil[]) {
+    /*loadMenu(menuAsignados: PermisosxPerfil[]) {
         
 
         // Separar por niveles usando CodigoFormulario
@@ -112,6 +112,6 @@ export class AppMenuComponent implements OnInit {
             };
         });
 
-        
-    }
+        */
 }
+

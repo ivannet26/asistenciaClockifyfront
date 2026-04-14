@@ -64,7 +64,7 @@ export class EquipoComponent implements OnInit {
 
   // Modelos de Creación
   nuevoGrupo: Grupo = { id: 0, nombre: '' };
-  nuevoMiembro: Miembros = { id: 0, nombre: '', correo: '', rol: undefined, grupoIds: undefined, activo: true };
+  nuevoMiembro: Miembros = { id: 0, nombre: '', correo: '', contrasena: undefined, rol: undefined, grupoIds: undefined, activo: true };
 
   miembroEnEdicion: number | null = null;
   grupoEnEdicion: number | null = null;
@@ -133,16 +133,17 @@ export class EquipoComponent implements OnInit {
   guardarMiembro() {
     const nombre = this.nuevoMiembro.nombre?.trim();
     const correo = this.nuevoMiembro.correo?.trim();
+    const contrasena = this.nuevoMiembro.correo?.trim();
     if (!nombre || !correo) return;
 
-    const nuevos = this.miembrosService.agregarMiembro(nombre, correo);
+    const nuevos = this.miembrosService.agregarMiembro(nombre, correo, contrasena);
     if (this.nuevoMiembro.rol) {
       const agregado = nuevos[nuevos.length - 1];
       this.miembrosService.actualizarMiembro(agregado.id, { rol: this.nuevoMiembro.rol });
     }
 
     this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Miembro añadido' });
-    this.nuevoMiembro = { id: 0, nombre: '', correo: '', rol: undefined, activo: true };
+    this.nuevoMiembro = { id: 0, nombre: '', correo: '',contrasena: undefined, rol: undefined, activo: true };
     this.mostrarModalMiembro = false;
     this.cargarDatos();
   }

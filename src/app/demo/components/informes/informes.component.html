@@ -56,10 +56,6 @@
               <p-dropdown [options]="[]" [placeholder]="p" [appendTo]="'body'" class="w-full"
                 [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
             </div>
-            <div class="px-3 flex align-items-center bg-white">
-              <button pButton label="Aplicar filtro" style="background-color: #2196F3; border: none; font-size: 11px;"
-                class="p-button-sm font-bold shadow-none"></button>
-            </div>
           </div>
         </div>
 
@@ -70,11 +66,6 @@
             <div class="flex align-items-baseline gap-2">
               <span class="text-500 text-xs font-bold uppercase">Total:</span>
               <span class="text-900 font-bold text-xl">{{ tiempoTotalFormateado }}</span>
-            </div>
-            <div class="flex align-items-baseline gap-2 border-left-1 surface-border pl-4"
-              *ngIf="tabactivot?.id === '1'">
-              <span class="text-500 text-xs font-bold uppercase">Importe:</span>
-              <span class="text-900 font-bold text-xl">0,00 USD</span>
             </div>
           </div>
 
@@ -129,32 +120,37 @@
             [style]="{'table-layout': 'fixed', 'width': '100%'}">
             <ng-template pTemplate="header">
               <tr class="text-xs text-500 uppercase">
-                <th style="width: 3rem"></th>
-                <th style="width: 35%">Entrada de tiempo</th>
-                <th style="width: 15%" class="text-right">Importe</th>
+                <th style="width: 5%"></th>
+                <th style="width: 36%" class="text-left">Entrada de tiempo</th>
                 <th style="width: 12%" class="text-center">Usuario</th>
-                <th style="width: 18%" class="text-center">Tiempo</th>
-                <th style="width: 12%" class="text-right">Duración</th>
-                <th style="width: 3rem"></th>
+                <th style="width: 20%" class="text-center">Tiempo</th>
+                <th style="width: 12%" class="text-center">Duración</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-r>
               <tr class="hover:surface-50 border-bottom-1 surface-border">
                 <td><p-checkbox [binary]="true"></p-checkbox></td>
                 <td class="celda-truncate">
-                  <span class="font-bold text-sm">{{ r.descripcion || 'Sin descripción' }}</span>
-                  <small class="text-500 ml-2">● {{ r.proyecto?.nombre || r.proyecto || 'Sin Proyecto' }}</small>
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span class="font-bold text-sm">{{ r.descripcion || 'Sin descripción' }}</span>
+                    <small class="text-500 ml-2"> <span *ngIf="r.proyecto?.color" [style.color]="r.proyecto.color"
+                        style="width: 10px; height: 10px; flex-shrink: 0;"> ●
+                      </span> {{ r.proyecto?.nombre || r.proyecto || 'Sin Proyecto' }}-{{
+                      r.clienteNombre || 'Sin Cliente' }}</small>
+                  </div>
+                  <div style="display: flex; align-items: center; margin:8px 0 0 ; gap: 8px; flex-wrap: wrap;">
+                    <span *ngFor="let tag of r.etiquetas"
+                      style="background: #e8f0fe; color: #3c78d8; border-radius: 4px; padding: 1px 6px; font-size: 0.75em;">
+                      {{ tag }}
+                    </span>
+                  </div>
                 </td>
-                <td class="text-right">0,00 $</td>
                 <td class="text-center text-xs">Alejandra</td>
                 <td class="text-center text-xs">
                   {{ r.inicio | date:'HH:mm' }} - {{ r.fin | date:'HH:mm' }}<br>
                   <small class="text-500">{{ r.inicio | date:'dd/MM/yyyy' }}</small>
                 </td>
                 <td class="text-right font-bold">{{ r.duracion }}</td>
-                <td class="text-center">
-                  <i class="pi pi-ellipsis-v text-400 cursor-pointer" (click)="abrirMenu(menuOpciones, $event, r)"></i>
-                </td>
               </tr>
             </ng-template>
           </p-table>
@@ -170,15 +166,21 @@
           <p-table [value]="datosSemanales" styleClass="p-datatable-gridlines p-datatable-sm">
             <ng-template pTemplate="header">
               <tr class="text-xs text-500 uppercase bg-gray-50">
-                <th style="width: 200px">Proyecto</th>
-                <th *ngFor="let dia of etiquetasDias" class="text-center">{{ dia }}</th>
-                <th class="text-right" style="width: 100px">Total</th>
+                <th style="width: 36%">Proyecto</th>
+                <th style="width: 8%" *ngFor="let dia of etiquetasDias" class="text-center">{{ dia }}</th>
+                <th class="text-center" style="width: 8%">Total</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-ds>
               <tr class="text-sm">
                 <td class="font-bold" style="border-left: 4px solid #00BCD4">
-                  <span style="color:#00BCD4" class="mr-2">●</span>{{ ds.proyecto }}
+                  <div style="display: flex; flex-direccion: column; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span class="font-bold text-sm">{{ ds.descripcion || 'Sin descripción' }}</span>
+                    <small class="text-400 ml-2">
+                      <span *ngIf="ds.proyectoColor" [style.color]="ds.proyectoColor">●</span>
+                      {{ ds.proyectoNombre }} - {{ ds.clienteNombre }}
+                    </small>
+                  </div>
                 </td>
                 <td *ngFor="let dia of ds.dias" class="text-center text-500">{{ dia }}</td>
                 <td class="text-right font-bold bg-gray-50">{{ ds.total }}</td>
@@ -285,28 +287,27 @@
               style="min-width: 90px; border-right-style: dashed !important;">
               <span class="text-500 font-bold text-xs uppercase">Filtrar <i class="pi pi-chevron-down ml-1"></i></span>
             </div>
-            <div *ngFor="let p of ['Equipo','Inicio','Fin','Trabajo','Horas extra','Bajas']"
+            <div *ngFor="let p of ['Equipo','Inicio','Fin','Trabajo','Horas extra','Observación']"
               class="flex-1 border-right-1 surface-border flex align-items-center"
               style="border-right-style: dashed !important;">
               <p-dropdown [options]="[]" [placeholder]="p" [appendTo]="'body'" class="w-full"
                 [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
             </div>
-            <div class="px-3 flex align-items-center bg-white">
-              <button pButton label="Aplicar filtro" style="background-color: #2196F3; border: none; font-size: 11px;"
-                class="p-button-sm font-bold shadow-none"></button>
-            </div>
+            <p-button class="p-button-text p-button-danger" label="Exportar" icon="pi pi-file-excel"
+              (onClick)="exportar()">
+            </p-button>
           </div>
-          <p-table [value]="registrosDetallados" styleClass="p-datatable-sm tabla-fija-detallado"
+          <p-table #dt [value]="registrosDetallados" styleClass="p-datatable-sm tabla-fija-detallado"
             [style]="{'table-layout': 'fixed', 'width': '100%'}">
             <ng-template pTemplate="header">
               <tr class="text-xs text-500 uppercase">
                 <th style="width: 15%">Usuario</th>
                 <th style="width: 10%" class="text-center"> Fecha</th>
-                <th style="width: 12%" class="text-center"> Inicio</th>
-                <th style="width: 18%" class="text-center"> Fin</th>
-                <th style="width: 20%" class="text-center"> Trabajo</th>
-                <th style="width: 20%" class="text-center"> Horas Extra</th>
-                <th style="width: 20%" class="text-center"> Bajas</th>
+                <th style="width: 8%" class="text-center"> Inicio</th>
+                <th style="width: 8%" class="text-center"> Fin</th>
+                <th style="width: 35%" class="text-center"> Trabajo</th>
+                <th style="width: 10%" class="text-center"> Horas Extra</th>
+                <th style="width: 15%" class="text-center"> Observación</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-r>
@@ -315,19 +316,28 @@
                 <td class="text-center text-xs">{{ r.inicio | date:'dd/MM/yyyy' }}</td>
                 <td class="text-center text-xs">
                   {{ r.inicio | date:'HH:mm' }}<br>
-                  <small class="text-500">{{ r.inicio | date:'dd/MM/yyyy' }}</small>
                 </td>
                 <td class="text-center text-xs">
                   {{ r.fin | date:'HH:mm' }}<br>
-                  <small class="text-500">{{ r.inicio | date:'dd/MM/yyyy' }}</small>
                 </td>
                 <td class="celda-truncate">
-                  <span class="font-bold text-sm">{{ r.descripcion || 'Sin descripción' }}</span>
-                  <small class="text-500 ml-2">● {{ r.proyecto?.nombre || r.proyecto || 'Sin Proyecto' }}</small>
+                  <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                    <span class="font-bold text-sm">{{ r.descripcion || 'Sin descripción' }}</span>
+                    <small class="text-500 ml-2"> <span *ngIf="r.proyecto?.color" [style.color]="r.proyecto.color"
+                        style="width: 10px; height: 10px; flex-shrink: 0;"> ●
+                      </span> {{ r.proyecto?.nombre || r.proyecto || 'Sin Proyecto' }}-{{
+                      r.clienteNombre || 'Sin Cliente' }}</small>
+                  </div>
                 </td>
-                <td class="text-right font-bold">{{ r.duracion }}</td>
-                <td class="text-center">
-                  <i class="pi pi-ellipsis-v text-400 cursor-pointer" (click)="abrirMenu(menuOpciones, $event, r)"></i>
+                <td class="text-right font-bold">
+                  <span>{{ restarHoras(r.duracion).tiempo }}</span>
+                </td>
+                <td>
+                  <small [ngStyle]="{
+                    'color': restarHoras(r.duracion).estado.startsWith('Debe') ? '#e53935' : 
+                      restarHoras(r.duracion).estado.startsWith('Extra') ? '#43a047' : '#9aa0a6'}">
+                    {{ restarHoras(r.duracion).estado }}
+                  </small>
                 </td>
               </tr>
             </ng-template>
@@ -345,10 +355,6 @@
               style="border-right-style: dashed !important;">
               <p-dropdown [options]="[]" [placeholder]="p" [appendTo]="'body'" class="w-full"
                 [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
-            </div>
-            <div class="px-3 flex align-items-center bg-white">
-              <button pButton label="Aplicar filtro" style="background-color: #2196F3; border: none; font-size: 11px;"
-                class="p-button-sm font-bold shadow-none"></button>
             </div>
           </div>
           <p-table [value]="registrosDetallados" styleClass="p-datatable-sm tabla-fija-detallado"

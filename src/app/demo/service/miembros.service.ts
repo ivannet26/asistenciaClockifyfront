@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Miembros } from '../model/Miembro';
+import { Miembros, RolNombre } from '../model/Miembro';
 
 @Injectable({
     providedIn: 'root'
@@ -13,12 +13,13 @@ export class MiembrosService {
         return data ? JSON.parse(data) : [];
     }
 
-    agregarMiembro(nombre: string, correo: string): Miembros[] {
+    agregarMiembro(nombre: string, correo: string, contrasena: string): Miembros[] {
         const miembro = this.getMiembros();
         const nuevo: Miembros = {
             id: Date.now(),
             nombre,
             correo,
+            contrasena,
             rol: undefined,
             grupoIds: undefined,
             activo: true
@@ -52,5 +53,30 @@ export class MiembrosService {
     private guardar(miembro: Miembros[]): void {
         localStorage.setItem(this.storageKey, JSON.stringify(miembro));
     }
+
+    login(correo: string, contrasena: string): Miembros | null {
+        const miembros = this.getMiembros();
+        const encontrado = miembros.find(
+            (m) => m.correo === correo && m.contrasena === contrasena && m.activo
+        );
+        return encontrado ?? null;
+    }
+    initDefaultMiembro(): void {
+    const existing = this.getMiembros();
+
+    // Solo crea el usuario por defecto si la lista está vacía
+    if (existing.length === 0) {
+        const defaultMiembro: Miembros = {
+            id: Date.now(),
+            nombre: 'Administrador',
+            correo: 'admin@correo.com',
+            contrasena: 'admin123',
+            rol: RolNombre.ADMIN,
+            grupoIds: [],
+            activo: true
+        };
+        this.guardar([defaultMiembro]);
+    }
+}
 
 }

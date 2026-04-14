@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TabMenuModule } from "primeng/tabmenu";
 import { DropdownModule } from "primeng/dropdown";
 import { CalendarModule } from "primeng/calendar";
-import { TableModule } from 'primeng/table';
+import { TableModule, Table } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from "primeng/card";
 import { ChartModule } from 'primeng/chart';
@@ -15,6 +15,8 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { OverlayPanelModule, OverlayPanel } from 'primeng/overlaypanel';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenuItem } from 'primeng/api';
+
+import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
 
 @Component({
   selector: 'app-informes',
@@ -32,6 +34,7 @@ export class InformesComponent implements OnInit {
   @ViewChild('op') op!: OverlayPanel;
 
   // --- UI ---
+  @ViewChild('dt') dt!: Table;
   tabactivot!: MenuItem;
   tabactivoe!: MenuItem;
   filtroEtiqueta: string = '';
@@ -79,7 +82,6 @@ export class InformesComponent implements OnInit {
     this.tabactivot = this.tabsT[0];
     this.tabactivoe = this.tabsE[0];
   }
-
 
   ngOnInit() {
     this.configurarGraficos();
@@ -173,9 +175,21 @@ export class InformesComponent implements OnInit {
     const data = localStorage.getItem('registros');
     if (!data) return;
     const registros = JSON.parse(data);
+    const clientesData = localStorage.getItem('clientes');
+    const clientes = clientesData ? JSON.parse(clientesData) : [];
+
 
     this.registrosDetallados = registros
-      .map((r: any) => ({ ...r, inicio: new Date(r.inicio), fin: new Date(r.fin) }))
+      .map((r: any) => {
+        const clienteId = r.proyecto?.clienteId;
+        const cliente = clientes.find((c: any) => c.id === clienteId);
+        return {
+          ...r,
+          inicio: new Date(r.inicio),
+          fin: new Date(r.fin),
+          clienteNombre: cliente?.nombre || 'Sin Cliente'
+        };
+      })
       .filter((r: any) => r.inicio >= inicioF && r.inicio <= new Date(finF.getTime() + 86400000))
       .sort((a: any, b: any) => b.inicio.getTime() - a.inicio.getTime());
 
@@ -221,11 +235,25 @@ export class InformesComponent implements OnInit {
       titulo: n, duracion: this.formatearSegundos(tiemposPorProyecto[n]), color: '#2196F3'
     }));
 
-    this.datosSemanales = Object.keys(agrupacionSemanal).map(n => ({
-      proyecto: n,
-      dias: agrupacionSemanal[n].map(seg => seg > 0 ? this.formatearSegundos(seg) : '—'),
-      total: this.formatearSegundos(agrupacionSemanal[n].reduce((a, b) => a + b, 0))
-    }));
+    this.datosSemanales = Object.keys(agrupacionSemanal).map(n => {
+      // Busca un registro de ese proyecto para sacar los datos extra
+      const registroRef = this.registrosDetallados.find((r: any) => {
+        const nombre = (r.proyecto && typeof r.proyecto === 'object') ? r.proyecto.nombre : (r.proyecto || 'Sin Proyecto');
+        return nombre === n;
+      });
+
+      return {
+        proyecto: n,
+        descripcion: registroRef?.descripcion || 'Sin descripción',
+        proyectoColor: registroRef?.proyecto?.color || null,
+        proyectoNombre: registroRef?.proyecto?.nombre || registroRef?.proyecto || 'Sin Proyecto',
+        clienteNombre: registroRef?.clienteNombre || 'Sin Cliente',
+        dias: agrupacionSemanal[n].map(seg => seg > 0 ? this.formatearSegundos(seg) : '—'),
+        total: this.formatearSegundos(agrupacionSemanal[n].reduce((a, b) => a + b, 0))
+      };
+    });
+
+
     this.totalesPorDiaSemana = tiempoPorDiaBarras.map(seg => this.formatearSegundos(seg));
 
     this.dataBarras = {
@@ -271,4 +299,46 @@ export class InformesComponent implements OnInit {
   abrirMenu(panel: any, event: Event, r: any) { this.registroSeleccionado = r; panel.toggle(event); }
   duplicarSeleccionado(p: any) { p.hide(); }
   eliminarSeleccionado(p: any) { p.hide(); }
+  restarHoras(duracion: string, horas: number = 8): { tiempo: string, estado: string } {
+    const [h, m, s] = duracion.split(':').map(Number);
+    const trabajados = (h * 3600) + (m * 60) + s;
+    const requeridos = horas * 3600;
+    const diferencia = requeridos - trabajados;
+    const umbral = 60;
+
+    if (diferencia > umbral) {
+      return {
+        tiempo: '- ' + this.formatearSegundos(diferencia),
+        estado: 'Debe '
+      };
+    } else if (diferencia < -umbral) {
+      return {
+        tiempo: '+ ' + this.formatearSegundos(Math.abs(diferencia)),
+        estado: 'Extra'
+      };
+    } else {
+      return {
+        tiempo: '00:00:00',
+        estado: 'Completado'
+      };
+    }
+  }
+  exportar(): void {
+    ExtraccionExcel.desdeTabla(
+      this.dt,
+      (r, i) => ({
+        'N°': i + 1,
+        'Usuario': 'Alejandra',
+        'Fecha': r.inicio ? new Date(r.inicio).toLocaleDateString('es-ES') : '',
+        'Inicio': r.inicio ? new Date(r.inicio).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '',
+        'Fin': r.fin ? new Date(r.fin).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '',
+        'Descripcion': `${r.descripcion || 'Sin descripción'}`,
+        'Trabajo': ` ${r.proyecto?.nombre || 'Sin Proyecto'}`,
+        'Cliente': `${r.clienteNombre || 'Sin Cliente'}`,
+        'Horas Extra': this.restarHoras(r.duracion).tiempo,
+        'Observación': this.restarHoras(r.duracion).estado,
+      }),
+      'Informe - Asistencia'
+    );
+  }
 }

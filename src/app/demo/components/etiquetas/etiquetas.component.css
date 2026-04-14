@@ -134,14 +134,7 @@
   border-bottom: 1px solid #f1f5f9;
 }
 
-.acciones-celda {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
-
 /* --- BOTONES Y INPUTS ESTANDARIZADOS --- */
-
 .input-personalizado {
   flex: 1;
   border-top-right-radius: 0 !important;

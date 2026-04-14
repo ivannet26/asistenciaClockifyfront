@@ -69,7 +69,7 @@ export class AppLayoutComponent implements OnDestroy {
     get isNuevaRuta(): boolean {
         return this.router.url.includes('/menu-layout');
     }
-
+    
     hideMenu() {
         this.layoutService.state.overlayMenuActive = false;
         this.layoutService.state.staticMenuMobileActive = false;
