@@ -1,3 +1,6 @@
+/* =========================================
+   1. CONFIGURACIÓN BASE Y CARD
+   ========================================= */
 :host {
     display: block;
     width: 100%;
@@ -9,181 +12,132 @@
     border-radius: 4px;
 }
 
-/* Esto obliga a que si el menú lo empuja, el contenido interno se ajuste */
+/* Evita que el contenido se desborde si el menú lateral empuja */
 .grid {
     margin: 0 !important;
 }
 
-/* En proyectos.component.css */
-.grid.formgrid {
-    border-bottom: 1px solid #e4e7eb;
+/* =========================================
+   2. ESTILO DE FILTROS (ESTILO CLOCKIFY)
+   ========================================= */
+
+/* Unificación de fuentes y color negro para que parezcan texto plano */
+.filtro-item ::ng-deep .p-dropdown-label,
+.filtro-item-btn {
+    color: #000000 !important; /* Negro puro */
+    font-family: 'Inter', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
 }
 
+/* Quitar bordes y sombras de PrimeNG en Dropdowns */
 :host ::ng-deep .p-dropdown {
     border: none !important;
-    /* Quita el borde de los dropdowns para que parezcan links */
-}
-
-:host ::ng-deep .p-dropdown:not(.p-disabled).p-focus {
-    box-shadow: none !important;
-}
-
-/* Estilo unificado para los botones de texto y dropdowns */
-.filtro-boton,
-.filtro-texto ::ng-deep .p-dropdown-label {
-    font-family: 'Inter', sans-serif !important;
-    /* O la fuente que uses en tu proyecto */
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    color: #5c6b7a !important;
-    /* El color gris azulado de la imagen */
-    padding-left: 0.5rem !important;
-}
-
-/* Quitar efectos de hover de PrimeNG que cambian el fondo */
-.filtro-boton:hover {
     background: transparent !important;
-    color: #00a1f1 !important;
-    /* Cambia a azul al pasar el mouse como en la original */
 }
 
-/* Ajuste específico para el icono del dropdown */
-.filtro-texto ::ng-deep .p-dropdown-trigger {
-    color: #5c6b7a !important;
-}
-
-/* Quitar bordes y sombras al hacer clic */
 :host ::ng-deep .p-dropdown:not(.p-disabled).p-focus {
     box-shadow: none !important;
 }
 
-/* UNIFICACIÓN DE FUENTES Y COLOR NEGRO EN FILTROS */
-.filtro-item-btn {
-    color: #000000 !important;
-    /* Negro puro */
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    padding: 0.5rem 0.7rem !important;
-    text-decoration: none !important;
-}
-
-.filtro-item ::ng-deep .p-dropdown-label {
-    color: #000000 !important;
-    /* Negro puro */
-    font-size: 14px !important;
-    font-weight: 600 !important;
-}
-
-/* QUITAR BORDES AZULES Y SOMBRAS */
-:host ::ng-deep .p-dropdown:not(.p-disabled).p-focus,
-:host ::ng-deep .p-inputtext:enabled:focus {
-    box-shadow: none !important;
-    border-color: #ced4da !important;
-}
-
-.border-none {
-    border: none !important;
-}
-
-/* EFECTO HOVER PARA BOTONES DE FILTRO */
-.filtro-item-btn:hover {
-    background: rgba(0, 0, 0, 0.04) !important;
-}
-
-.color-swatch {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    transition: transform 0.1s ease;
-}
-
-.color-swatch:hover {
-    transform: scale(1.1);
-    filter: brightness(0.9);
-}
-
-.color-trigger:hover {
-    filter: brightness(0.9);
-}
-
-.grid-filtros {
-    display: flex;
-    flex-direction: row;
-}
-
-
-.menu-fila {
-    display: flex;
-    flex-direction: column;
-}
-
-.item-menu {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
+/* Efecto Hover para que el texto cambie a azul */
+.filtro-item:hover ::ng-deep .p-dropdown-label,
+.filtro-item:hover ::ng-deep .p-dropdown-trigger {
+    color: #00a1f1 !important;
     cursor: pointer;
-    border-radius: 6px;
-    transition: background 0.2s;
+}
+
+/* =========================================
+   3. TABLA Y CELDAS (BLINDAJE)
+   ========================================= */
+
+/* Forzar que el texto no se amontone y se trunque si es muy largo */
+.celda-truncate {
+    display: block;
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Estilo de las celdas de la tabla */
+:host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td {
+    border-color: #f3f4f6 !important;
+    padding: 12px 8px !important;
+    vertical-align: middle;
+}
+
+.text-700 {
+    color: #374151 !important; /* Gris profesional */
+}
+
+/* Quitar flechas de los inputs de tipo número (Progreso) */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* =========================================
+   4. MODALES Y FORMULARIOS
+   ========================================= */
+.color-box input[type="color"] {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* =========================================
+   5. RESPONSIVIDAD (MOBILE FIX)
+   ========================================= */
+
+/* Sticky left para el label de "Filtrar" en móviles */
+.sticky-left {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #f9fafb !important;
+}
+
+@media screen and (max-width: 768px) {
+    /* Permitir que la tabla se desplace sin romper el diseño */
+    .overflow-x-auto {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+    }
+
+    /* Ajustar filtros para que se apilen en móviles */
+    .grid-filtros {
+        flex-direction: column !important;
+    }
+
+    /* Quitar el borde derecho dashed en móvil porque ahora están uno sobre otro */
+    .border-right-1 {
+        border-right: none !important;
+        border-bottom: 1px dashed #e2e8f0 !important;
+    }
+
+    /* Centrar título en móviles */
+    .text-900 {
+        text-align: center;
+        width: 100%;
+    }
+}
+
+/* Estilos de Menú de Acciones (Editar/Archivar) */
+.p-button-sm {
+    padding: 0.4rem !important;
 }
 
 .item-menu:hover {
     background-color: #f1f5f9;
-}
-
-.item-menu i {
-    color: #64748b;
-}
-
-.item-menu.danger {
-    color: #ef4444;
-}
-
-.item-menu.danger i {
-    color: #ef4444;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 10px;
-}
-
-.input-full {
-    width: 100%;
-}
-
-.color-box {
-    display: flex;
-    align-items: center;
-}
-
-.color-box input {
-    width: 40px;
-    height: 35px;
-    border: none;
-    cursor: pointer;
-}
-
-.publico-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* agregado para responsividad */
-@media (max-width: 430px) {
-    .contenedor-filtros span {
-        display: none;
-    }
-
-    .grid-filtros {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(2, 1fr);
-        gap: 10px;
-    }
-
-    .item-filtro {
-        display: none;
-    }
+    border-radius: 6px;
 }
