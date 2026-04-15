@@ -23,7 +23,8 @@
 
 /* Color negro y fuente Inter para los textos de los filtros */
 .filtro-item ::ng-deep .p-dropdown-label {
-    color: #334155 !important; /* Gris oscuro/negro original */
+    color: #334155 !important;
+    /* Gris oscuro/negro original */
     font-family: 'Inter', sans-serif !important;
     font-size: 14px !important;
     font-weight: 700 !important;
@@ -51,7 +52,7 @@
    3. TABLA Y CELDAS (DISEÑO COMPACTO)
    ========================================= */
 
-:host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td {
+:host ::ng-deep .p-datatable-sm .p-datatable-tbody>tr>td {
     padding: 10px 12px !important;
     border-color: #f1f5f9 !important;
     vertical-align: middle;
@@ -67,6 +68,7 @@ input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
 input[type=number] {
     -moz-appearance: textfield;
 }
@@ -77,10 +79,14 @@ input[type=number] {
 
 /* ELIMINAR EL CUADRO AZUL SÓLIDO POR COMPLETO */
 :host ::ng-deep .p-datatable-tbody .p-button.p-button-text {
-    background-color: transparent !important; /* Quita el fondo azul */
-    border: none !important;                  /* Quita cualquier borde */
-    box-shadow: none !important;              /* Quita sombras */
-    width: 32px !important;                   /* Tamaño compacto */
+    background-color: transparent !important;
+    /* Quita el fondo azul */
+    border: none !important;
+    /* Quita cualquier borde */
+    box-shadow: none !important;
+    /* Quita sombras */
+    width: 32px !important;
+    /* Tamaño compacto */
     height: 32px !important;
     padding: 0 !important;
 }
@@ -88,7 +94,8 @@ input[type=number] {
 /* Color Celeste para el icono (Lápiz / Folder) */
 :host ::ng-deep .p-button-primary.p-button-text .p-button-icon,
 :host ::ng-deep .p-button-warning.p-button-text .p-button-icon {
-    color: #2196F3 !important; /* El celeste de tu diseño original */
+    color: #2196F3 !important;
+    /* El celeste de tu diseño original */
     font-size: 1.15rem !important;
 }
 
@@ -100,11 +107,13 @@ input[type=number] {
 
 /* Fix para botones de edición (Check Verde / X Roja) */
 :host ::ng-deep .p-button-success.p-button-text .p-button-icon {
-    color: #22c55e !important; /* Verde visible */
+    color: #22c55e !important;
+    /* Verde visible */
 }
 
 :host ::ng-deep .p-button-danger.p-button-text .p-button-icon {
-    color: #ef4444 !important; /* Rojo visible */
+    color: #ef4444 !important;
+    /* Rojo visible */
 }
 
 /* =========================================
@@ -112,6 +121,7 @@ input[type=number] {
    ========================================= */
 
 @media screen and (max-width: 768px) {
+
     /* Apila los filtros en vertical en móviles */
     .grid-filtros {
         flex-direction: column !important;
@@ -143,4 +153,25 @@ input[type=number] {
     border-radius: 4px;
     border: 1px solid #ddd;
     cursor: pointer;
+}
+
+.boton-personalizado {
+    background-color: #2196F3 !important;
+    border-radius: 4px !important;
+    /* El lado izquierdo debe ser recto cuando está pegado al input */
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border: none;
+    color: white !important;
+    font-weight: bold;
+    font-size: 0.9rem;
+    padding: 0 1.5rem;
+    height: 40px;
+    /* Misma altura que el input */
+    transition: background 0.2s;
+    width: auto;
+}
+
+.boton-personalizado:hover {
+    background-color: #0d89ec !important;
 }

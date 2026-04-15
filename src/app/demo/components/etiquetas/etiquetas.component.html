@@ -6,7 +6,8 @@
 
       <div class="barra-herramientas" *ngIf="mostrarLista">
         <div class="busqueda-filtros">
-          <p-dropdown [options]="opcionesFiltro" [(ngModel)]="filtroSeleccionado" placeholder="Mostrar activo">
+          <p-dropdown [options]="opcionesFiltro" [(ngModel)]="filtroSeleccionado" (onChange)="filtrarClientes()"
+            placeholder="Mostrar activo">
           </p-dropdown>
 
           <span class="p-input-icon-left">
@@ -16,7 +17,7 @@
           </span>
         </div>
 
-        <div class="grupo-input-compacto">
+        <div class="grupo-input">
           <input type="text" pInputText [(ngModel)]="nuevaEtiquetaNombre" placeholder="Añadir nueva etiqueta"
             class="input-personalizado" (keyup.enter)="agregarEtiqueta()" />
           <button pButton type="button" label="Añadir" class="boton-personalizado" (click)="agregarEtiqueta()">
@@ -26,9 +27,10 @@
 
       <p-card styleClass="card-tabla-estandar">
 
-        <!-- Estado vacío -->
         <div class="contenedor-vacio" *ngIf="!mostrarLista">
-          <h1 class="titulo-principal">Organiza tus entradas con etiquetas</h1>
+          <h1 class="titulo-principal">
+            Organiza tus entradas con etiquetas
+          </h1>
           <p class="subtitulo">
             Usa etiquetas para añadir información adicional a las entradas de tiempo y obtener más información sobre los
             datos con informes.
@@ -36,12 +38,11 @@
           <div class="grupo-input">
             <input type="text" pInputText [(ngModel)]="nuevaEtiquetaNombre" placeholder="Añadir nueva etiqueta"
               class="input-personalizado" (keyup.enter)="agregarEtiqueta()" />
-            <button pButton type="button" label="AÑADIR" class="boton-personalizado" (click)="agregarEtiqueta()">
+            <button pButton type="button" label="Añadir" class="boton-personalizado" (click)="agregarEtiqueta()">
             </button>
           </div>
         </div>
 
-        <!-- Tabla con lista -->
         <div class="contenedor-tabla" *ngIf="mostrarLista">
           <p-table #dt [value]="etiquetasFiltrados" [scrollable]="true" scrollHeight="450px"
             class="tabla-personalizada">
@@ -52,7 +53,7 @@
                   <p-checkbox [binary]="true"></p-checkbox>
                 </th>
                 <th>NOMBRE</th>
-                <th style="width: 10rem">
+                <th style="width: 8rem">
                   <p-button class="p-button-text p-button-danger" label="Exportar" icon="pi pi-file-excel"
                     (onClick)="exportar()">
                   </p-button>

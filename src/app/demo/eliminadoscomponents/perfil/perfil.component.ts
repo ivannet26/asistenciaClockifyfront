@@ -17,8 +17,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { Perfil } from '../../model/perfil';
-import { PerfilService } from '../../service/perfil.service';
+//import { Perfil } from '../../model/perfil';
+//import { PerfilService } from '../../service/perfil.service';
 import { BreadcrumbService } from '../../service/breadcrumb.service';
 import { Router, RouterModule } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
@@ -47,21 +47,21 @@ import { TooltipModule } from 'primeng/tooltip';
 })
 export class PerfilComponent implements OnInit{
   mPerfilForm: FormGroup;
-    mPerfilList: Perfil[] = [];
+    //mPerfilList: Perfil[] = [];
     isEditing: boolean = false;
     editingRowIndex: number | null = null;
-    editingPerfil: Perfil | null = null;
+    //editingPerfil: Perfil | null = null;
     editingRows: { [s: string]: boolean } = {};
     editingData: any = {};
     displayDialog: boolean = false;
     isNew: boolean = false;
-    clonedPerfil: { [s: string]: Perfil } = {};
+    //clonedPerfil: { [s: string]: Perfil } = {};
     items: any[] = [];
     enableAddbutton: boolean = true;
 
     constructor(
         private fb: FormBuilder,
-        private maS: PerfilService,
+        //private maS: PerfilService,
         private mS: MessageService,
         private confirmationsService: ConfirmationService,
         private bS: BreadcrumbService,
@@ -88,7 +88,7 @@ export class PerfilComponent implements OnInit{
     }
 
     loadPerfil(): void {
-        this.maS.getAll().subscribe({
+        /*this.maS.getAll().subscribe({
             next: (data) => {
                 //console.log('Datos obtenidos:', data); // Console log para verificar la data
                 this.mPerfilList = data;
@@ -96,10 +96,10 @@ export class PerfilComponent implements OnInit{
             error: (err) => {
                 console.error('Error al obtener datos:', err); // Manejo de errores
             },
-        });
+        });*/
     }
 
-    verasignarPerfiles(rowData: Perfil)
+    /*verasignarPerfiles(rowData: Perfil)
     {
         const navigationExtras={
             state:{
@@ -123,9 +123,9 @@ export class PerfilComponent implements OnInit{
             this.editingRows[index] = true; // Habilita edición solo para esta fila
             this.editingPerfil = { ...perfil }; // Crea una copia del perfil actual
         }
-    }
+    }*/
 
-    onRowEditSave(perfil: any, index: number) {
+    /*onRowEditSave(perfil: any, index: number) {
         if (this.editingPerfil) {
             this.maS.update(perfil.codigo, perfil).subscribe({
                 next: () => {
@@ -147,9 +147,9 @@ export class PerfilComponent implements OnInit{
                 },
             });
         }
-    }
+    }*/
 
-    onRowEditCancel(perfil: any, index: number) {
+    /*onRowEditCancel(perfil: any, index: number) {
         this.mPerfilList[index] = { ...this.editingPerfil }; // Restaura datos originales
         this.editingRows[index] = false; // Desactiva edición para esta fila
         this.editingPerfil = null;
@@ -221,6 +221,4 @@ export class PerfilComponent implements OnInit{
                 });
             },
         });
-    }
-
-}
+    */}

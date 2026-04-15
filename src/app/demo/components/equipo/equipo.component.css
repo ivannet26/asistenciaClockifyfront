@@ -258,3 +258,24 @@
     min-width: 600px;
   }
 }
+
+.boton-personalizado {
+  background-color: #2196F3 !important;
+  border-radius: 4px !important;
+  /* El lado izquierdo debe ser recto cuando está pegado al input */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border: none;
+  color: white !important;
+  font-weight: bold;
+  font-size: 0.9rem;
+  padding: 0 1.5rem;
+  height: 40px;
+  /* Misma altura que el input */
+  transition: background 0.2s;
+  width: auto;
+}
+
+.boton-personalizado:hover {
+  background-color: #0d89ec !important;
+}

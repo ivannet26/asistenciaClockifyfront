@@ -10,8 +10,22 @@
                     <p-tabMenu [model]="tabs" [activeItem]="tabactivo" (activeItemChange)="CambioTab($event)" />
 
                     <div [hidden]="tabactivo?.id !== 0">
-                        <button pButton icon="pi pi-plus" label="Crear" class="p-button-info px-3 py-2 m-3 font-bold"
-                            (click)="abrirModalNuevoMiembro()" style="border-radius: 4px;"></button>
+                        <div class="p-3 bg-white border-bottom-1 surface-border">
+                            <div class="flex align-items-center gap-2">
+                                <div
+                                    class="flex-1 flex align-items-center border-1 surface-border border-round px-2 bg-white">
+                                    <i class="pi pi-search text-400 mx-2"></i>
+                                    <input type="text" pInputText placeholder="Buscar por nombre"
+                                        [(ngModel)]="filtroNombre" (input)="aplicarFiltros()"
+                                        class="border-none shadow-none py-2 text-sm w-full">
+                                </div>
+                                <button pButton icon="pi pi-plus" label="Crear"
+                                    class="boton-personalizado px-3 py-2 m-3 font-bold"
+                                    (click)="abrirModalNuevoMiembro()" style="border-radius: 4px;">
+                                </button>
+                            </div>
+                        </div>
+
 
                         <div class="surface-0 border-y-1 surface-border">
                             <div class="flex align-items-stretch w-full">
@@ -49,8 +63,15 @@
                         <p-table #dt [value]="miembrosFiltrados" class="tabla-personalizada">
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <th colspan="7" class="">
+                                    <th colspan="6" class="">
                                         <p>Miembros</p>
+
+                                    </th>
+                                    <th>
+                                        <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
+                hover:bg-green-700 hover:border-green-600" label="Exportar" icon="pi pi-file-excel"
+                                            (onClick)="exportar()">
+                                        </p-button>
                                     </th>
                                 </tr>
                                 <tr class="cabecera-gris">
@@ -60,11 +81,7 @@
                                     <th>CONTRASEÑA</th>
                                     <th>ROL</th>
                                     <th>GRUPO</th>
-                                    <th style="width: 8rem">
-                                        <p-button class="p-button-text p-button-danger" label="Exportar"
-                                            icon="pi pi-file-excel" (onClick)="exportarMiembros()">
-                                        </p-button>
-                                    </th>
+                                    <th></th>
                                 </tr>
                             </ng-template>
 

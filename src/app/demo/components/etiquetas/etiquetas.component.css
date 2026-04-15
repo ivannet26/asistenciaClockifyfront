@@ -27,7 +27,7 @@
 .etiquetas-panel {
   background: var(--surface-card);
   border-radius: 0.5rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
   padding: 1.25rem;
 }
 
@@ -87,7 +87,7 @@
   width: 250px;
 }
 
-.grupo-input-compacto {
+.grupo-input {
   display: flex;
   max-width: 400px;
 }
@@ -98,7 +98,8 @@
   width: 100%;
   border: 1px solid #f1f5f9;
   border-radius: 4px;
-  overflow: hidden; /* Mantiene el scroll dentro de los bordes */
+  overflow: hidden;
+  /* Mantiene el scroll dentro de los bordes */
 }
 
 /* Forzar que la tabla respete el scrollHeight del HTML */
@@ -118,18 +119,21 @@
 
 /* Estilos para la Cabecera */
 :host ::v-deep .cabecera-gris th {
-  background-color: #f8fafc !important; /* Un gris más claro para estandarizar */
+  background-color: #f8fafc !important;
+  /* Un gris más claro para estandarizar */
   color: #64748b !important;
-  font-size: 0.75rem; /* Más pequeño para que parezca Clockify */
+  font-size: 0.75rem;
+  /* Más pequeño para que parezca Clockify */
   font-weight: 700;
   border-bottom: 1px solid #e2e8f0 !important;
   padding: 0.75rem 1rem !important;
-  position: sticky; /* Mantiene los títulos arriba mientras haces scroll */
+  position: sticky;
+  /* Mantiene los títulos arriba mientras haces scroll */
   top: 0;
   z-index: 10;
 }
 
-:host ::v-deep .p-datatable .p-datatable-tbody > tr > td {
+:host ::v-deep .p-datatable .p-datatable-tbody>tr>td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #f1f5f9;
 }
@@ -137,15 +141,17 @@
 /* --- BOTONES Y INPUTS ESTANDARIZADOS --- */
 .input-personalizado {
   flex: 1;
-  border-top-right-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
   border: 1px solid #ced4da;
   padding: 0.75rem;
-  height: 40px; /* Altura fija para alinear con el botón */
+  height: 40px;
+  max-width: 300px;
+  /* Altura fija para alinear con el botón */
 }
 
 .boton-personalizado {
-  background-color: #3B82F6 !important; 
+  background-color: #2196F3 !important;
   border-radius: 4px !important;
   /* El lado izquierdo debe ser recto cuando está pegado al input */
   border-top-left-radius: 0 !important;
@@ -155,12 +161,14 @@
   font-weight: bold;
   font-size: 0.9rem;
   padding: 0 1.5rem;
-  height: 40px; /* Misma altura que el input */
+  height: 40px;
+  /* Misma altura que el input */
   transition: background 0.2s;
+  width: auto;
 }
 
 .boton-personalizado:hover {
-  background-color: #2563eb !important;
+  background-color: #0d89ec !important;
 }
 
 /* MODO PANTALLA PEQUEÑA O MOVIL */
@@ -169,6 +177,18 @@
   .etiquetas-pagina {
     margin: 0;
     padding: 0.5rem;
+  }
+
+  .etiquetas-panel {
+    padding: 1rem;
+  }
+
+  .titulo-principal {
+    font-size: 1.4rem;
+  }
+
+  .subtitulo {
+    font-size: 0.9rem;
   }
 
   .barra-herramientas {
@@ -194,15 +214,22 @@
   }
 
   .input-personalizado {
-    border-radius: 4px !important; /* Redondeado total en móvil */
+    border-radius: 4px !important;
+    /* Redondeado total en móvil */
   }
 
   .boton-personalizado {
-    border-radius: 4px !important; /* Redondeado total en móvil */
+    border-radius: 4px !important;
+    /* Redondeado total en móvil */
     width: 100%;
   }
 
+  .contenedor-tabla {
+    overflow-x: auto;
+  }
+
   :host ::v-deep .p-datatable {
-    min-width: 100%; /* Ajustado para que no rompa el móvil si hay pocas columnas */
+    min-width: 100%;
+    /* Ajustado para que no rompa el móvil si hay pocas columnas */
   }
 }

@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ConfigService } from './config.service';
+/*import { ConfigService } from './config.service';
 import { catchError, map, throwError } from 'rxjs';
 import { ListarPerfil, Usuario, UsuarioCrear } from '../model/Usuario';
 import { ApiResponse } from '../model/api_response';
-
+*/
 
 @Injectable({
   providedIn: 'root'
@@ -17,14 +17,14 @@ export class UsuarioService {
   private apiUrl2 = ''
   private apiUrlPerfil = ''
 
-  constructor(private http:HttpClient, private configService: ConfigService) 
+  constructor(private http:HttpClient, /*private configService: ConfigService*/) 
   {
-    this.apiUrl = configService.getApiUrl();
+    /*this.apiUrl = configService.getApiUrl();*/
     this.urlAPI = `${this.apiUrl}/Usuario`;
-    this.apiUrl2 = configService.getApiUrl();
+    /*this.apiUrl2 = configService.getApiUrl();*/
     this.apiUrlPerfil = `${this.apiUrl2}/Perfil`;
   }
-
+/*
   getAllPerfil(): Observable<ListarPerfil[]> {
     return this.http.get<ApiResponse<ListarPerfil>>(`${this.apiUrlPerfil}/SpLista`)
       .pipe(map(response => response.data));
@@ -61,5 +61,5 @@ export class UsuarioService {
           return throwError(error);
         })
       );
-  }
+  }*/
 }

@@ -12,6 +12,7 @@ export interface Miembros {
     correo: string;
     contrasena: string;
     rol?: RolNombre | null;
+    //espaciotrabajoId: number;
     grupoIds?: number[];
     activo: boolean;
 }
