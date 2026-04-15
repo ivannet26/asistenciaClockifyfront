@@ -12,25 +12,25 @@
     border-radius: 4px;
 }
 
-/* Evita que el contenido se desborde si el menú lateral empuja */
+/* Evita desajustes si el menú lateral empuja el contenido */
 .grid {
     margin: 0 !important;
 }
 
 /* =========================================
-   2. ESTILO DE FILTROS (ESTILO CLOCKIFY)
+   2. FILTROS ESTILO "LINK" (SIN BORDES)
    ========================================= */
 
-/* Unificación de fuentes y color negro para que parezcan texto plano */
-.filtro-item ::ng-deep .p-dropdown-label,
-.filtro-item-btn {
-    color: #000000 !important; /* Negro puro */
+/* Color negro y fuente Inter para los textos de los filtros */
+.filtro-item ::ng-deep .p-dropdown-label {
+    color: #334155 !important; /* Gris oscuro/negro original */
     font-family: 'Inter', sans-serif !important;
     font-size: 14px !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
+    padding-left: 1rem !important;
 }
 
-/* Quitar bordes y sombras de PrimeNG en Dropdowns */
+/* Quitar bordes y sombras de PrimeNG para que parezcan texto plano */
 :host ::ng-deep .p-dropdown {
     border: none !important;
     background: transparent !important;
@@ -40,35 +40,25 @@
     box-shadow: none !important;
 }
 
-/* Efecto Hover para que el texto cambie a azul */
+/* Hover: Cambia a celeste al pasar el mouse por el filtro */
 .filtro-item:hover ::ng-deep .p-dropdown-label,
 .filtro-item:hover ::ng-deep .p-dropdown-trigger {
-    color: #00a1f1 !important;
+    color: #2196F3 !important;
     cursor: pointer;
 }
 
 /* =========================================
-   3. TABLA Y CELDAS (BLINDAJE)
+   3. TABLA Y CELDAS (DISEÑO COMPACTO)
    ========================================= */
 
-/* Forzar que el texto no se amontone y se trunque si es muy largo */
-.celda-truncate {
-    display: block;
-    max-width: 250px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Estilo de las celdas de la tabla */
 :host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td {
-    border-color: #f3f4f6 !important;
-    padding: 12px 8px !important;
+    padding: 10px 12px !important;
+    border-color: #f1f5f9 !important;
     vertical-align: middle;
 }
 
 .text-700 {
-    color: #374151 !important; /* Gris profesional */
+    color: #334155 !important;
 }
 
 /* Quitar flechas de los inputs de tipo número (Progreso) */
@@ -82,62 +72,75 @@ input[type=number] {
 }
 
 /* =========================================
-   4. MODALES Y FORMULARIOS
+   4. RESTAURAR BOTONES (ICONOS LIMPUIOS SIN FONDO AZUL)
    ========================================= */
-.color-box input[type="color"] {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    cursor: pointer;
-    padding: 0;
+
+/* ELIMINAR EL CUADRO AZUL SÓLIDO POR COMPLETO */
+:host ::ng-deep .p-datatable-tbody .p-button.p-button-text {
+    background-color: transparent !important; /* Quita el fondo azul */
+    border: none !important;                  /* Quita cualquier borde */
+    box-shadow: none !important;              /* Quita sombras */
+    width: 32px !important;                   /* Tamaño compacto */
+    height: 32px !important;
+    padding: 0 !important;
+}
+
+/* Color Celeste para el icono (Lápiz / Folder) */
+:host ::ng-deep .p-button-primary.p-button-text .p-button-icon,
+:host ::ng-deep .p-button-warning.p-button-text .p-button-icon {
+    color: #2196F3 !important; /* El celeste de tu diseño original */
+    font-size: 1.15rem !important;
+}
+
+/* Hover suave y circular para no tapar el icono */
+:host ::ng-deep .p-datatable-tbody .p-button.p-button-text:hover {
+    background-color: #f1f5f9 !important;
+    border-radius: 50% !important;
+}
+
+/* Fix para botones de edición (Check Verde / X Roja) */
+:host ::ng-deep .p-button-success.p-button-text .p-button-icon {
+    color: #22c55e !important; /* Verde visible */
+}
+
+:host ::ng-deep .p-button-danger.p-button-text .p-button-icon {
+    color: #ef4444 !important; /* Rojo visible */
 }
 
 /* =========================================
    5. RESPONSIVIDAD (MOBILE FIX)
    ========================================= */
 
-/* Sticky left para el label de "Filtrar" en móviles */
-.sticky-left {
-    position: sticky;
-    left: 0;
-    z-index: 2;
-    background: #f9fafb !important;
-}
-
 @media screen and (max-width: 768px) {
-    /* Permitir que la tabla se desplace sin romper el diseño */
-    .overflow-x-auto {
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch;
-        border: 1px solid #e2e8f0;
-        border-radius: 4px;
-    }
-
-    /* Ajustar filtros para que se apilen en móviles */
+    /* Apila los filtros en vertical en móviles */
     .grid-filtros {
         flex-direction: column !important;
+        height: auto !important;
     }
 
-    /* Quitar el borde derecho dashed en móvil porque ahora están uno sobre otro */
+    /* Cambia bordes punteados de vertical a horizontal en móvil */
     .border-right-1 {
         border-right: none !important;
         border-bottom: 1px dashed #e2e8f0 !important;
     }
 
-    /* Centrar título en móviles */
-    .text-900 {
-        text-align: center;
-        width: 100%;
+    /* Permitir scroll lateral en la tabla sin deformar el card */
+    .overflow-x-auto {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
     }
 }
 
-/* Estilos de Menú de Acciones (Editar/Archivar) */
-.p-button-sm {
-    padding: 0.4rem !important;
+/* Estilo del buscador */
+.p-inputtext {
+    font-size: 14px !important;
 }
 
-.item-menu:hover {
-    background-color: #f1f5f9;
-    border-radius: 6px;
+/* Modal de creación */
+.color-box input[type="color"] {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    cursor: pointer;
 }
