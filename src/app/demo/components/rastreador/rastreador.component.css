@@ -110,6 +110,7 @@
   flex: 1;
   min-width: 0;
   padding-right: 20px;
+  max-width: fit-content;
 }
 
 /* SECCIÓN DERECHA DEL REGISTRO (TODO AGRUPADO) */
@@ -158,6 +159,7 @@
 /* --- ESTILO PARA EL INPUT DE LA LISTA (MÁS LARGO E INVISIBLE) --- */
 .input-descripcion {
     width: 100%;             /* Se estira todo lo que puede */
+    max-width: 250px;
     border: none !important; /* Quita el borde gris */
     background: transparent !important; /* Quita el fondo blanco */
     box-shadow: none !important; /* Quita la sombra azul al hacer clic */

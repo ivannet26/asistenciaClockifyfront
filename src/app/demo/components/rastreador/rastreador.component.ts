@@ -74,7 +74,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     this.verificarTimerPersistente();
     this.agruparRegistros();
   }
-  
+
 
   ngOnDestroy() {
     if (this.intervalo) clearInterval(this.intervalo);
@@ -298,5 +298,11 @@ export class RastreadorComponent implements OnInit, OnDestroy {
       .filter(r => new Date(r.inicio).toDateString() === hoy)
       .reduce((acc, r) => acc + (new Date(r.fin).getTime() - new Date(r.inicio).getTime()), 0);
     return this.formatearTiempo(msTotal);
+  }
+
+  eliminarRegistro(registro: Registro) {
+    this.registros = this.registros.filter(r => r !== registro);
+    this.actualizarRegistrosStorage();
+    this.agruparRegistros();
   }
 }
