@@ -1,15 +1,56 @@
 /* =========================================
-   TABLA DETALLADA: FIX DE COLUMNAS
+   1. CONFIGURACIÓN GLOBAL Y RESPONSIVE
+   ========================================= */
+:host {
+    display: block;
+    background-color: #f8fafc;
+    min-height: 100vh;
+}
+
+/* Ajuste de márgenes responsivos */
+.informes-pagina {
+    transition: padding 0.3s ease;
+}
+
+/* Contenedor de Tabs con scroll para móvil */
+.tabmenu-container {
+    max-width: 100%;
+}
+
+.tabmenu-container ::ng-deep .p-tabmenu .p-tabmenu-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+@media screen and (max-width: 768px) {
+    .informes-pagina { padding: 0.5rem !important; }
+    .titulo-seccion { font-size: 1.25rem !important; text-align: center; }
+    
+    /* Forzar que el selector de fechas ocupe el ancho total */
+    .p-inputgroup.w-full { width: 100% !important; }
+    
+    /* Scroll horizontal para las tablas y filtros */
+    .mx-2, .mx-3 { 
+        overflow-x: auto !important; 
+        margin-left: 0.2rem !important; 
+        margin-right: 0.2rem !important; 
+    }
+}
+
+/* =========================================
+   2. FIX DE COLUMNAS (TABLA DETALLADA)
    ========================================= */
 
-/* 1. Obligar a la tabla a usar el ancho total y no deformarse */
+/* Obligar a la tabla a usar el ancho total y no deformarse */
 :host ::ng-deep .tabla-fija-detallado {
     table-layout: fixed !important;
     width: 100% !important;
     border-collapse: collapse !important;
 }
 
-/* 2. Estilo real para el botón de etiquetas (para que deje de ser negro/gris feo) */
+/* Estilo para el botón de etiquetas (Celeste profesional) */
 :host ::ng-deep .btn-etiqueta-detallado {
     border: 1px solid #dee2e6 !important;
     background-color: #ffffff !important;
@@ -25,7 +66,7 @@
     display: inline-block !important;
 }
 
-/* 3. Asegurar que las celdas tengan el espacio que les dimos en el HTML */
+/* Asegurar que las celdas respeten el espacio */
 :host ::ng-deep .tabla-fija-detallado th, 
 :host ::ng-deep .tabla-fija-detallado td {
     padding: 12px 8px !important;
@@ -33,28 +74,15 @@
     text-overflow: ellipsis !important;
 }
 
-/* 4. Evitar que la descripción del tiempo empuje a los demás */
 .celda-truncate {
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
 }
 
-/* 5. Colores de los textos de tiempo y duración para que resalten */
-.text-700 {
-    color: #374151 !important; /* Gris oscuro profesional */
-}
-
-/* 6. Color celeste para el icono de dólar y puntos de proyecto */
-.pi-dollar, .text-celeste {
-    color: #2196F3 !important;
-}
-
-/* 7. Quitar bordes innecesarios que ensucian la vista */
-:host ::ng-deep .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
-    border-color: #f3f4f6 !important;
-}
-/* Menú lateral del Calendario Overlay */
+/* =========================================
+   3. MENÚ CALENDARIO OVERLAY
+   ========================================= */
 .menu-calendario {
     width: 160px;
     border-right: 1px solid #dee2e6;
@@ -86,23 +114,88 @@
     font-weight: bold;
 }
 
-/* Blindaje de la Tabla Detallado */
-:host ::ng-deep .tabla-fija-detallado {
-    table-layout: fixed !important;
+/* =========================================
+   4. ESTILOS VISUALES Y COLORES
+   ========================================= */
+.text-700 {
+    color: #374151 !important; /* Gris oscuro profesional */
 }
 
-.celda-truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* Estilo para los iconos del recuadro gris */
-.pi-print:hover, .pi-share-alt:hover, .pi-download:hover {
+.text-celeste, .pi-dollar {
     color: #2196F3 !important;
 }
 
-/* Alineación de los botones del inputgroup */
+/* Efecto hover en iconos de acción */
+.pi-print:hover, .pi-share-alt:hover, .pi-download:hover {
+    color: #2196F3 !important;
+    cursor: pointer;
+}
+
+/* Quitar bordes innecesarios */
+:host ::ng-deep .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+    border-color: #f3f4f6 !important;
+}
+
+/* Sticky left para el label de "Filtrar" en móvil */
+.sticky-left {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #f9fafb !important;
+}
+
+/* Alineación de botones en inputgroup */
 :host ::ng-deep .p-inputgroup .p-button {
     border-left: none !important;
+}
+
+/* Chart Container para evitar desbordes */
+.chart-container {
+    position: relative;
+    width: 100%;
+}
+/* 1. Eliminar cualquier rastro de scrollbars y flechas en el TabMenu */
+::ng-deep .p-tabmenu {
+    overflow: hidden !important;
+}
+
+::ng-deep .p-tabmenu .p-tabmenu-nav {
+    overflow: hidden !important;
+    border: none !important;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+}
+
+::ng-deep .p-tabmenu .p-tabmenu-nav::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari y Edge */
+}
+
+/* 2. Blindaje para que no aparezcan spinners/flechas de input */
+::ng-deep .p-tabmenu-nav-btn {
+    display: none !important;
+}
+
+/* 3. Asegurar que el contenedor de las pestañas no tenga scroll vertical */
+.tabmenu-container {
+    overflow-y: hidden !important;
+    display: flex;
+    align-items: center;
+}
+/* Asegurar que la línea azul del TabMenu sea visible */
+:host ::ng-deep .p-tabmenu .p-tabmenu-nav .p-tabmenuitem.p-highlight .p-menuitem-link {
+    border-color: #2196F3 !important; /* El azul de tu diseño */
+    border-bottom-width: 2px !important;
+    color: #2196F3 !important;
+}
+
+/* Mantener el resto de la navegación sin bordes feos */
+:host ::ng-deep .p-tabmenu .p-tabmenu-nav {
+    border-bottom: 1px solid #dee2e6 !important; /* Línea gris sutil de fondo */
+    background: transparent !important;
+}
+
+:host ::ng-deep .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+    border-bottom: 2px solid transparent !important; /* Espacio para la línea */
+    background: transparent !important;
+    transition: none !important;
 }
