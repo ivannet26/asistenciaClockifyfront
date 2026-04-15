@@ -1,9 +1,9 @@
 <div class="rastreador-pagina">
     <div class="rastreador-panel">
-        <div class="barra-rastreador">
+        <div class="barra-rastreador flex flex-column md:flex-row align-items-center gap-2">
 
-            <div class="tarea-proyecto-seccion">
-                <div class="input-seccion">
+            <div class="tarea-proyecto-seccion flex flex-grow-1 w-full md:w-auto align-items-center">
+                <div class="input-seccion flex-grow-1">
                     <input type="text" pInputText placeholder="¿En qué estás trabajando?" class="input-tarea"
                         [(ngModel)]="tareaActual" />
                 </div>
@@ -24,27 +24,28 @@
                 </div>
             </div>
 
-            <div class="acciones-seccion">
+            <div class="acciones-seccion flex align-items-center justify-content-between w-full md:w-auto gap-3">
+                
                 <div class="flex align-items-center gap-2">
                     <button pButton icon="pi pi-tag" class="p-button-text"
                         [ngClass]="{'icono-activo': etiquetasSeleccionadas.length > 0}"
                         (click)="panelEtiquetas.toggle($event)">
                     </button>
 
-                    <div class="tags-pill-container" *ngIf="etiquetasSeleccionadas.length > 0">
+                    <div class="tags-pill-container flex flex-wrap gap-1" *ngIf="etiquetasSeleccionadas.length > 0">
                         <span *ngFor="let tag of etiquetasSeleccionadas" class="tag-badge">
                             {{ tag }}
                         </span>
                     </div>
                 </div>
 
-                <div class="divisor-vertical"></div>
+                <div class="divisor-vertical hidden md:block"></div>
 
                 <span class="timer-display" [ngClass]="{'corriendo': corriendo}">
                     {{ tiempoTranscurrido || '00:00:00' }}
                 </span>
 
-                <div class="botones-control">
+                <div class="botones-control flex align-items-center gap-1">
                     <button pButton [label]="corriendo ? 'DETENER' : 'INICIO'"
                         [ngClass]="corriendo ? 'p-button-danger' : 'p-button-info'" (click)="toggleTimer()">
                     </button>
@@ -59,20 +60,21 @@
     <div *ngIf="registros.length > 0" class="contenedor-lista">
         <div *ngFor="let grupo of registrosAgrupados">
 
-            <div class="cabecera-tiempo">
+            <div class="cabecera-tiempo flex justify-content-between">
                 <span>{{ grupo.label }}</span>
                 <span>Total: {{ formatearTiempo(grupo.totalMs) }}</span>
             </div>
 
             <div *ngFor="let r of grupo.registros" class="registro-item">
-                <div class="registro-contenido">
+                <div class="registro-contenido flex flex-column lg:flex-row gap-3 lg:align-items-center">
 
-                    <div class="registro-izquierda">
+                    <div class="registro-izquierda flex-grow-1">
                         <input type="text" pInputText [(ngModel)]="r.descripcion" class="input-descripcion"
                             placeholder="Sin descripción" />
                     </div>
 
-                    <div class="registro-centro">
+                    <div class="registro-centro flex flex-wrap align-items-center gap-3 lg:justify-content-end">
+                        
                         <div class="flex align-items-center gap-2" style="min-width: 150px;">
                             <div class="color-dot" [style.background]="r.proyecto?.color || '#94a3b8'"></div>
                             <span class="proyecto-nombre">
@@ -80,23 +82,23 @@
                             </span>
                         </div>
 
-                        <div class="registro-tags-display">
+                        <div class="registro-tags-display flex flex-wrap gap-1">
                             <span *ngFor="let tag of r.etiquetas" class="tag-badge-small">
                                 {{ tag.nombre ? tag.nombre : tag }}
                             </span>
                             <i *ngIf="!r.etiquetas || r.etiquetas.length === 0" class="pi pi-tag icono-suave"></i>
                         </div>
 
-                        <span class="hora-rango">
-                            {{ formatearHora(r.inicio) }} - {{ formatearHora(r.fin) }}
-                        </span>
-
-                        <i class="pi pi-calendar icono-suave"></i>
-
-                        <strong class="duracion">{{ r.duracion }}</strong>
+                        <div class="flex align-items-center gap-2">
+                            <span class="hora-rango">
+                                {{ formatearHora(r.inicio) }} - {{ formatearHora(r.fin) }}
+                            </span>
+                            <i class="pi pi-calendar icono-suave"></i>
+                            <strong class="duracion">{{ r.duracion }}</strong>
+                        </div>
                     </div>
 
-                    <div class="registro-derecha">
+                    <div class="registro-derecha flex justify-content-end gap-1">
                         <button pButton icon="pi pi-play" class="p-button-text" (click)="repetirTarea(r)"
                             pTooltip="Repetir tarea"></button>
                         <button pButton icon="pi pi-trash" (click)="eliminarRegistro(r)" class="p-button-text p-button-danger"></button>
@@ -108,7 +110,7 @@
     </div>
 </div>
 
-<p-overlayPanel #panelProyectos [style]="{ width: '320px' }">
+<p-overlayPanel #panelProyectos [style]="{ width: 'min(320px, 90vw)' }">
     <div class="flex flex-column gap-3">
         <span class="p-input-icon-left w-full">
             <i class="pi pi-search"></i>
@@ -135,7 +137,7 @@
     </div>
 </p-overlayPanel>
 
-<p-overlayPanel #panelEtiquetas [style]="{ width: '250px' }">
+<p-overlayPanel #panelEtiquetas [style]="{ width: 'min(250px, 80vw)' }">
     <div class="flex flex-column gap-2">
         <span class="p-input-icon-left w-full">
             <i class="pi pi-search"></i>
@@ -155,7 +157,7 @@
     </div>
 </p-overlayPanel>
 
-<p-dialog header="Crear nuevo Proyecto" [(visible)]="mostrarModalProyecto" [modal]="true" [style]="{width: '450px'}"
+<p-dialog header="Crear nuevo Proyecto" [(visible)]="mostrarModalProyecto" [modal]="true" [style]="{width: 'min(450px, 95vw)'}"
     [closable]="true">
     <div class="flex flex-column gap-3 mt-2">
         <input pInputText placeholder="Nombre del proyecto" [(ngModel)]="nuevoProyecto.nombre" class="w-full" />
@@ -164,7 +166,7 @@
             placeholder="Seleccionar cliente" appendTo="body" class="w-full">
         </p-dropdown>
 
-        <div class="flex align-items-center gap-3">
+        <div class="flex flex-wrap align-items-center gap-3">
             <span>Color:</span>
             <input type="color" [(ngModel)]="nuevoProyecto.color"
                 style="border:none; width:40px; height:40px; cursor:pointer" />
@@ -180,7 +182,7 @@
 
 <p-overlayPanel #menuModos>
     <div class="flex flex-column menu-fila">
-        <div class="item-menu"><i class="pi pi-clock"></i> Modo temporizador</div>
-        <div class="item-menu"><i class="pi pi-pencil"></i> Modo manual</div>
+        <div class="item-menu p-2 hover:bg-100 cursor-pointer"><i class="pi pi-clock"></i> Modo temporizador</div>
+        <div class="item-menu p-2 hover:bg-100 cursor-pointer"><i class="pi pi-pencil"></i> Modo manual</div>
     </div>
 </p-overlayPanel>
