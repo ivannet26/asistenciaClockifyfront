@@ -11,9 +11,6 @@
 }
 
 .header-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding-bottom: 10px;
 }
 
@@ -29,27 +26,11 @@
   color: #3b82f6;
 }
 
-.planificado-row td {
-  height: 40px;
-  background-color: #f1f5f9;
-  border-bottom: 2px solid #cbd5e1 !important;
-  font-weight: bold;
-  font-size: 0.8rem;
-  color: #64748b;
-}
-
 .time-col {
   width: 80px;
   text-align: center;
   border-right: 1px solid #e2e8f0;
   vertical-align: bottom;
-}
-
-.hora-label {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  vertical-align: bottom;
-  padding-top: 5px;
 }
 
 .slot-cell {
@@ -73,18 +54,15 @@
 .zoom-btn:first-child {
   border-right: 1px solid #ccc;
 }
+
 ::ng-deep .p-datatable-tbody > tr {
   height: 60px;
   vertical-align: top;
 }
+
 ::ng-deep .p-datatable-wrapper {
-  max-height: none !important;
-  height: 100% !important;
-  overflow: auto;
-}
-::ng-deep .p-datatable-wrapper {
+  overflow-x: auto;
   overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .titulo-calendario {
@@ -101,170 +79,86 @@
   border: 1px solid #ccc !important;
 }
 
-::ng-deep .view-buttons .p-button:hover {
-  background: #f1f5f9 !important;
-}
-
 ::ng-deep .view-buttons .p-button.activo {
-  background: #e5e7eb !important; /* gris */
+  background: #e5e7eb !important;
   color: black !important;
   border: 1px solid #cbd5e1 !important;
 }
-.view-buttons {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-}
-.oculto {
-  display: none;
-}
+
+.oculto { display: none; }
 
 ::ng-deep th.hoy .header-day {
   color: #3b82f6 !important;
   font-weight: 600;
 }
 
-::ng-deep th.hoy .time-sub {
-  color: #3b82f6 !important;
-}
-
 ::ng-deep .p-datatable table {
   table-layout: auto !important;
-  width: 100%;
+  min-width: 800px; /* Evita que la tabla se colapse en móvil */
 }
 
-::ng-deep th.oculto,
-::ng-deep td.oculto {
+::ng-deep th.oculto, ::ng-deep td.oculto {
   display: none !important;
 }
 
-.nav-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.left-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.center-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.fecha-label {
-  font-weight: 600;
-  color: #374151;
-  min-width: 120px;
-}
-::ng-deep .p-datatable {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-::ng-deep .custom-overlay .p-overlaypanel-content {
-  padding: 1rem !important;
-}
-
-.text-xs {
-  font-size: 0.7rem;
-}
-
-.font-bold {
-  font-weight: 700;
-}
-
-.mostrar-filter {
-  color: #6c757d;
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
-}
-
-.compañero-item {
-  transition: background 0.2s;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 4px;
-}
-
-.compañero-item:hover {
-  background-color: #f8f9fa;
-}
-
-.cursor-pointer {
-  cursor: pointer;
-}
-
-::ng-deep .p-inputgroup .p-inputtext {
-  border-left: none;
-}
-::ng-deep .p-inputgroup-addon {
-  background: transparent;
-  border-right: none;
-  color: #94a3b8;
-}
-::ng-deep .p-overlaypanel,
-::ng-deep .p-dropdown-panel,
-::ng-deep .p-multiselect-panel,
-::ng-deep .p-datepicker {
-  z-index: 9999 !important;
-}
+/* MODAL Y DIALOGS */
 ::ng-deep .p-dialog .field textarea {
   width: 100%;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   padding: 10px 12px;
   font-size: 0.85rem;
-  color: #374151;
-  transition: all 0.2s ease;
   resize: none;
-  background: #fff;
-}
-
-::ng-deep .p-dialog .field textarea:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 1px #3b82f6;
-}
-
-::ng-deep .p-dialog .field textarea::placeholder {
-  color: #9ca3af;
-}
-
-::ng-deep .p-dialog .field label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #6b7280;
-  margin-bottom: 4px;
-  display: block;
-}
-
-::ng-deep textarea::placeholder {
-  color: #9ca3af !important;
-  opacity: 1 !important;
 }
 
 .event-block {
-    cursor: pointer;
-    transition: filter 0.2s;
+  cursor: pointer;
+  transition: filter 0.2s;
 }
 
 .event-block:hover {
-    filter: brightness(0.9); /* Se oscurece un poquito al pasar el mouse */
+  filter: brightness(0.9);
 }
 
-/* Estilo personalizado para el fondo del tooltip si lo deseas más oscuro */
-::ng-deep .p-tooltip .p-tooltip-text {
-    background: #333333 !important;
-    color: #ffffff !important;
+/* SECCIÓN RESPONSIVA */
+@media screen and (max-width: 768px) {
+  .header-toolbar {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .nav-controls {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .center-controls {
+    width: 100%;
+    justify-content: center !important;
+  }
+
+  ::ng-deep .responsive-calendar .p-calendar .p-inputtext {
+    width: 100px;
     font-size: 0.8rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  }
+
+  .time-col {
+    width: 50px;
+  }
+
+  .titulo-calendario {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .view-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .left-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
