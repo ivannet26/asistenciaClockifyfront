@@ -133,7 +133,7 @@
                     <span *ngFor="let tag of r.etiquetas" class="btn-etiqueta-detallado">{{ tag }}</span>
                   </div>
                 </td>
-                <td class="text-center text-xs">Alejandra</td>
+                <td class="text-center text-xs">{{ r.miembroNombre }}</td>
                 <td class="text-center text-xs">{{ r.inicio | date:'HH:mm' }} - {{ r.fin | date:'HH:mm' }}<br><small class="text-500">{{ r.inicio | date:'dd/MM/yyyy' }}</small></td>
                 <td class="text-right font-bold text-700">{{ r.duracion }}</td>
               </tr>
@@ -233,7 +233,7 @@
               </ng-template>
               <ng-template pTemplate="body" let-r>
                 <tr class="hover:surface-50 border-bottom-1 surface-border text-xs">
-                  <td class="text-center">Alejandra</td>
+                  <td class="text-center">{{ r.miembroNombre }}</td>
                   <td class="text-center">{{ r.inicio | date:'dd/MM/yyyy' }}</td>
                   <td class="text-center">{{ r.inicio | date:'HH:mm' }}</td>
                   <td class="text-center">{{ r.fin | date:'HH:mm' }}</td>
@@ -270,7 +270,7 @@
             <ng-template pTemplate="body" let-r>
               <tr class="hover:surface-50 border-bottom-1 surface-border text-xs">
                 <td class="celda-truncate"><strong>{{ r.descripcion || 'Sin descripción' }}</strong><small class="text-500 ml-2">● {{ r.proyecto?.nombre || 'Sin Proyecto' }}</small></td>
-                <td class="text-center">Alejandra</td>
+                <td class="text-center">{{ r.miembroNombre }}</td>
                 <td class="text-center">{{ r.inicio | date:'HH:mm' }} - {{ r.fin | date:'HH:mm' }}</td>
                 <td class="text-right font-bold">Pendiente</td>
               </tr>

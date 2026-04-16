@@ -1,7 +1,7 @@
 export interface Autenticacion{
-    Codigo:string;
-    NombreUsuario:string;
-    ClaveUsuario:string;
-    CodigoPerfil:string;
-    CodigoEmpresa:string;
+    nombre :string;
+    correo:string;
+    contrasena:string;
+    //CodigoPerfil:string;
+    //CodigoEmpresa:string;
 }

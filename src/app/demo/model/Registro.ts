@@ -4,8 +4,8 @@ export interface Registro {
   id?: number;
   descripcion: string;
   proyecto: Proyecto | null; 
-  //espaciotrabajoId: number;
-  //miembroId: number;
+  miembroId: number;
+  miembroNombre: string;
   inicio: Date;
   fin: Date;
   duracion: string;

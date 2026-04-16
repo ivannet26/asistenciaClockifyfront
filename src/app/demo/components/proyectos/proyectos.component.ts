@@ -130,8 +130,8 @@ export class ProyectosComponent implements OnInit {
       this.nuevoProyecto.color,
       this.nuevoProyecto.publico,
       0,
-      new Date(),
       true,
+      new Date(),
     );
 
     this.mostrarModalProyecto = false;
@@ -181,12 +181,36 @@ export class ProyectosComponent implements OnInit {
         'Nombre del Proyecto': p.nombre,
         'Cliente': this.getNombreCliente(p.clienteId),
         'Progreso': p.progreso + '%',
-        'Registrado': this.datepipe.transform(p.registrado, 'dd/MM/yyyy HH:mm'),
+        'Tiempo Registrado': this.getTiempoProyecto(p.id!),
         'Acceso': p.publico ? 'Público' : 'Privado',
-        'Estado': p.activo ? 'Activo' : 'Archivado'
+        'Estado': p.activo ? 'Activo' : 'Archivado',
+        'FCreacion': this.datepipe.transform(p.fcreacion, 'dd/MM/yyyy HH:mm'),
       }),
       'Proyectos'
     );
+  }
+
+  getTiempoProyecto(proyectoId: number): string {
+    const data = JSON.parse(localStorage.getItem('registros') || '[]');
+
+    const totalMs = data
+      .filter((r: any) => r.proyecto?.id === proyectoId)
+      .reduce((acc: number, r: any) => {
+        const inicio = new Date(r.inicio).getTime();
+        const fin = new Date(r.fin).getTime();
+        return acc + (fin - inicio);
+      }, 0);
+
+    return this.formatearTiempo(totalMs);
+  }
+
+
+  formatearTiempo(ms: number): string {
+    const totalS = Math.floor(ms / 1000);
+    const h = Math.floor(totalS / 3600).toString().padStart(2, '0');
+    const m = Math.floor((totalS % 3600) / 60).toString().padStart(2, '0');
+    const s = (totalS % 60).toString().padStart(2, '0');
+    return `${h}:${m}:${s}`;
   }
 
   //edicion

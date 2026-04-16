@@ -19,8 +19,8 @@ export class ProyectosService {
         color: string,
         publico: boolean,
         progreso: number,
-        registrado: Date,
-        activo: boolean
+        activo: boolean,
+        fcreacion: Date
     ): Proyecto[] {
 
         const proyectos = this.getProyectos();
@@ -32,8 +32,8 @@ export class ProyectosService {
             color,
             publico,
             progreso,
-            registrado: new Date,
-            activo: true
+            activo: true,
+            fcreacion: new Date(),
         };
 
         proyectos.push(nuevo);

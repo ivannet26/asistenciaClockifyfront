@@ -73,13 +73,15 @@
                                     Cliente</th>
                                 <th
                                     class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
-                                    Registrado</th>
+                                    T. Registrado</th>
                                 <th
                                     class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
                                     Progreso</th>
                                 <th
                                     class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
                                     Acceso</th>
+                                <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                    FCreación</th>
                                 <th class="bg-white border-bottom-1 surface-border" style="width: 120px;"></th>
                             </tr>
                         </ng-template>
@@ -113,7 +115,7 @@
 
                                 <td class="border-none">
                                     <span class="text-700 font-medium text-xs">
-                                        {{ proyecto.registrado | date:'dd/MM/yyyy HH:mm' }}
+                                        {{ getTiempoProyecto(proyecto.id!) }}
                                     </span>
                                 </td>
 
@@ -129,6 +131,11 @@
                                 <td class="border-none">
                                     <span class="text-700 font-medium text-xs">
                                         {{ proyecto.publico ? 'Público' : 'Privado' }}
+                                    </span>
+                                </td>
+                                <td class="border-none">
+                                    <span class="text-700 font-medium text-xs">
+                                        {{ proyecto.registrado | date:'dd/MM/yyyy' }}
                                     </span>
                                 </td>
 

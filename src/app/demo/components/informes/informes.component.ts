@@ -170,14 +170,12 @@ export class InformesComponent implements OnInit {
     this.actualizarYFiltrar();
   }
 
-  // --- CARGA Y PROCESAMIENTO ---
   cargarTodoDesdeStorage(inicioF: Date, finF: Date) {
     const data = localStorage.getItem('registros');
     if (!data) return;
     const registros = JSON.parse(data);
     const clientesData = localStorage.getItem('clientes');
     const clientes = clientesData ? JSON.parse(clientesData) : [];
-
 
     this.registrosDetallados = registros
       .map((r: any) => {
@@ -187,10 +185,14 @@ export class InformesComponent implements OnInit {
           ...r,
           inicio: new Date(r.inicio),
           fin: new Date(r.fin),
-          clienteNombre: cliente?.nombre || 'Sin Cliente'
+          clienteNombre: cliente?.nombre || 'Sin Cliente',
+          miembroNombre: r.miembroNombre || 'Sin nombre'
         };
       })
-      .filter((r: any) => r.inicio >= inicioF && r.inicio <= new Date(finF.getTime() + 86400000))
+      .filter((r: any) =>
+        r.inicio >= inicioF &&
+        r.inicio <= new Date(finF.getTime() + 86400000)
+      )
       .sort((a: any, b: any) => b.inicio.getTime() - a.inicio.getTime());
 
     this.procesarEstadisticas(inicioF);

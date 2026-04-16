@@ -6,13 +6,13 @@ import { ConfigService } from './config.service';
     providedIn: 'root',
 })
 export class GlobalService {
-    private readonly Nombre_Usuario = 'nombreusuario';
-    private readonly Codigo_Empresa = 'codigoempresa';
-    private readonly urlAPIServidor = 'urlapiservidor';
+    private readonly Nombre_Usuario = 'nombre';
+    //private readonly Codigo_Empresa = 'codigoempresa';
+    //private readonly urlAPIServidor = 'urlapiservidor';
     private readonly CODIGO_PERFIL_KEY = 'codigoperfil';
-    private readonly Codigo_Modulo = 'codigoModulo';
-    private readonly TipoAplicacion = 'tipoAplicacion';
-    private readonly Estado = 'estado';
+    //private readonly Codigo_Modulo = 'codigoModulo';
+    //private readonly TipoAplicacion = 'tipoAplicacion';
+    //private readonly Estado = 'estado';
     private _selectedDate = new BehaviorSubject<Date>(new Date());
     selectedDate$ = this._selectedDate.asObservable();
 
@@ -32,7 +32,7 @@ export class GlobalService {
     getNombreUsuario(): string {
         return sessionStorage.getItem(this.Nombre_Usuario);
     }
-    setCodigoEmpresa(codigo: string) {
+    /*setCodigoEmpresa(codigo: string) {
         sessionStorage.setItem(this.Codigo_Empresa, codigo);
     }
     getCodigoEmpresa(): string {
@@ -46,7 +46,7 @@ export class GlobalService {
     getUrlApi(): string {
         return sessionStorage.getItem(this.urlAPIServidor);
     }
-
+*/
     updateSelectedDate(date: Date) {
         this._selectedDate.next(date);
     }
@@ -54,7 +54,7 @@ export class GlobalService {
     clearSession() {
         sessionStorage.removeItem(this.CODIGO_PERFIL_KEY); //nuevo
         sessionStorage.removeItem(this.Nombre_Usuario);
-        sessionStorage.removeItem(this.Codigo_Empresa);
+        //sessionStorage.removeItem(this.Codigo_Empresa);
     }
 
     // Método para verificar si hay una sesión activa -- nuevo

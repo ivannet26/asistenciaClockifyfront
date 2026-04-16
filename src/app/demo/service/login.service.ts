@@ -7,6 +7,7 @@ import { ConfigService } from './config.service';
 import { RespuestaAPIBase } from '../components/utilities/funciones_utilitarias';
 import { MiembrosService } from './miembros.service';
 import { Miembros } from '../model/Miembro';
+import { GlobalService } from './global.service';
 
 interface LoginResponse {
     token: string;
@@ -34,7 +35,8 @@ export class LoginService {
     constructor(
         //private httpClient: HttpClient,
         //private configService: ConfigService,
-        private miembrosService: MiembrosService
+        private miembrosService: MiembrosService,
+        private globalService: GlobalService
     ) {
         /*this.apiUrl = configService.getApiUrl();
         this.urlAPI = `${this.apiUrl}/Autenticacion`;
@@ -133,6 +135,10 @@ export class LoginService {
             }));
             localStorage.setItem('sesionStartTime', new Date().toISOString());
             this.isAuthenticatedSubject.next(true);
+
+            // ← Agrega esto:
+            this.globalService.setNombreUsuario(result.nombre); // ajusta el campo según tu modelo Miembros
+
             return result;
         }
 

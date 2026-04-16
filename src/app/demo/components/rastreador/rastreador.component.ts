@@ -9,7 +9,7 @@ import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
 
-import { Proyecto } from '../../model/Proyecto';
+import { Proyecto, PROYECTO_SIN_PROYECTO } from '../../model/Proyecto';
 import { Registro } from '../../model/Registro';
 import { ClientesService } from '../../service/clientes.service';
 import { Clientes } from '../../model/Clientes';
@@ -37,7 +37,8 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   esFacturable: boolean = false;
   busquedaProyecto: string = '';
   proyectos: Proyecto[] = [];
-  proyectoSeleccionado: Proyecto | null = null;
+  sinProyecto: Proyecto
+  proyectoSeleccionado: Proyecto | null = PROYECTO_SIN_PROYECTO;
   mostrarModalProyecto: boolean = false;
   clientes: Clientes[] = [];
   etiquetasDisponibles: any[] = [];
@@ -98,8 +99,8 @@ export class RastreadorComponent implements OnInit, OnDestroy {
       this.nuevoProyecto.color,
       this.nuevoProyecto.publico,
       0,
+      true,
       new Date(),
-      true
     );
 
     this.proyectoSeleccionado = this.proyectos[this.proyectos.length - 1];
@@ -218,10 +219,12 @@ export class RastreadorComponent implements OnInit, OnDestroy {
 
       const finTiempo = new Date();
       const diffMs = finTiempo.getTime() - this.inicioTiempo.getTime();
-
+      const session = JSON.parse(localStorage.getItem('userSession') || '{}');
       const nuevoRegistro: Registro = {
         descripcion: this.tareaActual?.trim() || 'Sin descripción',
         proyecto: this.proyectoSeleccionado,
+        miembroId: session.userData?.id,
+        miembroNombre: session.userData?.nombre,
         inicio: this.inicioTiempo,
         fin: finTiempo,
         duracion: this.formatearTiempo(diffMs),
@@ -229,8 +232,8 @@ export class RastreadorComponent implements OnInit, OnDestroy {
         etiquetas: [...this.etiquetasSeleccionadas]
       };
 
-      this.registros.unshift(nuevoRegistro);
-      this.actualizarRegistrosStorage();
+      this.guardarRegistro(nuevoRegistro);
+      this.cargarRegistros(); // vuelve a traer solo los del usuario
       this.agruparRegistros();
       localStorage.removeItem(this.STORAGE_TIMER_ACTIVO);
 
@@ -250,19 +253,32 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   }
 
   cargarRegistros() {
+    const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+    const miembroId = session.userData?.id;
+
     const data = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
-    this.registros = data.map((r: any) => ({
-      ...r,
-      inicio: new Date(r.inicio),
-      fin: new Date(r.fin),
-      etiquetas: r.etiquetas || []
-    }));
+    this.registros = data
+      .filter((r: any) => r.miembroId === miembroId)
+      .map((r: any) => ({
+        ...r,
+        inicio: new Date(r.inicio),
+        fin: new Date(r.fin),
+        etiquetas: r.etiquetas || []
+      }));
   }
 
+  guardarRegistro(nuevoRegistro: Registro) {
+    const data = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
+
+    data.unshift(nuevoRegistro);
+
+    localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(data));
+  }
+/*
   actualizarRegistrosStorage() {
     localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(this.registros));
   }
-
+*/
 
   formatearTiempo(ms: number): string {
     const totalS = Math.floor(ms / 1000);
@@ -302,7 +318,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
 
   eliminarRegistro(registro: Registro) {
     this.registros = this.registros.filter(r => r !== registro);
-    this.actualizarRegistrosStorage();
+    /*this.actualizarRegistrosStorage();*/
     this.agruparRegistros();
   }
 }

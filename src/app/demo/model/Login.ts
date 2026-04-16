@@ -27,8 +27,8 @@ export interface EmpresasxModulo{
 }
 
 export interface Login{
-    nombreusuario:string;
-    claveusuario:string;
-    codigoempresa:string;
-    codigoPerfil:string;
+    nombrestring;
+    contrasena:string;
+    //codigoempresa:string;
+    //codigoPerfil:string;
 }

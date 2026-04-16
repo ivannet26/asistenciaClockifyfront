@@ -31,6 +31,7 @@ export class AppTopBarComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.nombre = this.gS.getNombreUsuario() ?? '';
         this.proyectos = [
             { label: 'Proyecto 1', icon: 'pi pi-fw pi-file', command: () => this.link.navigate(['/menu-layout']) },
             { label: 'Proyecto 2', icon: 'pi pi-fw pi-file', command: () => this.link.navigate(['/Home']) }

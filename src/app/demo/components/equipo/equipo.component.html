@@ -203,9 +203,10 @@
     <div class="flex flex-column gap-3 mt-2">
         <input pInputText type="text" [(ngModel)]="nuevoMiembro.nombre" placeholder="Nombre completo" />
         <input pInputText type="email" [(ngModel)]="nuevoMiembro.correo" placeholder="Correo electrónico" />
+        <input pInputText type="password" [(ngModel)]="nuevoMiembro.contrasena" placeholder="Correo contraseña" />
     </div>
     <ng-template pTemplate="footer">
         <p-button label="Cancelar" class="p-button-text" (click)="mostrarModalMiembro = false"></p-button>
-        <p-button label="AÑADIR" (click)="guardarMiembro()"></p-button>
+        <p-button label="Añadir" (click)="guardarMiembro()"></p-button>
     </ng-template>
 </p-dialog>
