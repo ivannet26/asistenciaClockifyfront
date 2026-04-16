@@ -317,8 +317,23 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   }
 
   eliminarRegistro(registro: Registro) {
+    
     this.registros = this.registros.filter(r => r !== registro);
-    /*this.actualizarRegistrosStorage();*/
+
+    
+    // Obtener todos los registros del localstorage
+    const todosLosRegistros = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
+    
+    
+    
+    const dataActualizada = todosLosRegistros.filter((r: any) => {
+        return new Date(r.inicio).getTime() !== new Date(registro.inicio).getTime() || 
+               r.descripcion !== registro.descripcion;
+    });
+
+    localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(dataActualizada));
+
+    // 3. Volver a agrupar para que la vista se actualice
     this.agruparRegistros();
   }
 }
