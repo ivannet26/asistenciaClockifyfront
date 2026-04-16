@@ -121,17 +121,8 @@
 
 .grupo-input {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 500px;
-}
-
-.grupo-input button , .grupo-input input{
-  width: 85%;
-  height: 48px;
+  gap: 0;
+  max-width: 200px;
 }
 
 :host ::v-deep .p-card-body {
@@ -140,8 +131,8 @@
 
 .barra-herramientas {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 1.5rem;
   gap: 1rem;
   flex-wrap: wrap;
@@ -154,14 +145,15 @@
 }
 
 .input-busqueda {
-  width: 250px;
+  width: 200px;
 }
 
-.grupo-input-compacto {
+.grupo-input {
   display: flex;
-  max-height: 38px;
-  max-width: 400px;
+  gap: 0;
+  max-width: 200px;
 }
+
 
 /* Estilos para la Tabla */
 .contenedor-tabla {
@@ -221,6 +213,7 @@
   .grupo-input-compacto {
     flex-direction: column;
     max-width: 100%;
+    gap: 0.5rem;
   }
 
   .contenedor-tabla {
@@ -248,5 +241,25 @@
 }
 
 .boton-personalizado:hover {
+  background-color: #0d89ec !important;
+}
+
+.boton-personalizado2 {
+  background-color: #2196F3 !important;
+  border-radius: 4px !important;
+  /* El lado izquierdo debe ser recto cuando está pegado al input */
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border: none;
+  color: white !important;
+  font-weight: bold;
+  font-size: 0.9rem;
+  padding: 0 1.5rem;
+  height: 40px;
+  transition: background 0.2s;
+  width: auto;
+}
+
+.boton-personalizado2:hover {
   background-color: #0d89ec !important;
 }

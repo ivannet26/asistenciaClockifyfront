@@ -60,8 +60,7 @@
 .grupo-input {
   display: flex;
   gap: 0;
-  width: 100%;
-  max-width: 500px;
+
 }
 
 :host ::v-deep .p-card-body {
