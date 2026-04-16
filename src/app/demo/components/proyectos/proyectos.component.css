@@ -73,6 +73,28 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
+.contenedor-vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1rem;
+    text-align: center;
+}
+
+.titulo-principal {
+    font-size: 1.75rem;
+    color: #334155;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.subtitulo {
+    color: #64748b;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
 /* =========================================
    4. RESTAURAR BOTONES (ICONOS LIMPUIOS SIN FONDO AZUL)
    ========================================= */
@@ -116,6 +138,24 @@ input[type=number] {
     /* Rojo visible */
 }
 
+.clientes-pagina {
+    margin: 0 80px 0 80px;
+    transition: margin 0.3s ease;
+}
+
+.clientes-panel {
+    background: var(--surface-card);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+    padding: 1.25rem;
+}
+
+@media (max-width: 1024px) {
+    .clientes-pagina {
+        margin: 0 25px 0 80px;
+    }
+}
+
 /* =========================================
    5. RESPONSIVIDAD (MOBILE FIX)
    ========================================= */
@@ -126,6 +166,14 @@ input[type=number] {
     .grid-filtros {
         flex-direction: column !important;
         height: auto !important;
+    }
+
+    .clientes-pagina {
+        margin: auto;
+    }
+
+    .clientes-panel {
+        padding: 1rem;
     }
 
     /* Cambia bordes punteados de vertical a horizontal en móvil */
@@ -158,9 +206,6 @@ input[type=number] {
 .boton-personalizado {
     background-color: #2196F3 !important;
     border-radius: 4px !important;
-    /* El lado izquierdo debe ser recto cuando está pegado al input */
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
     border: none;
     color: white !important;
     font-weight: bold;

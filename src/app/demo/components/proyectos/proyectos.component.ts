@@ -15,6 +15,7 @@ import { ProyectosService } from '../../service/proyectos.service';
 import { ClientesService } from '../../service/clientes.service';
 import { Clientes } from '../../model/Clientes';
 import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
+import { CardModule } from "primeng/card";
 
 @Component({
   selector: 'app-proyectos',
@@ -29,7 +30,9 @@ import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
     TableModule,
     InputTextModule,
     DropdownModule,
-  ],
+    CardModule,
+    
+],
   providers: [DatePipe],
   templateUrl: './proyectos.component.html',
   styleUrl: './proyectos.component.css'
@@ -88,6 +91,10 @@ export class ProyectosComponent implements OnInit {
   ngOnInit(): void {
     this.cargarClientes();
     this.cargarProyectos();
+  }
+
+  get mostrarLista(): boolean {
+    return this.proyectos.length > 0;
   }
 
   cargarProyectos(): void {

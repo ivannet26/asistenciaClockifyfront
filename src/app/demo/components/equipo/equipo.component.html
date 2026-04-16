@@ -26,7 +26,6 @@
                             </div>
                         </div>
 
-
                         <div class="surface-0 border-y-1 surface-border">
                             <div class="flex align-items-stretch w-full">
 
@@ -59,29 +58,35 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div
+                            class="surface-100 p-2 flex justify-content-between align-items-center border-bottom-1 surface-border">
+                            <span class="text-xs font-bold text-500 ml-2 uppercase">Miembros</span>
+                            <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
+                            hover:bg-green-700 hover:border-green-600" label="Exportar" icon="pi pi-file-excel"
+                                (onClick)="exportar()">
+                            </p-button>
+                        </div>
                         <p-table #dt [value]="miembrosFiltrados" class="tabla-personalizada">
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <th colspan="6" class="">
-                                        <p>Miembros</p>
-
-                                    </th>
-                                    <th>
-                                        <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
-                hover:bg-green-700 hover:border-green-600" label="Exportar" icon="pi pi-file-excel"
-                                            (onClick)="exportar()">
-                                        </p-button>
-                                    </th>
-                                </tr>
-                                <tr class="cabecera-gris">
-                                    <th style="width: 4rem"><p-checkbox [binary]="true"></p-checkbox></th>
-                                    <th>NOMBRE</th>
-                                    <th>CORREO</th>
-                                    <th>CONTRASEÑA</th>
-                                    <th>ROL</th>
-                                    <th>GRUPO</th>
-                                    <th></th>
+                                    <th class="text-center bg-white border-bottom-1 surface-border" style="width: 3rem">
+                                        <p-checkbox [binary]="true"></p-checkbox></th>
+                                    <th style="width: 15%"
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Nombre</th>
+                                    <th style="width: 15%"
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Correo</th>
+                                    <th style="width: 15%"
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Contraseña</th>
+                                    <th style="width: 15%"
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Rol</th>
+                                    <th style="width: 15%"
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Grupo</th>
+                                    <th class="bg-white border-bottom-1 surface-border" style="width: 17%"></th>
                                 </tr>
                             </ng-template>
 
@@ -146,11 +151,16 @@
                             <ng-template pTemplate="header">
                                 <tr class="cabecera-gris">
                                     <th style="width: 4rem"><p-checkbox [binary]="true"></p-checkbox></th>
-                                    <th>NOMBRE</th>
-                                    <th>MIEMBROS</th>
+                                    <th
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Nombre</th>
+                                    <th
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Miembros</th>
                                     <th style="width: 8rem">
-                                        <p-button class="p-button-text p-button-danger" label="Exportar"
-                                            icon="pi pi-file-excel" (onClick)="exportarGrupos()">
+                                        <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
+                            hover:bg-green-700 hover:border-green-600" label="Exportar" icon="pi pi-file-excel"
+                                            (onClick)="exportarGrupos()">
                                         </p-button>
                                     </th>
                                 </tr>
