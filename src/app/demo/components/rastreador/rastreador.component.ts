@@ -239,7 +239,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
 
       this.tiempoTranscurrido = '00:00:00';
       this.tareaActual = '';
-      this.proyectoSeleccionado = null;
+      this.proyectoSeleccionado = PROYECTO_SIN_PROYECTO;
       this.etiquetasSeleccionadas = [];
     }
   }

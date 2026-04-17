@@ -21,32 +21,7 @@
    2. FILTROS ESTILO "LINK" (SIN BORDES)
    ========================================= */
 
-/* Color negro y fuente Inter para los textos de los filtros */
-.filtro-item ::ng-deep .p-dropdown-label {
-    color: #334155 !important;
-    /* Gris oscuro/negro original */
-    font-family: 'Inter', sans-serif !important;
-    font-size: 14px !important;
-    font-weight: 700 !important;
-    padding-left: 1rem !important;
-}
 
-/* Quitar bordes y sombras de PrimeNG para que parezcan texto plano */
-:host ::ng-deep .p-dropdown {
-    border: none !important;
-    background: transparent !important;
-}
-
-:host ::ng-deep .p-dropdown:not(.p-disabled).p-focus {
-    box-shadow: none !important;
-}
-
-/* Hover: Cambia a celeste al pasar el mouse por el filtro */
-.filtro-item:hover ::ng-deep .p-dropdown-label,
-.filtro-item:hover ::ng-deep .p-dropdown-trigger {
-    color: #2196F3 !important;
-    cursor: pointer;
-}
 
 /* =========================================
    3. TABLA Y CELDAS (DISEÑO COMPACTO)

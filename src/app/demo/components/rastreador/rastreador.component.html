@@ -12,7 +12,7 @@
                     <button pButton type="button" class="p-button-text boton-proyecto"
                         (click)="panelProyectos.toggle($event)">
                         <span class="texto-proyecto">
-                            <ng-container *ngIf="proyectoSeleccionado?.id === 0; else proyectoNormal">
+                            <ng-container *ngIf="proyectoSeleccionado?.id === 0 ; else proyectoNormal">
                                 <i class="pi pi-plus-circle"></i>
                                 Proyecto
                             </ng-container>

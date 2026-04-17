@@ -53,29 +53,35 @@
                             </div>
                         </div>
                         <div class="surface-0 border-y-1 surface-border">
-                            <div class="flex flex-column md:flex-row align-items-stretch w-full grid-filtros">
 
-                                <div class="flex align-items-center px-4 border-right-1 border-bottom-1 md:border-bottom-none surface-border bg-gray-50 py-2 md:py-0"
+                            <div class="flex flex-column align-items-stretch w-full md:flex-row align-items-stretch">
+
+                                <div class="flex align-items-center px-4 border-right-1 surface-border bg-gray-50"
                                     style="border-right-style: dashed !important; min-width: 120px;">
                                     <span class="text-500 font-bold text-xs uppercase">Filtrar</span>
                                 </div>
 
-                                <div class="flex-1 flex align-items-center border-right-1 border-bottom-1 md:border-bottom-none surface-border filtro-item"
+                                <div class="flex-1 flex align-items-center border-right-1 surface-border md:border-bottom-none surface-border filtro-item"
                                     style="border-right-style: dashed !important;">
                                     <p-dropdown [options]="opcionesEstado" [(ngModel)]="filtroEstado"
-                                        (onChange)="aplicarFiltros()" class="w-full"></p-dropdown>
+                                        (onChange)="aplicarFiltros()" placeholder="Estado"
+                                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                                        class="w-full">
+                                    </p-dropdown>
                                 </div>
 
                                 <div class="flex-1 flex align-items-center border-right-1 border-bottom-1 md:border-bottom-none surface-border filtro-item"
                                     style="border-right-style: dashed !important;">
                                     <p-dropdown [options]="clientes" optionLabel="nombre" [(ngModel)]="filtroCliente"
                                         [showClear]="true" (onChange)="aplicarFiltros()" placeholder="Cliente"
+                                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
                                         class="w-full"></p-dropdown>
                                 </div>
 
                                 <div class="flex-1 flex align-items-center filtro-item">
                                     <p-dropdown [options]="opcionesAcceso" [(ngModel)]="filtroAcceso"
-                                        (onChange)="aplicarFiltros()" placeholder="Acceso" class="w-full"></p-dropdown>
+                                        (onChange)="aplicarFiltros()" placeholder="Acceso"[style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                                        class="w-full"></p-dropdown>
                                 </div>
                             </div>
                         </div>
@@ -97,7 +103,7 @@
                                             class="text-center bg-white border-bottom-1 surface-border">
                                             <p-checkbox [binary]="true"></p-checkbox>
                                         </th>
-                                        <th style="width: 15%" 
+                                        <th style="width: 15%"
                                             class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
                                             Nombre</th>
                                         <th style="width: 15%"
@@ -195,8 +201,8 @@
                                                     class="p-button-text p-button-success"
                                                     (click)="guardarEdicion(proyecto)" pTooltip="Guardar"></button>
                                                 <button pButton icon="pi pi-times"
-                                                    class="p-button-text p-button-secondary"
-                                                    (click)="cancelarEdicion()" pTooltip="Cancelar"></button>
+                                                    class="p-button-text p-button-secondary" (click)="cancelarEdicion()"
+                                                    pTooltip="Cancelar"></button>
                                             </ng-template>
                                         </td>
                                     </tr>
