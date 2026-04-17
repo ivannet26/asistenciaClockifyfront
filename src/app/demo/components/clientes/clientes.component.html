@@ -23,7 +23,7 @@
           </div>
         </div>
 
-        <div  *ngIf="mostrarLista">
+        <div *ngIf="mostrarLista">
           <div class="barra-herramientas">
             <div class="busqueda-filtros">
               <p-dropdown [options]="opcionesFiltro" [(ngModel)]="filtroSeleccionado" (onChange)="filtrarClientes()"
@@ -44,30 +44,41 @@
               </button>
             </div>
           </div>
+
+          <div class="surface-100 p-2 flex justify-content-between align-items-center border-bottom-1 surface-border">
+            <span class="text-xs font-bold text-500 ml-2 uppercase">Clientes</span>
+            <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
+                            hover:bg-green-700 h9over:border-green-600" label="Exportar" icon="pi pi-file-excel"
+              (onClick)="exportar()">
+            </p-button>
+          </div>
           <p-table #dt [value]="clientesFiltrados" [scrollable]="true" scrollHeight="450px">
             <ng-template pTemplate="header">
-              <tr class="cabecera-gris">
-                <th style="width: 4rem">
+              <tr>
+                <th style="width: 5%" class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
                   <p-checkbox [binary]="true"></p-checkbox>
                 </th>
-                <th>NOMBRE</th>
-                <th>DIRECCIÓN</th>
-                <th>MONEDA</th>
-                <th style="width: 8rem">
-                  <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
-                            hover:bg-green-700 h9over:border-green-600" label="Exportar" icon="pi pi-file-excel"
-                    (onClick)="exportar()">
-                  </p-button>
+                <th style="width: 25%"
+                  class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                  Nombre</th>
+                <th style="width: 30%"
+                  class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                  Dirección</th>
+                <th style="width: 20%"
+                  class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                  Moneda</th>
+                <th style="width: 20%"
+                  class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
                 </th>
               </tr>
             </ng-template>
-
             <ng-template pTemplate="body" let-cliente>
               <tr>
-                <td style="width: 4rem"><p-checkbox [binary]="true"></p-checkbox></td>
-
                 <ng-container *ngIf="clienteEnEdicion?.id !== cliente.id">
-                  <td class="font-bold">{{ cliente.nombre }}</td>
+                  <td style="width: 4rem">
+                    <p-checkbox [binary]="true"></p-checkbox>
+                  </td>
+                  <td>{{ cliente.nombre }}</td>
                   <td>{{ cliente.direccion || '-' }}</td>
                   <td>{{ cliente.moneda || '-' }}</td>
                   <td class="acciones-celda">
@@ -79,7 +90,6 @@
                     </button>
                   </td>
                 </ng-container>
-
                 <ng-container *ngIf="clienteEnEdicion?.id === cliente.id">
                   <td>
                     <input pInputText [(ngModel)]="clienteEnEdicion!.nombre" />
@@ -101,13 +111,10 @@
                     </button>
                   </td>
                 </ng-container>
-
               </tr>
             </ng-template>
-
           </p-table>
         </div>
-
       </p-card>
     </div>
   </div>
