@@ -43,8 +43,8 @@ export class EquipoComponent implements OnInit {
 
   miembrosFiltrados: Miembros[] = [];
   gruposFiltrados: Grupo[] = [];
-
-  filtroTodo: any = 'todos'; 
+  filtroNombre: string = '';
+  filtroTodo: any = 'todos';
   filtroRol: RolNombre | null = null;
   filtroGrupo: number | null = null;
   filtroBusquedaGrupo: string = '';
@@ -113,7 +113,10 @@ export class EquipoComponent implements OnInit {
       const coincideMiembro = this.filtroTodo === 'todos' || m.nombre === this.filtroTodo;
       const cumpleRol = !this.filtroRol || m.rol === this.filtroRol;
       const cumpleGrupo = !this.filtroGrupo || (m.grupoIds && m.grupoIds.includes(this.filtroGrupo));
-      return coincideMiembro && cumpleRol && cumpleGrupo;
+      // ── filtro de búsqueda por nombre ──
+      const cumpleBusqueda = !this.filtroNombre ||
+        m.nombre.toLowerCase().includes(this.filtroNombre.toLowerCase());
+      return coincideMiembro && cumpleRol && cumpleGrupo && cumpleBusqueda;
     });
   }
 
@@ -135,7 +138,7 @@ export class EquipoComponent implements OnInit {
       this.miembrosService.actualizarMiembro(agregado.id, { rol: this.nuevoMiembro.rol });
     }
 
-    this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Miembro añadido' });
+    this.messageService.add({ severity: 'success', summary: 'Miembro Creado', detail: `${this.nuevoMiembro.nombre} fue agregado correctamente` });
     this.nuevoMiembro = { id: 0, nombre: '', correo: '', contrasena: undefined, rol: undefined, activo: true };
     this.mostrarModalMiembro = false;
     this.cargarDatos();
@@ -151,39 +154,42 @@ export class EquipoComponent implements OnInit {
     const nombre = this.nuevoGrupo.nombre?.trim();
     if (!nombre) return;
     this.gruposService.agregarGrupo(nombre);
+    this.messageService.add({ severity: 'success', summary: 'Grupo Creado', detail: `${this.nuevoGrupo.nombre} fue agregado correctamente` });
     this.nuevoGrupo = { id: 0, nombre: '' };
     this.cargarDatos();
   }
 
+
   eliminarGrupo(id: number) {
     this.gruposService.eliminarGrupo(id);
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Registro Eliminado',
+      detail: `El proyecto fue eliminado correctamente`
+    });
     this.cargarDatos();
   }
 
-  // --- FUNCIÓN CORREGIDA ---
   guardarMiembrosAGrupo(grupo: Grupo) {
     const miembrosGlobales = this.miembrosService.getMiembros();
-    
-    // 1. Sincronizar los grupoIds en cada Miembro
+
     miembrosGlobales.forEach(m => {
       if (!m.grupoIds) m.grupoIds = [];
-      
-      const debeEstarEnGrupo = grupo.miembrosIds?.includes(m.id);
-
-      if (debeEstarEnGrupo) {
-        if (!m.grupoIds.includes(grupo.id)) m.grupoIds.push(grupo.id);
-      } else {
+      const debeEstar = grupo.miembrosIds?.includes(m.id) ?? false;
+      if (debeEstar && !m.grupoIds.includes(grupo.id)) {
+        m.grupoIds.push(grupo.id);
+      } else if (!debeEstar) {
         m.grupoIds = m.grupoIds.filter(gid => gid !== grupo.id);
       }
-      this.miembrosService.actualizarMiembro(m.id, { grupoIds: m.grupoIds });
     });
 
-    // 2. Persistir los IDs de los miembros en el objeto Grupo dentro de LocalStorage
-    this.gruposService.actualizarGrupo(grupo.id, { 
-      miembrosIds: grupo.miembrosIds || [] 
+    this.miembrosService.guardarTodos(miembrosGlobales);
+    this.gruposService.actualizarGrupo(grupo.id, {
+      nombre: grupo.nombre,
+      miembrosIds: grupo.miembrosIds ?? []
     });
 
-    this.messageService.add({ severity: 'success', summary: 'Grupo Actualizado', detail: 'Miembros guardados correctamente' });
+    this.messageService.add({ severity: 'warn', summary: 'Grupo Actualizado', detail: 'Grupo actualizado correctamente' });
     this.cargarDatos();
   }
 
@@ -201,7 +207,7 @@ export class EquipoComponent implements OnInit {
   }
 
   getNombreGrupo = (id?: number) => this.grupos.find(g => g.id === id)?.nombre || '';
-  
+
   CambioTab(event: any) { this.tabactivo = event; }
 
   exportarMiembros(): void {
@@ -218,6 +224,29 @@ export class EquipoComponent implements OnInit {
       }),
       'Equipo-Miembros'
     );
+  }
+
+  abrirModalNuevoMiembro() {
+    this.nuevoMiembro = {
+      id: 0, nombre: '', correo: '',
+      contrasena: '', rol: undefined,
+      grupoIds: undefined, activo: true
+    };
+    this.mostrarModalMiembro = true;
+  }
+
+  editarMiembro(id: number) {
+    this.miembroEnEdicion = id;
+  }
+
+  desactivarMiembro(id: number) {
+    this.miembrosService.desactivarMiembro(id);
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Desactivado',
+      detail: 'Miembro desactivado correctamente'
+    });
+    this.cargarDatos();
   }
 
   exportarGrupos(): void {

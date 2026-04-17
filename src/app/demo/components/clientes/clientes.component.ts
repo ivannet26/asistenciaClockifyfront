@@ -13,6 +13,8 @@ import { Clientes } from '../../model/Clientes';
 import { Monedas } from '../../model/Monedas';
 
 import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from "primeng/toast";
 
 @Component({
   selector: 'app-clientes',
@@ -25,8 +27,10 @@ import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
     DropdownModule,
     CheckboxModule,
     InputTextModule,
-    FormsModule
+    FormsModule,
+    ToastModule
   ],
+  providers: [MessageService],
   templateUrl: './clientes.component.html',
   styleUrls: ['./clientes.component.css']
 })
@@ -46,7 +50,7 @@ export class ClientesComponent implements OnInit {
   filtroSeleccionado: string = 'activo';
   clienteEnEdicion: Clientes | null = null;
 
-  constructor(private clientesService: ClientesService) { }
+  constructor(private clientesService: ClientesService, private messageService: MessageService) { }
 
   get mostrarLista(): boolean {
     return this.clientes.length > 0;
@@ -60,20 +64,41 @@ export class ClientesComponent implements OnInit {
   }
 
   agregarCliente() {
-    if (!this.nuevoClienteNombre.trim()) return;
+    if (!this.nuevoClienteNombre.trim())
+      return this.messageService.add({
+        severity: 'info',
+        summary: 'Campos Vacios',
+        detail: `Campo de nombre vacio`
+      });
+
     this.clientes = this.clientesService.agregarCliente(this.nuevoClienteNombre);
     this.clientesFiltrados = [...this.clientes];
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Cliente Creado',
+      detail: `${this.nuevoClienteNombre} fue agregado correctamente`
+    });
     this.nuevoClienteNombre = '';
   }
 
   actualizarCliente(id: number, cambios: Partial<Clientes>) {
     this.clientes = this.clientesService.actualizarCliente(id, cambios);
     this.clientesFiltrados = [...this.clientes];
+        this.messageService.add({
+      severity: 'warn',
+      summary: 'Cliente Actualizado',
+      detail: `El cliente fue actualizado correctamente`
+    });
   }
 
   eliminarCliente(id: number) {
     this.clientes = this.clientesService.eliminarCliente(id);
     this.clientesFiltrados = [...this.clientes];
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Registro Eliminado',
+      detail: `El Cliente fue eliminado correctamente`
+    });
   }
 
   filtrarClientes() {
@@ -110,7 +135,7 @@ export class ClientesComponent implements OnInit {
         'N°': i + 1,
         'Nombre': p.nombre,
         'Dirección': p.direccion,
-        'Moneda': p.moneda? 'Activo' : 'No activo',
+        'Moneda': p.moneda ? 'Activo' : 'No activo',
       }),
       'Clientes'
     );

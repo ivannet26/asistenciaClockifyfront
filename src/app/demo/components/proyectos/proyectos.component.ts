@@ -17,6 +17,9 @@ import { Clientes } from '../../model/Clientes';
 import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
 import { CardModule } from "primeng/card";
 
+import { MessageService } from 'primeng/api';
+import { ToastModule } from "primeng/toast";
+
 @Component({
   selector: 'app-proyectos',
   standalone: true,
@@ -31,9 +34,9 @@ import { CardModule } from "primeng/card";
     InputTextModule,
     DropdownModule,
     CardModule,
-    
-],
-  providers: [DatePipe],
+    ToastModule
+  ],
+  providers: [DatePipe, MessageService],
   templateUrl: './proyectos.component.html',
   styleUrl: './proyectos.component.css'
 })
@@ -85,7 +88,8 @@ export class ProyectosComponent implements OnInit {
   constructor(
     private proyectosService: ProyectosService,
     private clientesService: ClientesService,
-    private datepipe: DatePipe
+    private datepipe: DatePipe,
+    private messageService: MessageService,
   ) { }
 
   ngOnInit(): void {
@@ -128,7 +132,19 @@ export class ProyectosComponent implements OnInit {
   }
 
   guardarProyecto(): void {
-    if (!this.nuevoProyecto.nombre?.trim()) return;
+    if (!this.nuevoProyecto.nombre?.trim())
+      return this.messageService.add({
+        severity: 'info',
+        summary: 'Campos Vacios',
+        detail: `Campo de nombre vacio`
+      });
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Proyecto Creado',
+      detail: `${this.nuevoProyecto.nombre} fue agregado correctamente`
+    });
+
     const clienteId = this.nuevoProyecto.cliente?.id ?? 0;
 
     this.proyectos = this.proyectosService.agregarProyecto(
@@ -149,11 +165,49 @@ export class ProyectosComponent implements OnInit {
   actualizarProyecto(id: number, cambios: any): void {
     this.proyectos = this.proyectosService.actualizarProyecto(id, cambios);
     this.aplicarFiltros();
+
+    const tieneSoloCambiosDeEstado = Object.keys(cambios).every(
+      k => k === 'activo' || k === 'publico'
+    );
+
+    if (tieneSoloCambiosDeEstado) {
+      if ('activo' in cambios) {
+        this.messageService.add({
+          severity: cambios.activo ? 'success' : 'warn',
+          summary: cambios.activo ? 'Proyecto Activado' : 'Proyecto Archivado',
+          detail: cambios.activo
+            ? 'El proyecto fue activado exitosamente'
+            : 'El proyecto fue archivado exitosamente'
+        });
+      }
+
+      if ('publico' in cambios) {
+        this.messageService.add({
+          severity: cambios.publico ? 'success' : 'warn',
+          summary: cambios.publico ? 'Proyecto Público' : 'Proyecto Privado',
+          detail: cambios.publico
+            ? 'El proyecto ahora es visible al público'
+            : 'El proyecto ahora es privado'
+        });
+      }
+
+    } else {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Proyecto Actualizado',
+        detail: 'Los datos del proyecto fueron actualizados exitosamente'
+      });
+    }
   }
 
   eliminarProyecto(id: number): void {
     this.proyectos = this.proyectosService.eliminarProyecto(id);
     this.aplicarFiltros();
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Registro Eliminado',
+      detail: `El proyecto fue eliminado correctamente`
+    });
   }
 
   private resetFormulario(): void {

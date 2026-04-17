@@ -1,8 +1,8 @@
-import { Component, OnInit , ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { TableModule ,Table} from 'primeng/table';
+import { TableModule, Table } from 'primeng/table';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
@@ -12,6 +12,8 @@ import { Etiquetas } from '../../model/Etiquetas';
 import { EtiquetasService } from '../../service/etiquetas.service';
 
 import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from "primeng/toast";
 
 @Component({
   selector: 'app-etiquetas',
@@ -24,8 +26,10 @@ import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
     DropdownModule,
     CheckboxModule,
     InputTextModule,
-    FormsModule
+    FormsModule,
+    ToastModule
   ],
+  providers: [MessageService],
   templateUrl: './etiquetas.component.html',
   styleUrl: './etiquetas.component.css'
 })
@@ -43,7 +47,7 @@ export class EtiquetasComponent implements OnInit {
   filtroSeleccionado: string = 'activo';
   etiquetaEnEdicion: Etiquetas | null = null;
 
-  constructor(private etiquetasService: EtiquetasService) { }
+  constructor(private etiquetasService: EtiquetasService, private messageService: MessageService) { }
 
   get mostrarLista(): boolean {
     return this.etiquetas.length > 0;
@@ -57,20 +61,43 @@ export class EtiquetasComponent implements OnInit {
   }
 
   agregarEtiqueta() {
-    if (!this.nuevaEtiquetaNombre.trim()) return;
+    if (!this.nuevaEtiquetaNombre.trim()) 
+      return this.messageService.add({
+      severity: 'info',
+      summary: 'Campos Vacios',
+      detail: `Campo de nombre vacio`
+    });
+
+    this.nuevaEtiquetaNombre = '';
     this.etiquetas = this.etiquetasService.agregarEtiqueta(this.nuevaEtiquetaNombre);
     this.etiquetasFiltrados = [...this.etiquetas];
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Etiqueta Creada',
+      detail: `${this.nuevaEtiquetaNombre} fue agregado correctamente`
+    });
     this.nuevaEtiquetaNombre = '';
+
   }
 
   actualizarEtiqueta(id: number, cambios: Partial<Etiquetas>) {
     this.etiquetas = this.etiquetasService.actualizarEtiqueta(id, cambios);
     this.etiquetasFiltrados = [...this.etiquetas];
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Etiqueta Actualizada',
+      detail: `La etiqueta fue actualizada correctamente`
+    });
   }
 
   eliminarEtiqueta(id: number) {
     this.etiquetas = this.etiquetasService.eliminarEtiqueta(id);
     this.etiquetasFiltrados = [...this.etiquetas];
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Registro Eliminado',
+      detail: `La etiqueta fue eliminada correctamente`
+    });
   }
 
   filtrarEtiquetas() {
@@ -97,14 +124,14 @@ export class EtiquetasComponent implements OnInit {
     this.etiquetaEnEdicion = null;
   }
 
-exportar(): void {
-  ExtraccionExcel.desdeTabla(
-    this.dt,
-    (p,i) => ({
-      'N°':  i + 1,
-      'Etiqueta': p.nombre,
-    }),
-    'Etiquetas'
-  );
-}
+  exportar(): void {
+    ExtraccionExcel.desdeTabla(
+      this.dt,
+      (p, i) => ({
+        'N°': i + 1,
+        'Etiqueta': p.nombre,
+      }),
+      'Etiquetas'
+    );
+  }
 }

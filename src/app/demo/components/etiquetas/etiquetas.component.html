@@ -1,3 +1,5 @@
+<p-toast position="top-right" [baseZIndex]="9999"
+  [preventOpenDuplicates]="true" />
 <div class="etiquetas-pagina">
   <div class="etiquetas-panel">
     <h2 class="titulo-seccion">Etiquetas</h2>
@@ -17,7 +19,7 @@
           <div class="grupo-input">
             <input type="text" pInputText [(ngModel)]="nuevaEtiquetaNombre" placeholder="Añadir nueva etiqueta"
               class="input-personalizado" (keyup.enter)="agregarEtiqueta()" />
-            <button pButton type="button" label="AÑADIR" class="boton-personalizado" (click)="agregarEtiqueta()">
+            <button pButton type="button" label="Añadir" class="boton-personalizado" (click)="agregarEtiqueta()">
             </button>
           </div>
         </div>

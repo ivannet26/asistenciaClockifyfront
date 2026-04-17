@@ -46,6 +46,10 @@ export class MiembrosService {
         return miembro;
     }
 
+    guardarTodos(miembros: Miembros[]): void {
+        this.guardar(miembros);
+    }
+
     desactivarMiembro(id: number): Miembros[] {
         return this.actualizarMiembro(id, { activo: false } as any);
     }
@@ -62,21 +66,21 @@ export class MiembrosService {
         return encontrado ?? null;
     }
     initDefaultMiembro(): void {
-    const existing = this.getMiembros();
+        const existing = this.getMiembros();
 
-    // Solo crea el usuario por defecto si la lista está vacía
-    if (existing.length === 0) {
-        const defaultMiembro: Miembros = {
-            id: Date.now(),
-            nombre: 'Administrador',
-            correo: 'admin@correo.com',
-            contrasena: 'admin123',
-            rol: RolNombre.ADMIN,
-            grupoIds: [],
-            activo: true
-        };
-        this.guardar([defaultMiembro]);
+        // Solo crea el usuario por defecto si la lista está vacía
+        if (existing.length === 0) {
+            const defaultMiembro: Miembros = {
+                id: Date.now(),
+                nombre: 'Administrador',
+                correo: 'admin@correo.com',
+                contrasena: 'admin123',
+                rol: RolNombre.ADMIN,
+                grupoIds: [],
+                activo: true
+            };
+            this.guardar([defaultMiembro]);
+        }
     }
-}
 
 }

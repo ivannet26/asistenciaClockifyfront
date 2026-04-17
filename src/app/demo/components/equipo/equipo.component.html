@@ -12,7 +12,8 @@
                     <div [hidden]="tabactivo?.id !== 0">
                         <div class="p-3 bg-white border-bottom-1 surface-border">
                             <div class="flex align-items-center gap-2">
-                                <div class="flex-1 flex align-items-center border-1 surface-border border-round px-2 bg-white">
+                                <div
+                                    class="flex-1 flex align-items-center border-1 surface-border border-round px-2 bg-white">
                                     <i class="pi pi-search text-400 mx-2"></i>
                                     <input type="text" pInputText placeholder="Buscar por nombre"
                                         [(ngModel)]="filtroNombre" (input)="aplicarFiltrosMiembros()"
@@ -61,7 +62,8 @@
                             </div>
                         </div>
 
-                        <div class="surface-100 p-2 flex justify-content-between align-items-center border-bottom-1 surface-border">
+                        <div
+                            class="surface-100 p-2 flex justify-content-between align-items-center border-bottom-1 surface-border">
                             <span class="text-xs font-bold text-500 ml-2 uppercase">Miembros</span>
                             <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
                             hover:bg-green-700 hover:border-green-600" label="Exportar" icon="pi pi-file-excel"
@@ -75,11 +77,21 @@
                                     <th class="text-center bg-white border-bottom-1 surface-border" style="width: 3rem">
                                         <p-checkbox [binary]="true"></p-checkbox>
                                     </th>
-                                    <th style="width: 15%" class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Nombre</th>
-                                    <th style="width: 15%" class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Correo</th>
-                                    <th style="width: 15%" class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Contraseña</th>
-                                    <th style="width: 15%" class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Rol</th>
-                                    <th style="width: 15%" class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Grupo</th>
+                                    <th style="width: 15%"
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Nombre</th>
+                                    <th style="width: 15%"
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Correo</th>
+                                    <th style="width: 15%"
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Contraseña</th>
+                                    <th style="width: 15%"
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Rol</th>
+                                    <th style="width: 15%"
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Grupo</th>
                                     <th class="bg-white border-bottom-1 surface-border" style="width: 17%"></th>
                                 </tr>
                             </ng-template>
@@ -92,12 +104,12 @@
                                     <td>{{ equipo.contrasena }}</td>
                                     <td>
                                         <ng-container *ngIf="miembroEnEdicion === equipo.id; else verRol">
-                                            <p-dropdown [options]="rolesOptions" [appendTo]="'body'"
-                                                optionLabel="label" optionValue="value"
-                                                [(ngModel)]="equipo.rol"></p-dropdown>
+                                            <p-dropdown [options]="rolesOptions" [appendTo]="'body'" optionLabel="label"
+                                                optionValue="value" [(ngModel)]="equipo.rol"></p-dropdown>
                                         </ng-container>
                                         <ng-template #verRol>
-                                            <span [ngClass]="{'text-400 font-italic': !equipo.rol}">{{ equipo.rol || 'Sin rol' }}</span>
+                                            <span [ngClass]="{'text-400 font-italic': !equipo.rol}">{{ equipo.rol ||
+                                                'Sin rol' }}</span>
                                         </ng-template>
                                     </td>
                                     <td>
@@ -107,8 +119,10 @@
                                                 placeholder="Grupos"></p-multiSelect>
                                         </ng-container>
                                         <ng-template #verGrupos>
-                                            <span *ngFor="let gid of equipo.grupoIds; let last = last">{{ getNombreGrupo(gid) }}{{ !last ? ', ' : '' }}</span>
-                                            <span *ngIf="!equipo.grupoIds?.length" class="text-400 font-italic">Sin grupo</span>
+                                            <span *ngFor="let gid of equipo.grupoIds; let last = last">{{
+                                                getNombreGrupo(gid) }}{{ !last ? ', ' : '' }}</span>
+                                            <span *ngIf="!equipo.grupoIds?.length" class="text-400 font-italic">Sin
+                                                grupo</span>
                                         </ng-template>
                                     </td>
                                     <td class="acciones-celda">
@@ -132,7 +146,7 @@
                                 <span class="p-input-icon-left">
                                     <i class="pi pi-search"></i>
                                     <input type="text" pInputText placeholder="Buscar grupo..."
-                                        [(ngModel)]="filtroBusquedaGrupo" (input)="aplicarFiltrosGrupos()"/>
+                                        [(ngModel)]="filtroBusquedaGrupo" (input)="aplicarFiltrosGrupos()" />
                                 </span>
                             </div>
 
@@ -147,12 +161,16 @@
                             <ng-template pTemplate="header">
                                 <tr class="cabecera-gris">
                                     <th style="width: 4rem"><p-checkbox [binary]="true"></p-checkbox></th>
-                                    <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Nombre</th>
-                                    <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Miembros</th>
+                                    <th
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Nombre</th>
+                                    <th
+                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                        Miembros</th>
                                     <th style="width: 8rem">
                                         <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
-                                        hover:bg-green-700 hover:border-green-600" label="Exportar" icon="pi pi-file-excel"
-                                            (onClick)="exportarGrupos()">
+                                        hover:bg-green-700 hover:border-green-600" label="Exportar"
+                                            icon="pi pi-file-excel" (onClick)="exportarGrupos()">
                                         </p-button>
                                     </th>
                                 </tr>
@@ -160,7 +178,15 @@
                             <ng-template pTemplate="body" let-grupo>
                                 <tr>
                                     <td><p-checkbox [binary]="true"></p-checkbox></td>
-                                    <td>{{ grupo.nombre }}</td>
+                                    <td>
+                                        <ng-container *ngIf="grupoEnEdicion === grupo.id; else verNombreG">
+                                            <input pInputText type="text" [(ngModel)]="grupo.nombre"
+                                                placeholder="Nombre del grupo" />
+                                        </ng-container>
+                                        <ng-template #verNombreG>
+                                            {{ grupo.nombre }}
+                                        </ng-template>
+                                    </td>
                                     <td>
                                         <ng-container *ngIf="grupoEnEdicion === grupo.id; else verMiembrosG">
                                             <p-multiSelect [options]="miembrosOptions" optionLabel="nombre"
@@ -168,7 +194,8 @@
                                                 [(ngModel)]="grupo.miembrosIds"></p-multiSelect>
                                         </ng-container>
                                         <ng-template #verMiembrosG>
-                                            <span *ngFor="let m of grupo.miembros; let last = last">{{ m.nombre }}{{ !last ? ', ' : '' }}</span>
+                                            <span *ngFor="let m of grupo.miembros; let last = last">{{ m.nombre }}{{
+                                                !last ? ', ' : '' }}</span>
                                         </ng-template>
                                     </td>
                                     <td class="acciones-celda">
@@ -205,9 +232,9 @@
         <input pInputText type="text" [(ngModel)]="nuevoMiembro.nombre" placeholder="Nombre completo" />
         <input pInputText type="email" [(ngModel)]="nuevoMiembro.correo" placeholder="Correo electrónico" />
         <input pInputText type="password" [(ngModel)]="nuevoMiembro.contrasena" placeholder="Contraseña" />
-        
-        <p-dropdown [options]="rolesOptions" [(ngModel)]="nuevoMiembro.rol" 
-            optionLabel="label" optionValue="value" placeholder="Seleccionar Rol" appendTo="body"></p-dropdown>
+
+        <p-dropdown [options]="rolesOptions" [(ngModel)]="nuevoMiembro.rol" optionLabel="label" optionValue="value"
+            placeholder="Seleccionar Rol" appendTo="body"></p-dropdown>
     </div>
     <ng-template pTemplate="footer">
         <p-button label="Cancelar" class="p-button-text" (click)="mostrarModalMiembro = false"></p-button>
