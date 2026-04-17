@@ -53,8 +53,7 @@ input[type=number] {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 4rem 1rem;
-    text-align: center;
+    padding: 2rem 1rem;
 }
 
 .titulo-principal {
@@ -62,12 +61,13 @@ input[type=number] {
     color: #334155;
     font-weight: 500;
     margin-bottom: 0.5rem;
+    text-align: center;
 }
 
 .subtitulo {
     color: #64748b;
     font-size: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 /* =========================================

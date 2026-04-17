@@ -68,7 +68,6 @@ export class EtiquetasComponent implements OnInit {
       detail: `Campo de nombre vacio`
     });
 
-    this.nuevaEtiquetaNombre = '';
     this.etiquetas = this.etiquetasService.agregarEtiqueta(this.nuevaEtiquetaNombre);
     this.etiquetasFiltrados = [...this.etiquetas];
     this.messageService.add({

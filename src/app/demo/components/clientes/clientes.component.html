@@ -94,6 +94,9 @@
                 </ng-container>
                 <ng-container *ngIf="clienteEnEdicion?.id === cliente.id">
                   <td>
+                    <p-checkbox [binary]="true"></p-checkbox>
+                  </td>
+                  <td>
                     <input pInputText [(ngModel)]="clienteEnEdicion!.nombre" />
                   </td>
                   <td>

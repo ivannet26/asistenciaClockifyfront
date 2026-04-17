@@ -1,5 +1,4 @@
-<p-toast position="top-right" [baseZIndex]="9999"
-  [preventOpenDuplicates]="true" />
+<p-toast position="top-right" [baseZIndex]="9999" [preventOpenDuplicates]="true" />
 <div class="clientes-pagina">
     <div class="clientes-panel ">
         <div class="flex flex-column  sm:flex-row justify-content-between align-items-center p-4 gap-3">
@@ -16,25 +15,35 @@
                         Asigna registros a los proyectos para optimizar la colaboración.
                     </p>
 
-                    <div class="flex flex-column gap-3 mt-2">
-                        <div>
-                            <input pInputText placeholder="Introduce el nombre de Proyecto"
+                    <div class="flex flex-column gap-3 mt-2" style="width: 300px;">
+                        <div class="flex flex-column gap-1">
+                            <label class="text-sm font-medium text-color-secondary">Nombre del proyecto</label>
+                            <input pInputText placeholder="Introduce el nombre de proyecto"
                                 [(ngModel)]="nuevoProyecto.nombre" class="w-full" />
-                            <p-dropdown [options]="clientes" optionLabel="nombre" [(ngModel)]="nuevoProyecto.cliente"
-                                placeholder="Seleccionar cliente" appendTo="body" styleClass="w-full"></p-dropdown>
-                            <div class="flex align-items-center gap-4">
-                                <div class="flex align-items-center gap-2">
-                                    <input type="color" [(ngModel)]="nuevoProyecto.color"
-                                        style="border:none; width:40px; height:40px; cursor:pointer" />
-                                    <label class="text-sm">Color del proyecto</label>
-                                </div>
-                                <div class="flex align-items-center gap-2">
-                                    <p-checkbox [(ngModel)]="nuevoProyecto.publico" binary="true"></p-checkbox>
-                                    <label class="text-sm">Público</label>
-                                </div>
-                            </div>
-                            <button pButton label="Crear" class="p-button-info" (click)="guardarProyecto()"></button>
                         </div>
+
+                        <div class="flex flex-column gap-1">
+                            <label class="text-sm font-medium text-color-secondary">Cliente</label>
+                            <p-dropdown [options]="clientes" optionLabel="nombre" [(ngModel)]="nuevoProyecto.cliente"
+                                placeholder="Seleccionar cliente" appendTo="body" styleClass="w-full">
+                            </p-dropdown>
+                        </div>
+
+                        <div class="flex align-items-center gap-4">
+                            <div class="flex align-items-center gap-2">
+                                <input type="color" [(ngModel)]="nuevoProyecto.color"
+                                    style="border: 0.5px solid var(--surface-border); width: 32px; height: 32px; cursor: pointer; border-radius: 6px;" />
+                                <label class="text-sm text-color-secondary">Color del proyecto</label>
+                            </div>
+                            <div class="flex align-items-center gap-2">
+                                <p-checkbox [(ngModel)]="nuevoProyecto.publico" binary="true"
+                                    inputId="publico"></p-checkbox>
+                                <label for="publico" class="text-sm text-color-secondary cursor-pointer">Público</label>
+                            </div>
+                        </div>
+
+                        <button pButton label="Crear proyecto" class="p-button-info w-full" (click)="guardarProyecto()">
+                        </button>
                     </div>
                 </div>
                 <div *ngIf="mostrarLista">
@@ -66,7 +75,7 @@
                                 <div class="flex-1 flex align-items-center border-right-1 surface-border md:border-bottom-none surface-border filtro-item"
                                     style="border-right-style: dashed !important;">
                                     <p-dropdown [options]="opcionesEstado" [(ngModel)]="filtroEstado"
-                                        (onChange)="aplicarFiltros()" placeholder="Estado"
+                                        (onChange)="aplicarFiltros()" placeholder="Estado" appendTo="body"
                                         [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
                                         class="w-full">
                                     </p-dropdown>
@@ -75,14 +84,15 @@
                                 <div class="flex-1 flex align-items-center border-right-1 border-bottom-1 md:border-bottom-none surface-border filtro-item"
                                     style="border-right-style: dashed !important;">
                                     <p-dropdown [options]="clientes" optionLabel="nombre" [(ngModel)]="filtroCliente"
-                                        [showClear]="true" (onChange)="aplicarFiltros()" placeholder="Cliente"
+                                        [showClear]="true" (onChange)="aplicarFiltros()" placeholder="Cliente" appendTo="body"
                                         [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
                                         class="w-full"></p-dropdown>
                                 </div>
 
                                 <div class="flex-1 flex align-items-center filtro-item">
                                     <p-dropdown [options]="opcionesAcceso" [(ngModel)]="filtroAcceso"
-                                        (onChange)="aplicarFiltros()" placeholder="Acceso"[style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
+                                        (onChange)="aplicarFiltros()" placeholder="Acceso" appendTo="body"
+                                        [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
                                         class="w-full"></p-dropdown>
                                 </div>
                             </div>
