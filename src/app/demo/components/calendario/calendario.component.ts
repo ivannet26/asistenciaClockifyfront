@@ -200,7 +200,7 @@ export class CalendarioComponent implements OnInit {
 
   irHoy() {
   this.fechaActual = new Date();
-  this.vista = 'dia'; // Esto fuerza a mostrar solo la columna de hoy
+  this.vista = 'dia'; 
   this.refrescarTodo();
   }
   irSiguiente() {

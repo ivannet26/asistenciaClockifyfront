@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-
+import { Router } from '@angular/router';
 import { TabMenuModule } from "primeng/tabmenu";
 import { DropdownModule } from "primeng/dropdown";
 import { CalendarModule } from "primeng/calendar";
@@ -32,9 +32,9 @@ import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
 })
 export class InformesComponent implements OnInit {
   @ViewChild('op') op!: OverlayPanel;
+  @ViewChild('dt') dt!: Table;
 
   // --- UI ---
-  @ViewChild('dt') dt!: Table;
   tabactivot!: MenuItem;
   tabactivoe!: MenuItem;
   filtroEtiqueta: string = '';
@@ -54,10 +54,23 @@ export class InformesComponent implements OnInit {
   tiempoTotalFormateado: string = '00:00:00';
   proyectosResumen: any[] = [];
   registrosDetallados: any[] = [];
-  etiquetasDisponibles: string[] = [];
+  registrosFiltrados: any[] = []; 
+  etiquetasDisponibles: any[] = [];
+  gruposDisponibles: any[] = [];
   datosSemanales: any[] = [];
   totalesPorDiaSemana: string[] = [];
   etiquetasDias: string[] = [];
+
+  // --- Variables de Filtros ---
+  filtroEquipo: any = null; // Guardará el ID o Nombre del Grupo seleccionado
+  filtroCliente: any = null;
+  filtroProyecto: any = null;
+  filtroTarea: any = null;
+  filtroEtiquetaSeleccionada: any = null;
+  filtroEstado: any = null;
+  filtroDescripcion: string = '';
+
+  estiloFiltro = { 'border': 'none', 'font-size': '12px' };
 
   tabsT: MenuItem[] = [
     { label: 'Resumido', id: '0' },
@@ -78,7 +91,7 @@ export class InformesComponent implements OnInit {
 
   opcionSeleccionada: number = 1;
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute, private link: Router) {
     this.tabactivot = this.tabsT[0];
     this.tabactivoe = this.tabsE[0];
   }
@@ -86,35 +99,135 @@ export class InformesComponent implements OnInit {
   ngOnInit() {
     this.configurarGraficos();
     this.cargarEtiquetasDeStorage();
-    // Inicializar con la semana actual como en el Panel
+    this.cargarGruposDeStorage(); // Cargar los grupos (Sistemas, Contabilidad, etc)
     this.seleccionarOpcion('estaSemana');
 
     this.route.queryParams.subscribe(params => {
-
       const tipo = params['tipo'];
       const tab = params['tab']?.toString();
-
       if (tipo === 'tiempo') {
         this.opcionSeleccionada = 1;
-
         if (tab !== undefined) {
           const encontrado = this.tabsT.find(t => t.id === tab);
           if (encontrado) this.tabactivot = encontrado;
         }
-
       } else if (tipo === 'equipo') {
         this.opcionSeleccionada = 2;
-
         if (tab !== undefined) {
           const encontrado = this.tabsE.find(t => t.id === tab);
           if (encontrado) this.tabactivoe = encontrado;
         }
       }
-
     });
   }
 
-  // --- LÓGICA DE CALENDARIO DEL PANEL ---
+  // --- GETTERS DINÁMICOS PARA FILTROS ---
+  
+  // Ahora devuelve los grupos cargados del storage
+  get opcionesEquipo() {
+    return this.gruposDisponibles;
+  }
+
+  get opcionesClientes() {
+    const datos = this.registrosDetallados.map(r => r.clienteNombre).filter(n => n);
+    return [...new Set(datos)].map(c => ({ label: c, value: c }));
+  }
+
+  get opcionesProyectos() {
+    const datos = this.registrosDetallados.map(r => r.proyecto?.nombre || r.proyecto).filter(p => p);
+    return [...new Set(datos)].map(p => ({ label: p, value: p }));
+  }
+
+  get opcionesTareas() {
+    const datos = this.registrosDetallados.map(r => r.tarea).filter(t => t);
+    return [...new Set(datos)].map(t => ({ label: t, value: t }));
+  }
+
+  get opcionesEstados() {
+    return [
+      { label: 'Activo', value: 'Activo' },
+      { label: 'Archivado', value: 'Archivado' }
+    ];
+  }
+
+  // --- LÓGICA DE FILTRADO ---
+  aplicarFiltrosLocales() {
+    this.registrosFiltrados = this.registrosDetallados.filter(r => {
+      // Filtrar por Equipo (Grupo). Compara el grupo del registro con el seleccionado
+      const coincideEquipo = !this.filtroEquipo || r.grupoNombre === this.filtroEquipo || r.grupoId === this.filtroEquipo;
+      
+      const coincideCliente = !this.filtroCliente || r.clienteNombre === this.filtroCliente;
+      const coincideProyecto = !this.filtroProyecto || (r.proyecto?.nombre || r.proyecto) === this.filtroProyecto;
+      const coincideTarea = !this.filtroTarea || r.tarea === this.filtroTarea;
+      const coincideEtiqueta = !this.filtroEtiquetaSeleccionada || (r.etiquetas && r.etiquetas.includes(this.filtroEtiquetaSeleccionada));
+      
+      const estadoRegistro = r.estado || 'Activo';
+      const coincideEstado = !this.filtroEstado || estadoRegistro === this.filtroEstado;
+      
+      const coincideDesc = !this.filtroDescripcion || r.descripcion?.toLowerCase().includes(this.filtroDescripcion.toLowerCase());
+
+      return coincideEquipo && coincideCliente && coincideProyecto && coincideTarea && coincideEtiqueta && coincideEstado && coincideDesc;
+    });
+
+    this.procesarEstadisticas(this.rangoFechas[0]);
+  }
+
+  // --- CARGA DE DATOS DESDE STORAGE ---
+
+  cargarGruposDeStorage() {
+    const data = localStorage.getItem('grupos');
+    if (data) {
+      const grupos = JSON.parse(data);
+      this.gruposDisponibles = grupos.map((g: any) => ({
+        label: g.nombre, // Ej: "Sistemas"
+        value: g.nombre  // O g.id si tus registros guardan el ID
+      }));
+    }
+  }
+
+  cargarEtiquetasDeStorage() {
+    const tagsData = localStorage.getItem('etiquetas');
+    if (tagsData) {
+      const etiquetasGuardadas = JSON.parse(tagsData);
+      this.etiquetasDisponibles = etiquetasGuardadas.map((e: any) => ({
+        label: e.nombre || e, 
+        value: e.nombre || e
+      }));
+    }
+  }
+
+  cargarTodoDesdeStorage(inicioF: Date, finF: Date) {
+    const data = localStorage.getItem('registros');
+    if (!data) return;
+    const registros = JSON.parse(data);
+    const clientesData = localStorage.getItem('clientes');
+    const clientes = clientesData ? JSON.parse(clientesData) : [];
+
+    this.registrosDetallados = registros
+      .map((r: any) => {
+        const clienteId = r.proyecto?.clienteId;
+        const cliente = clientes.find((c: any) => c.id === clienteId);
+        return {
+          ...r,
+          inicio: new Date(r.inicio),
+          fin: new Date(r.fin),
+          clienteNombre: cliente?.nombre || 'Sin Cliente',
+          miembroNombre: r.miembroNombre || 'Sin nombre',
+          // Asegúrate de que el registro tenga el nombre del grupo para filtrar
+          grupoNombre: r.grupoNombre || 'General' 
+        };
+      })
+      .filter((r: any) =>
+        r.inicio >= inicioF &&
+        r.inicio <= new Date(finF.getTime() + 86400000)
+      )
+      .sort((a: any, b: any) => b.inicio.getTime() - a.inicio.getTime());
+
+    this.aplicarFiltrosLocales();
+  }
+
+  // --- LÓGICA DE CALENDARIO ---
+
   seleccionarOpcion(opcion: string) {
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
@@ -122,9 +235,7 @@ export class InformesComponent implements OnInit {
     let fin = new Date(hoy);
 
     switch (opcion) {
-      case 'hoy':
-        fin.setHours(23, 59, 59, 999);
-        break;
+      case 'hoy': fin.setHours(23, 59, 59, 999); break;
       case 'ayer':
         inicio.setDate(hoy.getDate() - 1);
         fin.setDate(hoy.getDate() - 1);
@@ -153,50 +264,13 @@ export class InformesComponent implements OnInit {
     if (this.rangoFechas && this.rangoFechas[0]) {
       const inicio = new Date(this.rangoFechas[0]);
       const fin = this.rangoFechas[1] ? new Date(this.rangoFechas[1]) : new Date(inicio);
-
       const opciones: any = { day: '2-digit', month: '2-digit', year: 'numeric' };
       this.textoRango = `${inicio.toLocaleDateString('es-ES', opciones)} - ${fin.toLocaleDateString('es-ES', opciones)}`;
-
       this.cargarTodoDesdeStorage(inicio, fin);
     }
   }
 
-  cambiarSemana(dir: number) {
-    const nuevaFecha = new Date(this.rangoFechas[0]);
-    nuevaFecha.setDate(nuevaFecha.getDate() + (dir * 7));
-    const fin = new Date(nuevaFecha);
-    fin.setDate(nuevaFecha.getDate() + 6);
-    this.rangoFechas = [nuevaFecha, fin];
-    this.actualizarYFiltrar();
-  }
-
-  cargarTodoDesdeStorage(inicioF: Date, finF: Date) {
-    const data = localStorage.getItem('registros');
-    if (!data) return;
-    const registros = JSON.parse(data);
-    const clientesData = localStorage.getItem('clientes');
-    const clientes = clientesData ? JSON.parse(clientesData) : [];
-
-    this.registrosDetallados = registros
-      .map((r: any) => {
-        const clienteId = r.proyecto?.clienteId;
-        const cliente = clientes.find((c: any) => c.id === clienteId);
-        return {
-          ...r,
-          inicio: new Date(r.inicio),
-          fin: new Date(r.fin),
-          clienteNombre: cliente?.nombre || 'Sin Cliente',
-          miembroNombre: r.miembroNombre || 'Sin nombre'
-        };
-      })
-      .filter((r: any) =>
-        r.inicio >= inicioF &&
-        r.inicio <= new Date(finF.getTime() + 86400000)
-      )
-      .sort((a: any, b: any) => b.inicio.getTime() - a.inicio.getTime());
-
-    this.procesarEstadisticas(inicioF);
-  }
+  // --- GRÁFICOS Y ESTADÍSTICAS ---
 
   procesarEstadisticas(lunesReferencia: Date) {
     const tiemposPorProyecto: { [key: string]: number } = {};
@@ -204,7 +278,6 @@ export class InformesComponent implements OnInit {
     const agrupacionSemanal: { [key: string]: number[] } = {};
     let totalSGlobal = 0;
 
-    // Etiquetas dinámicas (lun., 6 abr.)
     const diasNombres = ['lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.', 'dom.'];
     this.etiquetasDias = [];
     for (let i = 0; i < 7; i++) {
@@ -213,7 +286,7 @@ export class InformesComponent implements OnInit {
       this.etiquetasDias.push(`${diasNombres[i]}, ${d.getDate()}`);
     }
 
-    this.registrosDetallados.forEach(r => {
+    this.registrosFiltrados.forEach(r => {
       let s = 0;
       if (r.duracion?.includes(':')) {
         const p = r.duracion.split(':');
@@ -238,12 +311,10 @@ export class InformesComponent implements OnInit {
     }));
 
     this.datosSemanales = Object.keys(agrupacionSemanal).map(n => {
-      // Busca un registro de ese proyecto para sacar los datos extra
-      const registroRef = this.registrosDetallados.find((r: any) => {
+      const registroRef = this.registrosFiltrados.find((r: any) => {
         const nombre = (r.proyecto && typeof r.proyecto === 'object') ? r.proyecto.nombre : (r.proyecto || 'Sin Proyecto');
         return nombre === n;
       });
-
       return {
         proyecto: n,
         descripcion: registroRef?.descripcion || 'Sin descripción',
@@ -255,9 +326,7 @@ export class InformesComponent implements OnInit {
       };
     });
 
-
     this.totalesPorDiaSemana = tiempoPorDiaBarras.map(seg => this.formatearSegundos(seg));
-
     this.dataBarras = {
       labels: this.etiquetasDias,
       datasets: [{ data: tiempoPorDiaBarras, backgroundColor: '#2196F3', borderRadius: 4 }]
@@ -287,55 +356,36 @@ export class InformesComponent implements OnInit {
     return `${h}:${m}:${s}`;
   }
 
-  cargarEtiquetasDeStorage() {
-    const tags = localStorage.getItem('etiquetas');
-    this.etiquetasDisponibles = tags ? JSON.parse(tags) : ['GM', 'DISEÑO'];
-  }
+  // --- NAVEGACIÓN Y EXPORTACIÓN ---
 
-  get etiquetasFiltradas() {
-    return this.etiquetasDisponibles.filter(t => t.toLowerCase().includes(this.filtroEtiqueta.toLowerCase()));
-  }
-
+  irAlRastreador() { this.link.navigate(['/menu-layout/rastreador']); }
   CambioTabT(event: any) { this.tabactivot = event; }
   CambioTabE(event: any) { this.tabactivoe = event; }
-  abrirMenu(panel: any, event: Event, r: any) { this.registroSeleccionado = r; panel.toggle(event); }
-  duplicarSeleccionado(p: any) { p.hide(); }
-  eliminarSeleccionado(p: any) { p.hide(); }
+
   restarHoras(duracion: string, horas: number = 8): { tiempo: string, estado: string } {
+    if(!duracion) return { tiempo: '00:00:00', estado: 'Sin datos' };
     const [h, m, s] = duracion.split(':').map(Number);
     const trabajados = (h * 3600) + (m * 60) + s;
     const requeridos = horas * 3600;
     const diferencia = requeridos - trabajados;
     const umbral = 60;
 
-    if (diferencia > umbral) {
-      return {
-        tiempo: '- ' + this.formatearSegundos(diferencia),
-        estado: 'Debe '
-      };
-    } else if (diferencia < -umbral) {
-      return {
-        tiempo: '+ ' + this.formatearSegundos(Math.abs(diferencia)),
-        estado: 'Extra'
-      };
-    } else {
-      return {
-        tiempo: '00:00:00',
-        estado: 'Completado'
-      };
-    }
+    if (diferencia > umbral) return { tiempo: '- ' + this.formatearSegundos(diferencia), estado: 'Debe ' };
+    if (diferencia < -umbral) return { tiempo: '+ ' + this.formatearSegundos(Math.abs(diferencia)), estado: 'Extra' };
+    return { tiempo: '00:00:00', estado: 'Completado' };
   }
+
   exportar(): void {
     ExtraccionExcel.desdeTabla(
       this.dt,
       (r, i) => ({
         'N°': i + 1,
-        'Usuario': 'Alejandra',
+        'Usuario': r.miembroNombre || 'Usuario',
         'Fecha': r.inicio ? new Date(r.inicio).toLocaleDateString('es-ES') : '',
         'Inicio': r.inicio ? new Date(r.inicio).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '',
         'Fin': r.fin ? new Date(r.fin).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '',
         'Descripcion': `${r.descripcion || 'Sin descripción'}`,
-        'Trabajo': ` ${r.proyecto?.nombre || 'Sin Proyecto'}`,
+        'Trabajo': ` ${r.proyecto?.nombre || r.proyecto || 'Sin Proyecto'}`,
         'Cliente': `${r.clienteNombre || 'Sin Cliente'}`,
         'Horas Extra': this.restarHoras(r.duracion).tiempo,
         'Observación': this.restarHoras(r.duracion).estado,
