@@ -124,23 +124,30 @@ export class PanelComponent implements OnInit {
     this.rangoFechas = [nuevaFecha, fin];
     this.actualizarYFiltrar();
   }
-  verificarRegistrosGlobales() {
-    const data = localStorage.getItem('registros');
-    const registros = data ? JSON.parse(data) : [];
-    this.hayRegistrosGlobales = registros.length > 0;
-  }
+verificarRegistrosGlobales() {
+  const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+  const miembroId = session.userData?.id;
+
+  const data = localStorage.getItem('registros');
+  const registros = data ? JSON.parse(data) : [];
+  this.hayRegistrosGlobales = registros.some((r: any) => r.miembroId === miembroId);
+}
 
   irAlRastreador() {
     this.router.navigate(['/menu-layout/rastreador']);
   }
 
-  cargarTodoDesdeStorage() {
-    const data = localStorage.getItem('registros');
-    if (data) {
-      this.registrosCompletos = JSON.parse(data);
-      this.procesarTodo();
-    }
+cargarTodoDesdeStorage() {
+  const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+  const miembroId = session.userData?.id;
+
+  const data = localStorage.getItem('registros');
+  if (data) {
+    const todos = JSON.parse(data);
+    this.registrosCompletos = todos.filter((r: any) => r.miembroId === miembroId);
+    this.procesarTodo();
   }
+}
 
   procesarTodo() {
     const tiemposPorProyecto: { [key: string]: number } = {};

@@ -46,10 +46,11 @@ export class CalendarioComponent implements OnInit {
   duracionInicio: string = '00:00';
   duracionFin: string = '00:00';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   ngOnInit() {
     this.cargarDesdeLocalStorage();
+    console.log('Registros cargados:', this.registros);
     this.generarHoras();
     this.refrescarTodo();
   }
@@ -59,16 +60,23 @@ export class CalendarioComponent implements OnInit {
   }
 
   cargarDesdeLocalStorage() {
+    const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+    const miembroId = session.userData?.id;
+
     const dataReg = localStorage.getItem('registros');
     if (dataReg) {
-      this.registros = JSON.parse(dataReg).map((reg: any) => ({
-        ...reg,
-        inicio: new Date(reg.inicio),
-        fin: new Date(reg.fin)
-      }));
+      this.registros = JSON.parse(dataReg)
+        .filter((r: any) => r.miembroId === miembroId)
+        .map((reg: any) => ({
+          ...reg,
+          inicio: new Date(reg.inicio),
+          fin: new Date(reg.fin)
+        }));
     }
+
     const dataProy = localStorage.getItem('proyectos');
     if (dataProy) this.listaProyectos = JSON.parse(dataProy);
+
     const dataEtq = localStorage.getItem('etiquetas');
     if (dataEtq) this.listaEtiquetas = JSON.parse(dataEtq);
   }
@@ -99,10 +107,14 @@ export class CalendarioComponent implements OnInit {
   }
 
   guardarEntrada() {
+    const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+
     const registroActualizado = {
       ...this.registroActivo,
       descripcion: this.descripcionTarea,
       proyecto: this.proyectoSeleccionado,
+      miembroId: session.userData?.id,
+      miembroNombre: session.userData?.nombre,
       inicio: this.registroActivo ? this.registroActivo.inicio : this.combinarFechaHora(this.fechaSeleccionada, this.duracionInicio),
       fin: this.registroActivo ? this.registroActivo.fin : this.combinarFechaHora(this.fechaSeleccionada, this.duracionFin),
       etiquetas: this.etiquetasSeleccionadas
@@ -122,8 +134,8 @@ export class CalendarioComponent implements OnInit {
 
   getDuracionTotalModal(): string {
     if (!this.registroActivo) {
-        // Si es nuevo, calculamos entre duracionInicio y duracionFin (default 30 min)
-        return "00:30:00";
+      // Si es nuevo, calculamos entre duracionInicio y duracionFin (default 30 min)
+      return "00:30:00";
     }
     const diffMs = this.registroActivo.fin.getTime() - this.registroActivo.inicio.getTime();
     const totalSegundos = Math.floor(diffMs / 1000);
@@ -134,7 +146,7 @@ export class CalendarioComponent implements OnInit {
   }
 
   formatearHora = (date: Date) => `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-  
+
   combinarFechaHora(fecha: Date, horaStr: string): Date {
     const d = new Date(fecha);
     const [h, m] = horaStr.split(':').map(Number);
@@ -151,15 +163,23 @@ export class CalendarioComponent implements OnInit {
   }
 
   calcularEstiloEvento(reg: any) {
-    const minutosInicio = reg.inicio.getMinutes();
+    const intervalo = this.zoomNivel === 1 ? 30 : this.zoomNivel === 2 ? 15 : this.zoomNivel === 3 ? 5 : 60;
+    const minutosInicio = reg.inicio.getMinutes() % intervalo; // 👈 relativo a la celda
     const duracionMinutos = (reg.fin.getTime() - reg.inicio.getTime()) / (1000 * 60);
+    const alturaMinima = Math.max(duracionMinutos, 15);
+
     const nombreP = reg.proyecto?.nombre || reg.proyecto;
     const infoP = this.listaProyectos.find(p => p.nombre === nombreP);
     return {
-      'position': 'absolute', 'top': `${minutosInicio}px`, 'height': `${duracionMinutos}px`,
-      'background-color': infoP?.color || '#64748b', 'width': '100%', 'z-index': '10',
-      'border-left': '4px solid rgba(0,0,0,0.2)', 'padding': '4px', 'color': 'white',
-      'font-size': '0.70rem', 'border-radius': '4px', 'pointer-events': 'auto', 'cursor': 'pointer'
+      'position': 'absolute',
+      'top': `${minutosInicio}px`,
+      'height': `${alturaMinima}px`,
+      'background-color': infoP?.color || '#64748b',
+      'width': '100%', 'z-index': '10',
+      'border-left': '4px solid rgba(0,0,0,0.2)',
+      'padding': '4px', 'color': 'white',
+      'font-size': '0.70rem', 'border-radius': '4px',
+      'pointer-events': 'auto', 'cursor': 'pointer'
     };
   }
 
@@ -178,12 +198,12 @@ export class CalendarioComponent implements OnInit {
   generarDias() {
     const nuevosDias = [];
     const nombres = ['lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.', 'dom.'];
-    
+
     // Calculamos el lunes de la semana de la fechaActual
     const base = new Date(this.fechaActual);
     const diaSemana = base.getDay();
     const diff = base.getDate() - (diaSemana === 0 ? 6 : diaSemana - 1);
-    
+
     const lunes = new Date(base.setDate(diff));
     lunes.setHours(0, 0, 0, 0);
 
@@ -196,7 +216,7 @@ export class CalendarioComponent implements OnInit {
         completa: d
       });
     }
-    
+
     this.diasSemana = nuevosDias;
   }
 
@@ -206,9 +226,9 @@ export class CalendarioComponent implements OnInit {
   }
 
   irHoy() {
-  this.fechaActual = new Date();
-  this.vista = 'dia'; 
-  this.refrescarTodo();
+    this.fechaActual = new Date();
+    this.vista = 'dia';
+    this.refrescarTodo();
   }
   irSiguiente() {
     const salto = this.vista === 'semana' ? 7 : 1;
@@ -235,7 +255,12 @@ export class CalendarioComponent implements OnInit {
   esMismoDia = (f1: Date, f2: Date) => f1.toDateString() === f2.toDateString();
   esMismaHora(fechaRegistro: Date, horaCelda: string): boolean {
     const [hCelda, mCelda] = horaCelda.split(':').map(Number);
-    return fechaRegistro.getHours() === hCelda && fechaRegistro.getMinutes() === mCelda;
+    const minutosRegistro = fechaRegistro.getHours() * 60 + fechaRegistro.getMinutes();
+    const minutosCelda = hCelda * 60 + mCelda;
+
+    const intervalo = this.zoomNivel === 1 ? 30 : this.zoomNivel === 2 ? 15 : this.zoomNivel === 3 ? 5 : 60;
+
+    return minutosRegistro >= minutosCelda && minutosRegistro < (minutosCelda + intervalo);
   }
   esHoy = (f: Date) => f.toDateString() === new Date().toDateString();
   aumentarZoom() { if (this.zoomNivel < 3) { this.zoomNivel++; this.generarHoras(); } }

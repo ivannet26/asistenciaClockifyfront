@@ -144,11 +144,35 @@ export class EquipoComponent implements OnInit {
     this.cargarDatos();
   }
 
-  guardarCambiosMiembro(miembro: Miembros) {
-    this.miembrosService.actualizarMiembro(miembro.id, miembro);
-    this.messageService.add({ severity: 'info', summary: 'Actualizado', detail: 'Cambios guardados' });
-    this.cargarDatos();
-  }
+guardarCambiosMiembro(miembro: Miembros) {
+  // 1. Guardar el miembro con sus nuevos datos
+  this.miembrosService.actualizarMiembro(miembro.id, miembro);
+
+  // 2. Sincronizar los grupos (igual que en guardarMiembrosAGrupo)
+  const todosLosGrupos = this.gruposService.getGrupos();
+
+  todosLosGrupos.forEach(grupo => {
+    const miembrosActuales = grupo.miembrosIds ?? [];
+    const debePertenecer = miembro.grupoIds?.includes(grupo.id) ?? false;
+
+    let nuevosMiembros: number[];
+    if (debePertenecer && !miembrosActuales.includes(miembro.id)) {
+      nuevosMiembros = [...miembrosActuales, miembro.id];
+    } else if (!debePertenecer && miembrosActuales.includes(miembro.id)) {
+      nuevosMiembros = miembrosActuales.filter(id => id !== miembro.id);
+    } else {
+      return; // Sin cambios en este grupo
+    }
+
+    this.gruposService.actualizarGrupo(grupo.id, {
+      nombre: grupo.nombre,
+      miembrosIds: nuevosMiembros
+    });
+  });
+
+  this.messageService.add({ severity: 'info', summary: 'Actualizado', detail: 'Cambios guardados' });
+  this.cargarDatos();
+}
 
   guardarGrupo() {
     const nombre = this.nuevoGrupo.nombre?.trim();

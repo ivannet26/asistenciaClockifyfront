@@ -165,7 +165,7 @@
     <div class="field grid mb-4 align-items-center">
       <label class="col-12 sm:col-3 text-xs font-bold text-500">Etiquetas</label>
       <div class="col-12 sm:col-9">
-        <p-multiSelect [options]="listaEtiquetas" [(ngModel)]="etiquetasSeleccionadas" optionLabel="nombre"
+        <p-multiSelect [options]="listaEtiquetas" appendTo="body" [(ngModel)]="etiquetasSeleccionadas" optionLabel="nombre"
           placeholder="Añadir etiquetas" display="chip"></p-multiSelect>
       </div>
     </div>
