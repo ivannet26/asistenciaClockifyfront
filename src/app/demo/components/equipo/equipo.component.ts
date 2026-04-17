@@ -41,22 +41,18 @@ export class EquipoComponent implements OnInit {
   gruposConIntegrantes: Grupo[] = [];
   miembros: Miembros[] = [];
 
-  // Lógica de Filtrado
   miembrosFiltrados: Miembros[] = [];
   gruposFiltrados: Grupo[] = [];
 
-  // Modelos de Filtro
-  filtroTodo: any = 'todos'; // Cambiado a any para soportar nombres
+  filtroTodo: any = 'todos'; 
   filtroRol: RolNombre | null = null;
   filtroGrupo: number | null = null;
   filtroBusquedaGrupo: string = '';
 
-  // Opciones Dropdowns
   rolesOptions = Object.values(RolNombre).map(rol => ({ label: rol, value: rol }));
   grupoOptions: { label: string; value: number }[] = [];
   miembrosOptions: { nombre: string; id: number }[] = [];
 
-  // Modelos de Creación
   nuevoGrupo: Grupo = { id: 0, nombre: '' };
   nuevoMiembro: Miembros = { id: 0, nombre: '', correo: '', contrasena: '', rol: undefined, grupoIds: undefined, activo: true };
 
@@ -99,7 +95,6 @@ export class EquipoComponent implements OnInit {
       .map(m => ({ nombre: m.nombre, id: m.id }));
   }
 
-  // --- GETTER DINÁMICO PARA EL DROPDOWN "TODOS" ---
   get todoOptions() {
     const listaMiembros = this.miembros.map(m => ({ label: m.nombre, value: m.nombre }));
     return [
@@ -109,20 +104,15 @@ export class EquipoComponent implements OnInit {
     ];
   }
 
-  // ── Lógica de Filtros (Todo, Rol, Grupo) ──────────────────────
-
   aplicarFiltrosMiembros() {
     if (this.filtroTodo === 'ninguno') {
       this.miembrosFiltrados = [];
       return;
     }
-
     this.miembrosFiltrados = this.miembros.filter(m => {
-      // Filtro por nombre específico (si no es 'todos')
       const coincideMiembro = this.filtroTodo === 'todos' || m.nombre === this.filtroTodo;
       const cumpleRol = !this.filtroRol || m.rol === this.filtroRol;
       const cumpleGrupo = !this.filtroGrupo || (m.grupoIds && m.grupoIds.includes(this.filtroGrupo));
-      
       return coincideMiembro && cumpleRol && cumpleGrupo;
     });
   }
@@ -132,10 +122,6 @@ export class EquipoComponent implements OnInit {
       !this.filtroBusquedaGrupo || g.nombre.toLowerCase().includes(this.filtroBusquedaGrupo.toLowerCase())
     );
   }
-
-  // ── Miembros ─────────────────────────────────────────────────
-
-  abrirModalNuevoMiembro() { this.mostrarModalMiembro = true; }
 
   guardarMiembro() {
     const nombre = this.nuevoMiembro.nombre?.trim();
@@ -161,15 +147,6 @@ export class EquipoComponent implements OnInit {
     this.cargarDatos();
   }
 
-  editarMiembro(id: number) { this.miembroEnEdicion = id; }
-
-  desactivarMiembro(id: number) {
-    this.miembrosService.desactivarMiembro(id);
-    this.cargarDatos();
-  }
-
-  // ── Grupos ───────────────────────────────────────────────────
-
   guardarGrupo() {
     const nombre = this.nuevoGrupo.nombre?.trim();
     if (!nombre) return;
@@ -183,28 +160,44 @@ export class EquipoComponent implements OnInit {
     this.cargarDatos();
   }
 
+  // --- FUNCIÓN CORREGIDA ---
   guardarMiembrosAGrupo(grupo: Grupo) {
-    const miembros = this.miembrosService.getMiembros();
-    miembros.forEach(m => {
+    const miembrosGlobales = this.miembrosService.getMiembros();
+    
+    // 1. Sincronizar los grupoIds en cada Miembro
+    miembrosGlobales.forEach(m => {
       if (!m.grupoIds) m.grupoIds = [];
-      if (grupo.miembrosIds?.includes(m.id)) {
+      
+      const debeEstarEnGrupo = grupo.miembrosIds?.includes(m.id);
+
+      if (debeEstarEnGrupo) {
         if (!m.grupoIds.includes(grupo.id)) m.grupoIds.push(grupo.id);
       } else {
         m.grupoIds = m.grupoIds.filter(gid => gid !== grupo.id);
       }
       this.miembrosService.actualizarMiembro(m.id, { grupoIds: m.grupoIds });
     });
+
+    // 2. Persistir los IDs de los miembros en el objeto Grupo dentro de LocalStorage
+    this.gruposService.actualizarGrupo(grupo.id, { 
+      miembrosIds: grupo.miembrosIds || [] 
+    });
+
+    this.messageService.add({ severity: 'success', summary: 'Grupo Actualizado', detail: 'Miembros guardados correctamente' });
     this.cargarDatos();
   }
 
   getGruposConIntegrantes(): Grupo[] {
     const grupos = this.gruposService.getGrupos();
     const miembros = this.miembrosService.getMiembros();
-    return grupos.map(grupo => ({
-      ...grupo,
-      miembros: miembros.filter(m => m.grupoIds?.includes(grupo.id)),
-      miembrosIds: miembros.filter(m => m.grupoIds?.includes(grupo.id)).map(m => m.id)
-    }));
+    return grupos.map(grupo => {
+      const integrantes = miembros.filter(m => m.grupoIds?.includes(grupo.id));
+      return {
+        ...grupo,
+        miembros: integrantes,
+        miembrosIds: integrantes.map(m => m.id)
+      };
+    });
   }
 
   getNombreGrupo = (id?: number) => this.grupos.find(g => g.id === id)?.nombre || '';

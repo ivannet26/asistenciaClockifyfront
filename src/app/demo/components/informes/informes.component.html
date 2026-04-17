@@ -46,8 +46,7 @@
         </p-overlayPanel>
 
         <div class="mx-2 md:mx-3 mb-4" *ngIf="tabactivot?.id !== '3'">
-          <div
-            class="surface-border border-1 border-round overflow-hidden shadow-1 flex align-items-stretch bg-white overflow-x-auto">
+          <div class="surface-border border-1 border-round overflow-hidden shadow-1 flex align-items-stretch bg-white overflow-x-auto">
             <div class="flex align-items-center border-right-1 surface-border bg-gray-50 px-2 py-2 sticky-left"
               style="min-width: 90px; border-right-style: dashed !important;">
               <span class="text-500 font-bold text-xs uppercase">Filtrar <i class="pi pi-chevron-down ml-1"></i></span>
@@ -90,8 +89,7 @@
           </div>
         </div>
 
-        <div
-          class="mx-2 md:mx-3 mb-1 surface-100 border-1 surface-border border-round-top flex flex-column sm:flex-row justify-content-between align-items-center px-3 py-2 bg-gray-50 gap-3"
+        <div class="mx-2 md:mx-3 mb-1 surface-100 border-1 surface-border border-round-top flex flex-column sm:flex-row justify-content-between align-items-center px-3 py-2 bg-gray-50 gap-3"
           *ngIf="tabactivot?.id !== '3'">
           <div class="flex align-items-baseline gap-2">
             <span class="text-500 text-xs font-bold uppercase">Total:</span>
@@ -107,8 +105,7 @@
 
         <div class="mx-2 md:mx-3" *ngIf="tabactivot?.id === '0'">
           <div class="surface-50 p-2 md:p-4 border-round-bottom mb-4 border-1 surface-border border-top-none">
-            <div style="height: 220px;"><p-chart type="bar" [data]="dataBarras" [options]="optionsBarras"></p-chart>
-            </div>
+            <div style="height: 220px;"><p-chart type="bar" [data]="dataBarras" [options]="optionsBarras"></p-chart></div>
           </div>
           <div class="grid grid-nogutter border-1 surface-border bg-white mb-5">
             <div class="col-12 md:col-8 border-right-1 surface-border overflow-x-auto">
@@ -124,8 +121,10 @@
                 <ng-template pTemplate="body" let-p>
                   <tr>
                     <td><i class="pi pi-chevron-down text-blue-400 text-xs"></i></td>
-                    <td><span [style.color]="p.color" class="mr-2">●</span><span
-                        class="font-bold text-xs uppercase">{{p.titulo}}</span></td>
+                    <td>
+                      <span [style.color]="p.color" class="mr-2">●</span>
+                      <span class="font-bold text-xs uppercase">{{p.titulo}}</span>
+                    </td>
                     <td class="text-right font-bold text-700">{{p.duracion}}</td>
                     <td class="text-right text-400">0,00 USD</td>
                   </tr>
@@ -133,15 +132,16 @@
               </p-table>
             </div>
             <div class="col-12 md:col-4 flex flex-column align-items-center p-4">
-              <div style="width: 180px; height: 180px;"><p-chart type="doughnut" [data]="dataDona"
-                  [options]="optionsDona"></p-chart></div>
+              <div style="width: 180px; height: 180px;">
+                <p-chart type="doughnut" [data]="dataDona" [options]="optionsDona"></p-chart>
+              </div>
               <div class="text-center mt-3 font-bold text-xl text-800">{{ tiempoTotalFormateado }}</div>
             </div>
           </div>
         </div>
 
         <div class="mx-2 md:mx-3 overflow-x-auto" *ngIf="tabactivot?.id === '1'">
-          <p-table [value]="registrosDetallados" styleClass="p-datatable-sm tabla-fija-detallado"
+          <p-table [value]="registrosFiltrados" styleClass="p-datatable-sm tabla-fija-detallado"
             [style]="{'table-layout': 'fixed', 'width': '100%', 'min-width': '800px'}">
             <ng-template pTemplate="header">
               <tr class="text-xs text-500 uppercase">
@@ -158,17 +158,20 @@
                 <td class="celda-truncate">
                   <div class="flex align-items-center gap-2 flex-wrap">
                     <span class="font-bold text-sm">{{ r.descripcion || 'Sin descripción' }}</span>
-                    <small class="text-500 ml-2"> <span *ngIf="r.proyecto?.color" [style.color]="r.proyecto.color"
-                        style="width: 10px; height: 10px; flex-shrink: 0;"> ● </span> {{ r.proyecto?.nombre ||
-                      r.proyecto || 'Sin Proyecto' }}-{{ r.clienteNombre || 'Sin Cliente' }}</small>
+                    <small class="text-500 ml-2"> 
+                      <span *ngIf="r.proyecto?.color" [style.color]="r.proyecto.color"> ● </span> 
+                      {{ r.proyecto?.nombre || r.proyecto || 'Sin Proyecto' }} - {{ r.clienteNombre || 'Sin Cliente' }}
+                    </small>
                   </div>
                   <div class="flex align-items-center mt-2 gap-2 flex-wrap">
                     <span *ngFor="let tag of r.etiquetas" class="btn-etiqueta-detallado">{{ tag }}</span>
                   </div>
                 </td>
                 <td class="text-center text-xs">{{ r.miembroNombre }}</td>
-                <td class="text-center text-xs">{{ r.inicio | date:'HH:mm' }} - {{ r.fin | date:'HH:mm' }}<br><small
-                    class="text-500">{{ r.inicio | date:'dd/MM/yyyy' }}</small></td>
+                <td class="text-center text-xs">
+                  {{ r.inicio | date:'HH:mm' }} - {{ r.fin | date:'HH:mm' }}<br>
+                  <small class="text-500">{{ r.inicio | date:'dd/MM/yyyy' }}</small>
+                </td>
                 <td class="text-right font-bold text-700">{{ r.duracion }}</td>
               </tr>
             </ng-template>
@@ -176,14 +179,12 @@
         </div>
 
         <div class="mx-2 md:mx-3 overflow-x-auto" *ngIf="tabactivot?.id === '2'">
-          <div
-            class="surface-100 p-2 border-1 surface-border flex align-items-center px-3 mb-1 bg-gray-50 border-bottom-3"
+          <div class="surface-100 p-2 border-1 surface-border flex align-items-center px-3 mb-1 bg-gray-50 border-bottom-3"
             style="border-bottom-color: #2196F3">
             <span class="text-500 text-xs font-bold mr-3 uppercase">Total Semana:</span>
             <span class="text-900 font-bold text-xl">{{ tiempoTotalFormateado }}</span>
           </div>
-          <p-table [value]="datosSemanales" styleClass="p-datatable-gridlines p-datatable-sm"
-            [style]="{'min-width': '900px'}">
+          <p-table [value]="datosSemanales" styleClass="p-datatable-gridlines p-datatable-sm" [style]="{'min-width': '900px'}">
             <ng-template pTemplate="header">
               <tr class="text-xs text-500 uppercase bg-gray-50">
                 <th style="width: 30%">Proyecto / Descripción</th>
@@ -194,10 +195,12 @@
             <ng-template pTemplate="body" let-ds>
               <tr class="text-sm">
                 <td class="font-bold" style="border-left: 4px solid #00BCD4">
-                  <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <div class="flex flex-column gap-1">
                     <span class="font-bold text-sm">{{ ds.descripcion || 'Sin descripción' }}</span>
-                    <small class="text-400"><span *ngIf="ds.proyectoColor" [style.color]="ds.proyectoColor">●</span> {{
-                      ds.proyectoNombre }} - {{ ds.clienteNombre }}</small>
+                    <small class="text-400">
+                      <span *ngIf="ds.proyectoColor" [style.color]="ds.proyectoColor">●</span> 
+                      {{ ds.proyectoNombre }} - {{ ds.clienteNombre }}
+                    </small>
                   </div>
                 </td>
                 <td *ngFor="let dia of ds.dias" class="text-center text-500">{{ dia }}</td>
@@ -215,18 +218,6 @@
         </div>
 
         <div *ngIf="tabactivot?.id === '3'">
-          <div class="flex flex-column sm:flex-row align-items-center gap-2 mb-3 px-3">
-            <p-dropdown [options]="[{label: 'Todos los informes', value: 1}]" placeholder="Todos los informes"
-              styleClass="bg-white border-1 border-300 text-sm w-full sm:w-12rem"></p-dropdown>
-            <div class="p-inputgroup w-full sm:w-18rem">
-              <span class="p-inputgroup-addon bg-white border-right-none border-1 border-300"><i
-                  class="pi pi-search text-400"></i></span>
-              <input type="text" pInputText placeholder="Buscar por nombre"
-                class="border-left-none border-1 border-300 text-sm" />
-            </div>
-          </div>
-          <div class="surface-100 border-y-1 surface-border px-4 py-2 mb-4 bg-gray-50"><span
-              class="text-500 font-bold text-xs uppercase">Informes compartidos</span></div>
           <div class="p-8 flex flex-column align-items-center text-center">
             <i class="pi pi-list text-200 mb-4" style="font-size: 3rem;"></i>
             <h3 class="text-900 font-bold mb-2">No hay informes compartidos</h3>
@@ -245,35 +236,30 @@
               <p-tabMenu [model]="tabsE" [activeItem]="tabactivoe" (activeItemChange)="CambioTabE($event)"></p-tabMenu>
             </div>
           </div>
-          <div class="p-inputgroup w-full md:w-22rem" *ngIf="tabactivoe?.id !== '3'">
-            <span class="p-inputgroup-addon bg-white cursor-pointer" (click)="op.toggle($event)"><i
-                class="pi pi-calendar" style="color: #2196F3;"></i></span>
-            <input type="text" pInputText [value]="textoRango" class="bg-white cursor-pointer text-sm" readonly
-              (click)="op.toggle($event)" />
-            <button type="button" pButton icon="pi pi-chevron-left" (click)="cambiarSemana(-1)"
-              class="p-button-secondary p-button-text bg-white border-1 border-300"></button>
-            <button type="button" pButton icon="pi pi-chevron-right" (click)="cambiarSemana(1)"
-              class="p-button-secondary p-button-text bg-white border-1 border-300"></button>
+          <div class="p-inputgroup w-full md:w-22rem">
+            <span class="p-inputgroup-addon bg-white cursor-pointer" (click)="op.toggle($event)">
+              <i class="pi pi-calendar" style="color: #2196F3;"></i>
+            </span>
+            <input type="text" pInputText [value]="textoRango" class="bg-white cursor-pointer text-sm" readonly (click)="op.toggle($event)" />
+            <button type="button" pButton icon="pi pi-chevron-left" (click)="cambiarSemana(-1)" class="p-button-secondary p-button-text bg-white border-1 border-300"></button>
+            <button type="button" pButton icon="pi pi-chevron-right" (click)="cambiarSemana(1)" class="p-button-secondary p-button-text bg-white border-1 border-300"></button>
           </div>
         </div>
 
         <div class="mx-2 md:mx-3 mb-4" *ngIf="tabactivoe?.id === '0'">
-          <div
-            class="surface-border border-1 border-round overflow-hidden shadow-1 flex align-items-stretch bg-white overflow-x-auto">
-            <div class="flex align-items-center border-right-1 surface-border bg-gray-50 px-2 py-2 sticky-left"
-              style="min-width: 90px;"><span class="text-500 font-bold text-xs uppercase">Filtrar</span></div>
-            <div *ngFor="let p of ['Equipo','Inicio','Fin','Trabajo','Horas extra','Observación']"
-              class="flex-1 border-right-1 surface-border flex align-items-center"
-              style="min-width: 130px; border-right-style: dashed !important;">
-              <p-dropdown [options]="[]" [placeholder]="p" [appendTo]="'body'" class="w-full"
-                [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
+          <div class="surface-border border-1 border-round overflow-hidden shadow-1 flex align-items-stretch bg-white overflow-x-auto">
+            <div class="flex align-items-center border-right-1 surface-border bg-gray-50 px-2 py-2 sticky-left" style="min-width: 90px;">
+              <span class="text-500 font-bold text-xs uppercase">Filtrar</span>
             </div>
-            <p-button class="p-button-text p-button-danger" label="Exportar" icon="pi pi-file-excel"
-              (onClick)="exportar()"></p-button>
+            
+            <div class="flex-1 border-right-1 surface-border flex align-items-center" style="min-width: 130px; border-right-style: dashed !important;">
+                <p-dropdown [options]="opcionesEquipo" [(ngModel)]="filtroEquipo" (onChange)="aplicarFiltrosLocales()" [showClear]="true" placeholder="Equipo" class="w-full" [style]="estiloFiltro"></p-dropdown>
+            </div>
+            <p-button class="p-button-text p-button-danger" label="Exportar" icon="pi pi-file-excel" (onClick)="exportar()"></p-button>
           </div>
+
           <div class="overflow-x-auto">
-            <p-table #dt [value]="registrosDetallados" styleClass="p-datatable-sm tabla-fija-detallado"
-              [style]="{'table-layout': 'fixed', 'width': '100%', 'min-width': '900px'}">
+            <p-table #dt [value]="registrosFiltrados" styleClass="p-datatable-sm tabla-fija-detallado" [style]="{'table-layout': 'fixed', 'width': '100%', 'min-width': '900px'}">
               <ng-template pTemplate="header">
                 <tr class="text-xs text-500 uppercase">
                   <th style="width: 15%">Usuario</th>
@@ -292,70 +278,37 @@
                   <td class="text-center">{{ r.inicio | date:'HH:mm' }}</td>
                   <td class="text-center">{{ r.fin | date:'HH:mm' }}</td>
                   <td class="celda-truncate">
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <div class="flex align-items-center justify-content-center gap-2">
                       <span class="font-bold">{{ r.descripcion || 'Sin descripción' }}</span>
                       <small class="text-500">● {{ r.proyecto?.nombre || 'Sin Proyecto' }}</small>
                     </div>
                   </td>
                   <td class="text-right font-bold">{{ restarHoras(r.duracion).tiempo }}</td>
-                  <td><small [style.color]="restarHoras(r.duracion).estado.includes('Extra') ? '#43a047' : '#e53935'">{{
-                      restarHoras(r.duracion).estado }}</small></td>
+                  <td>
+                    <small [style.color]="restarHoras(r.duracion).estado.includes('Extra') ? '#43a047' : '#e53935'">
+                      {{ restarHoras(r.duracion).estado }}
+                    </small>
+                  </td>
                 </tr>
               </ng-template>
             </p-table>
           </div>
         </div>
-
-        <div class="mx-2 md:mx-3 overflow-x-auto" *ngIf="tabactivoe?.id === '1'">
-          <div class="surface-border border-1 border-round overflow-hidden shadow-1 flex align-items-stretch bg-white">
-            <div class="flex align-items-center border-right-1 surface-border bg-gray-50 px-2 py-2 sticky-left"
-              style="min-width: 90px;"><span class="text-500 font-bold text-xs uppercase">Filtrar</span></div>
-            <div *ngFor="let p of ['Equipo','Cliente','Proyecto','Tarea']"
-              class="flex-1 border-right-1 surface-border flex align-items-center"
-              style="min-width: 150px; border-right-style: dashed !important;">
-              <p-dropdown [options]="[]" [placeholder]="p" [appendTo]="'body'" class="w-full"
-                [style]="{'border':'none', 'font-size': '12px'}"></p-dropdown>
-            </div>
-          </div>
-          <p-table [value]="registrosDetallados" styleClass="p-datatable-sm tabla-fija-detallado"
-            [style]="{'min-width': '800px'}">
-            <ng-template pTemplate="header">
-              <tr class="text-xs text-500 uppercase">
-                <th style="width: 5%"></th>
-                <th style="width: 36%" class="text-left">Entrada de tiempo</th>
-                <th style="width: 15%" class="text-center">Usuario</th>
-                <th style="width: 20%" class="text-center">Tiempo</th>
-                <th style="width: 12%" class="text-right">Duración</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-r>
-              <tr class="hover:surface-50 border-bottom-1 surface-border text-xs">
-                <td class="celda-truncate"><strong>{{ r.descripcion || 'Sin descripción' }}</strong><small
-                    class="text-500 ml-2">● {{ r.proyecto?.nombre || 'Sin Proyecto' }}</small></td>
-                <td class="text-center">{{ r.miembroNombre }}</td>
-                <td class="text-center">{{ r.inicio | date:'HH:mm' }} - {{ r.fin | date:'HH:mm' }}</td>
-                <td class="text-right font-bold">Pendiente</td>
-              </tr>
-            </ng-template>
-          </p-table>
-        </div>
       </p-card>
     </div>
   </div>
+
   <div *ngIf="registrosDetallados.length == 0">
     <div class="flex flex-column align-items-center justify-content-center" style="min-height: 50vh; padding: 2rem;">
-      <div class="card shadow-2 p-6 bg-white border-1 border-300 text-center"
-        style="max-width: 500px; border-radius: 12px;">
+      <div class="card shadow-2 p-6 bg-white border-1 border-300 text-center" style="max-width: 500px; border-radius: 12px;">
         <div class="flex justify-content-center mb-4">
-          <div
-            style="background: #e3f2fd; width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <div style="background: #e3f2fd; width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
             <i class="pi pi-clock text-5xl" style="color: #00BCD4;"></i>
           </div>
         </div>
         <h2 class="text-900 font-bold mb-2">Bienvenido a Informes</h2>
         <p class="text-600 line-height-3 mb-5">
-          Parece que aún no hay registros de tiempo para organizar. Comienza a rastrear tus actividades para ver tu
-          informes.
+          Parece que aún no hay registros de tiempo para organizar. Comienza a rastrear tus actividades para ver tus informes.
         </p>
         <button pButton label="Comenzar a rastrear" icon="pi pi-play"
           class="p-button-raised p-button-info px-5 py-3 font-bold" (click)="irAlRastreador()" style="width: auto;">

@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { Router } from '@angular/router';
 import { TabMenuModule } from "primeng/tabmenu";
 import { DropdownModule } from "primeng/dropdown";
 import { CalendarModule } from "primeng/calendar";
@@ -63,7 +62,7 @@ export class InformesComponent implements OnInit {
   etiquetasDias: string[] = [];
 
   // --- Variables de Filtros ---
-  filtroEquipo: any = null; // Guardará el ID o Nombre del Grupo seleccionado
+  filtroEquipo: any = null; // Guardará el ID del Grupo seleccionado
   filtroCliente: any = null;
   filtroProyecto: any = null;
   filtroTarea: any = null;
@@ -100,7 +99,7 @@ export class InformesComponent implements OnInit {
   ngOnInit() {
     this.configurarGraficos();
     this.cargarEtiquetasDeStorage();
-    this.cargarGruposDeStorage(); // Cargar los grupos (Sistemas, Contabilidad, etc)
+    this.cargarGruposDeStorage(); 
     this.seleccionarOpcion('estaSemana');
 
     this.route.queryParams.subscribe(params => {
@@ -124,7 +123,6 @@ export class InformesComponent implements OnInit {
 
   // --- GETTERS DINÁMICOS PARA FILTROS ---
   
-  // Ahora devuelve los grupos cargados del storage
   get opcionesEquipo() {
     return this.gruposDisponibles;
   }
@@ -152,10 +150,11 @@ export class InformesComponent implements OnInit {
   }
 
   // --- LÓGICA DE FILTRADO ---
+
   aplicarFiltrosLocales() {
     this.registrosFiltrados = this.registrosDetallados.filter(r => {
-      // Filtrar por Equipo (Grupo). Compara el grupo del registro con el seleccionado
-      const coincideEquipo = !this.filtroEquipo || r.grupoNombre === this.filtroEquipo || r.grupoId === this.filtroEquipo;
+      // Filtrado por Equipo (Grupo) usando el ID guardado en el cruce de datos
+      const coincideEquipo = !this.filtroEquipo || r.grupoId === this.filtroEquipo;
       
       const coincideCliente = !this.filtroCliente || r.clienteNombre === this.filtroCliente;
       const coincideProyecto = !this.filtroProyecto || (r.proyecto?.nombre || r.proyecto) === this.filtroProyecto;
@@ -170,7 +169,10 @@ export class InformesComponent implements OnInit {
       return coincideEquipo && coincideCliente && coincideProyecto && coincideTarea && coincideEtiqueta && coincideEstado && coincideDesc;
     });
 
-    this.procesarEstadisticas(this.rangoFechas[0]);
+    // Recalcular gráficos y totales basándose en la data filtrada
+    if (this.rangoFechas && this.rangoFechas[0]) {
+        this.procesarEstadisticas(this.rangoFechas[0]);
+    }
   }
 
   // --- CARGA DE DATOS DESDE STORAGE ---
@@ -180,8 +182,8 @@ export class InformesComponent implements OnInit {
     if (data) {
       const grupos = JSON.parse(data);
       this.gruposDisponibles = grupos.map((g: any) => ({
-        label: g.nombre, // Ej: "Sistemas"
-        value: g.nombre  // O g.id si tus registros guardan el ID
+        label: g.nombre, 
+        value: g.id 
       }));
     }
   }
@@ -200,22 +202,34 @@ export class InformesComponent implements OnInit {
   cargarTodoDesdeStorage(inicioF: Date, finF: Date) {
     const data = localStorage.getItem('registros');
     if (!data) return;
+    
     const registros = JSON.parse(data);
     const clientesData = localStorage.getItem('clientes');
     const clientes = clientesData ? JSON.parse(clientesData) : [];
+    
+    // Cargamos los grupos para hacer el cruce de miembros
+    const gruposData = localStorage.getItem('grupos');
+    const grupos = gruposData ? JSON.parse(gruposData) : [];
 
     this.registrosDetallados = registros
       .map((r: any) => {
         const clienteId = r.proyecto?.clienteId;
         const cliente = clientes.find((c: any) => c.id === clienteId);
+
+        // BUSCAMOS EL GRUPO: ¿El miembroId de este registro está en la lista de IDs de algún grupo?
+        const grupoRelacionado = grupos.find((g: any) => 
+            g.miembrosIds && g.miembrosIds.includes(r.miembroId)
+        );
+
         return {
           ...r,
           inicio: new Date(r.inicio),
           fin: new Date(r.fin),
           clienteNombre: cliente?.nombre || 'Sin Cliente',
           miembroNombre: r.miembroNombre || 'Sin nombre',
-          // Asegúrate de que el registro tenga el nombre del grupo para filtrar
-          grupoNombre: r.grupoNombre || 'General' 
+          // Campos calculados para el filtro de equipo
+          grupoId: grupoRelacionado ? grupoRelacionado.id : null,
+          grupoNombre: grupoRelacionado ? grupoRelacionado.nombre : 'Sin Grupo'
         };
       })
       .filter((r: any) =>
@@ -271,7 +285,7 @@ export class InformesComponent implements OnInit {
     }
   }
 
-    irAlRastreador() {
+  irAlRastreador() {
     this.link.navigate(['/menu-layout/rastreador']);
   }
 
@@ -360,9 +374,6 @@ export class InformesComponent implements OnInit {
     const s = (t % 60).toString().padStart(2, '0');
     return `${h}:${m}:${s}`;
   }
-
-  // --- NAVEGACIÓN Y EXPORTACIÓN ---
-
 
   CambioTabT(event: any) { this.tabactivot = event; }
   CambioTabE(event: any) { this.tabactivoe = event; }
