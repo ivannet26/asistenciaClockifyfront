@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -25,7 +26,9 @@ import { OverlayPanelModule, OverlayPanel } from 'primeng/overlaypanel';
     .menu-calendario ul { list-style: none; padding: 0; margin: 0; }
     .menu-calendario li { padding: 10px 15px; cursor: pointer; font-size: 14px; color: #495057; }
     .menu-calendario li:hover { background: #f8f9fa; color: #00BCD4; }
-    .menu-calendario li.active { background: #e3f2fd; color: #007ad9; border-left: 3px solid #007ad9; }
+    .menu-calendario li.active { background: #e3f2fd; color: #007ad9; border-left: 3px solid #007ad9;
+    
+  }
   `]
 })
 export class PanelComponent implements OnInit {
@@ -45,8 +48,11 @@ export class PanelComponent implements OnInit {
   opcionesGrafica: any;
   dataBarras: any;       
   opcionesBarras: any;
+  hayRegistrosGlobales: boolean = false;
+  constructor(private router: Router) {}
 
   ngOnInit() {
+    this.verificarRegistrosGlobales();
     this.configurarOpcionesGraficas();
     this.seleccionarOpcion('estaSemana'); 
   }
@@ -117,6 +123,16 @@ export class PanelComponent implements OnInit {
     
     this.rangoFechas = [nuevaFecha, fin];
     this.actualizarYFiltrar();
+  }
+  verificarRegistrosGlobales() {
+    const data = localStorage.getItem('registros');
+    const registros = data ? JSON.parse(data) : [];
+    this.hayRegistrosGlobales = registros.length > 0;
+  }
+
+  // 4. NUEVA FUNCIÓN para el botón del Empty State
+  irAlRastreador() {
+    this.router.navigate(['/menu-layout/rastreador']);
   }
 
   cargarTodoDesdeStorage() {

@@ -1,8 +1,7 @@
-<div class="grid p-fluid p-4">
+<div class="grid p-fluid p-4" *ngIf="hayRegistrosGlobales; else pantallaVacia">
     
     <div class="col-12 flex justify-content-end align-items-center mb-4 gap-2">
         <div class="flex flex-column md:flex-row gap-2">
-
             <p-dropdown [options]="[]" placeholder="Solo yo" styleClass="w-10rem bg-white"></p-dropdown>
             
             <div class="p-inputgroup w-22rem">
@@ -35,9 +34,24 @@
 
     <div class="col-12 mb-4">
         <div class="grid">
-            <div class="col-12 md:col-4"><div class="card-stats shadow-1 border-1 border-300 bg-white"><span class="stat-label">Tiempo Total</span><div class="stat-value">{{ tiempoTotalFormateado }}</div></div></div>
-            <div class="col-12 md:col-4"><div class="card-stats shadow-1 border-1 border-300 bg-white"><span class="stat-label">Proyecto Principal</span><div class="stat-value uppercase">{{ proyectoPrincipal }}</div></div></div>
-            <div class="col-12 md:col-4"><div class="card-stats shadow-1 border-1 border-300 bg-white"><span class="stat-label">Principal Cliente</span><div class="stat-value">--</div></div></div>
+            <div class="col-12 md:col-4">
+                <div class="card-stats shadow-1 border-1 border-300 bg-white">
+                    <span class="stat-label">Tiempo Total</span>
+                    <div class="stat-value">{{ tiempoTotalFormateado }}</div>
+                </div>
+            </div>
+            <div class="col-12 md:col-4">
+                <div class="card-stats shadow-1 border-1 border-300 bg-white">
+                    <span class="stat-label">Proyecto Principal</span>
+                    <div class="stat-value uppercase">{{ proyectoPrincipal }}</div>
+                </div>
+            </div>
+            <div class="col-12 md:col-4">
+                <div class="card-stats shadow-1 border-1 border-300 bg-white">
+                    <span class="stat-label">Principal Cliente</span>
+                    <div class="stat-value">--</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -47,16 +61,24 @@
                 <h5 class="m-0 text-500 uppercase text-xs font-bold">Tiempo por día</h5>
                 <span class="text-900 font-bold">{{ tiempoTotalFormateado }}</span>
             </div>
-            <div style="position: relative; height: 320px;"><p-chart type="bar" [data]="dataBarras" [options]="opcionesBarras"></p-chart></div>
+            <div style="position: relative; height: 320px;">
+                <p-chart type="bar" [data]="dataBarras" [options]="opcionesBarras"></p-chart>
+            </div>
         </div>
     </div>
 
     <div class="col-12 lg:col-3">
         <div class="card shadow-1 p-0 overflow-hidden bg-white border-1 border-300 h-full">
-            <div class="p-3 surface-100 border-bottom-1 surface-border flex justify-content-between align-items-center"><span class="text-xs font-bold text-700 uppercase">{{ proyectoPrincipal }}</span><span class="text-xs text-500">Top 10 <i class="pi pi-chevron-down"></i></span></div>
+            <div class="p-3 surface-100 border-bottom-1 surface-border flex justify-content-between align-items-center">
+                <span class="text-xs font-bold text-700 uppercase">{{ proyectoPrincipal }}</span>
+                <span class="text-xs text-500">Top 10 <i class="pi pi-chevron-down"></i></span>
+            </div>
             <div style="max-height: 335px; overflow-y: auto;">
                 <div *ngFor="let a of proyectosConTiempo" class="p-3 border-bottom-1 surface-border hover:surface-50 flex justify-content-between">
-                    <div class="overflow-hidden"><div class="text-sm font-bold">{{ a.nombre }}</div><div class="text-xs text-500">{{ a.proyecto }}</div></div>
+                    <div class="overflow-hidden">
+                        <div class="text-sm font-bold">{{ a.nombre }}</div>
+                        <div class="text-xs text-500">{{ a.proyecto }}</div>
+                    </div>
                     <span class="text-sm font-bold">{{ a.tiempoFormateado }}</span>
                 </div>
             </div>
@@ -68,17 +90,50 @@
             <h5 class="m-0 text-500 uppercase text-xs font-bold mb-4">Distribución</h5>
             <div class="grid align-items-center">
                 <div class="col-12 md:col-4 relative flex justify-content-center">
-                    <div style="width: 250px; height: 250px;"><p-chart type="doughnut" [data]="dataGrafica" [options]="opcionesGrafica"></p-chart></div>
-                    <div class="absolute text-center" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"><span class="text-900 font-bold text-2xl block">{{ tiempoTotalFormateado }}</span></div>
+                    <div style="width: 250px; height: 250px;">
+                        <p-chart type="doughnut" [data]="dataGrafica" [options]="opcionesGrafica"></p-chart>
+                    </div>
+                    <div class="absolute text-center" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        <span class="text-900 font-bold text-2xl block">{{ tiempoTotalFormateado }}</span>
+                    </div>
                 </div>
                 <div class="col-12 md:col-8 p-4">
                     <div *ngFor="let p of proyectosParaDistribucion" class="grid align-items-center mb-4">
                         <div class="col-3 text-right text-sm text-600">{{ p.nombre }}</div>
                         <div class="col-2 text-center text-sm font-bold">{{ p.tiempoFormateado }}</div>
-                        <div class="col-5"><div class="surface-200 border-round overflow-hidden" style="height: 14px;"><div class="bg-cyan-clock" [style.width]="p.porcentaje + '%'" style="height: 100%;"></div></div></div>
+                        <div class="col-5">
+                            <div class="surface-200 border-round overflow-hidden" style="height: 14px;">
+                                <div class="bg-cyan-clock" [style.width]="p.porcentaje + '%'" style="height: 100%;"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<ng-template #pantallaVacia>
+    <div class="flex flex-column align-items-center justify-content-center" style="min-height: 80vh; padding: 2rem;">
+        <div class="card shadow-2 p-6 bg-white border-1 border-300 text-center" style="max-width: 500px; border-radius: 12px;">
+            <div class="flex justify-content-center mb-4">
+                <div style="background: #e3f2fd; width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="pi pi-chart-line text-5xl" style="color: #00BCD4;"></i>
+                </div>
+            </div>
+            <h2 class="text-900 font-bold mb-2">Bienvenido a tu Panel</h2>
+            <p class="text-600 line-height-3 mb-5">
+                Parece que aún no tienes registros de tiempo guardados. Comienza a rastrear tus actividades para ver tus estadísticas y gráficos aquí.
+            </p>
+            
+            <button pButton label="Comenzar a rastrear" 
+                    icon="pi pi-play" 
+                    class="p-button-raised p-button-info px-5 py-3 font-bold"
+                    (click)="irAlRastreador()"
+                    style="width: auto;">
+            </button>
+
+            
+        </div>
+    </div>
+</ng-template>
