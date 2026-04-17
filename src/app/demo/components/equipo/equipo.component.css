@@ -119,11 +119,6 @@
   margin-bottom: 2rem;
 }
 
-.grupo-input {
-  display: flex;
-  gap: 0;
-  max-width: 200px;
-}
 
 :host ::v-deep .p-card-body {
   padding: 0;
@@ -150,8 +145,7 @@
 
 .grupo-input {
   display: flex;
-  gap: 0;
-  max-width: 200px;
+  max-width: 400px;
 }
 
 

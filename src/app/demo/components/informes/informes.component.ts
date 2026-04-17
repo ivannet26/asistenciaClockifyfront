@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+
 import { Router } from '@angular/router';
 import { TabMenuModule } from "primeng/tabmenu";
 import { DropdownModule } from "primeng/dropdown";
@@ -270,6 +271,10 @@ export class InformesComponent implements OnInit {
     }
   }
 
+    irAlRastreador() {
+    this.link.navigate(['/menu-layout/rastreador']);
+  }
+
   // --- GRÁFICOS Y ESTADÍSTICAS ---
 
   procesarEstadisticas(lunesReferencia: Date) {
@@ -358,7 +363,7 @@ export class InformesComponent implements OnInit {
 
   // --- NAVEGACIÓN Y EXPORTACIÓN ---
 
-  irAlRastreador() { this.link.navigate(['/menu-layout/rastreador']); }
+
   CambioTabT(event: any) { this.tabactivot = event; }
   CambioTabE(event: any) { this.tabactivoe = event; }
 

@@ -135,21 +135,24 @@
                         </p-table>
                     </div>
 
-                    <div class="m-3" [hidden]="tabactivo?.id !== 1">
-                        <div class="barra-herramientas flex  mb-3">
-                            <span class="p-input-icon-left w-5">
-                                <i class="pi pi-search"></i>
-                                <input type="text" pInputText placeholder="Buscar grupo..."
-                                    [(ngModel)]="filtroBusquedaGrupo" (input)="aplicarFiltrosGrupos()" class="w-full" />
-                            </span>
+                    <div class="" [hidden]="tabactivo?.id !== 1">
+                        <div class="barra-herramientas m-3">
+                            <div class="busqueda-filtros">
+                                <span class="p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input type="text" pInputText placeholder="Buscar grupo..."
+                                        [(ngModel)]="filtroBusquedaGrupo" (input)="aplicarFiltrosGrupos()"/>
+                                </span>
+                            </div>
+
                             <div class="grupo-input">
                                 <input type="text" pInputText [(ngModel)]="nuevoGrupo.nombre"
                                     placeholder="Añadir nuevo grupo" class="input-personalizado2" />
-                                <button pButton type="button" icon="pi pi-save" class="boton-personalizado2"
+                                <button pButton type="button" label="Añadir" class="boton-personalizado2"
                                     (click)="guardarGrupo()"></button>
                             </div>
                         </div>
-                        <p-table #dts [value]="gruposFiltrados" class="tabla-personalizada">
+                        <p-table #dts [value]="gruposFiltrados">
                             <ng-template pTemplate="header">
                                 <tr class="cabecera-gris">
                                     <th style="width: 4rem"><p-checkbox [binary]="true"></p-checkbox></th>

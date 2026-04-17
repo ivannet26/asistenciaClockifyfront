@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <div *ngIf="mostrarLista">
-                    <div class="m-2 md:m-3 border-1 surface-border border-round overflow-hidden">
+                    <div class="m-2  surface-border border-round overflow-hidden">
                         <div class="p-3 bg-white">
                             <div class="flex align-items-center gap-2">
                                 <div
@@ -178,13 +178,13 @@
                                         <td class="border-none text-right">
                                             <ng-container *ngIf="proyectoEditandoId !== proyecto.id; else modoEdicion">
                                                 <button pButton icon="pi pi-pencil"
-                                                    class="p-button-text p-button-primary p-button-sm"
+                                                    class="p-button-text p-button-secondary"
                                                     (click)="iniciarEdicion(proyecto)" pTooltip="Editar">
                                                 </button>
 
                                                 <button pButton
                                                     [icon]="proyecto.activo ? 'pi pi-folder' : 'pi pi-refresh'"
-                                                    class="p-button-text p-button-warning p-button-sm"
+                                                    [ngClass]="proyecto.activo ? 'p-button-text p-button-danger' : 'p-button-text p-button-primary'"
                                                     (click)="proyecto.activo ? archivarRegistro(proyecto) : activarRegistro(proyecto)"
                                                     [pTooltip]="proyecto.activo ? 'Archivar' : 'Activar'">
                                                 </button>
@@ -192,10 +192,10 @@
 
                                             <ng-template #modoEdicion>
                                                 <button pButton icon="pi pi-check"
-                                                    class="p-button-text p-button-success p-button-sm"
+                                                    class="p-button-text p-button-success"
                                                     (click)="guardarEdicion(proyecto)" pTooltip="Guardar"></button>
                                                 <button pButton icon="pi pi-times"
-                                                    class="p-button-text p-button-danger p-button-sm"
+                                                    class="p-button-text p-button-secondary"
                                                     (click)="cancelarEdicion()" pTooltip="Cancelar"></button>
                                             </ng-template>
                                         </td>

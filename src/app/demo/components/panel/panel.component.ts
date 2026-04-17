@@ -130,7 +130,6 @@ export class PanelComponent implements OnInit {
     this.hayRegistrosGlobales = registros.length > 0;
   }
 
-  // 4. NUEVA FUNCIÓN para el botón del Empty State
   irAlRastreador() {
     this.router.navigate(['/menu-layout/rastreador']);
   }
