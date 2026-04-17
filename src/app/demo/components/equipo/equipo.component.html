@@ -12,11 +12,10 @@
                     <div [hidden]="tabactivo?.id !== 0">
                         <div class="p-3 bg-white border-bottom-1 surface-border">
                             <div class="flex align-items-center gap-2">
-                                <div
-                                    class="flex-1 flex align-items-center border-1 surface-border border-round px-2 bg-white">
+                                <div class="flex-1 flex align-items-center border-1 surface-border border-round px-2 bg-white">
                                     <i class="pi pi-search text-400 mx-2"></i>
                                     <input type="text" pInputText placeholder="Buscar por nombre"
-                                        [(ngModel)]="filtroNombre" (input)="aplicarFiltros()"
+                                        [(ngModel)]="filtroNombre" (input)="aplicarFiltrosMiembros()"
                                         class="border-none shadow-none py-2 text-sm w-full">
                                 </div>
                                 <button pButton icon="pi pi-plus" label="Crear"
@@ -37,7 +36,8 @@
                                 <div class="flex-1 flex align-items-center border-right-1 surface-border"
                                     style="border-right-style: dashed !important;">
                                     <p-dropdown [options]="todoOptions" [(ngModel)]="filtroTodo"
-                                        (onChange)="aplicarFiltrosMiembros()" placeholder="Todo"
+                                        (onChange)="aplicarFiltrosMiembros()" optionLabel="label" optionValue="value"
+                                        placeholder="Todo"
                                         [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
                                         class="w-full"></p-dropdown>
                                 </div>
@@ -45,53 +45,46 @@
                                 <div class="flex-1 flex align-items-center border-right-1 surface-border"
                                     style="border-right-style: dashed !important;">
                                     <p-dropdown [options]="rolesOptions" [(ngModel)]="filtroRol" [showClear]="true"
-                                        (onChange)="aplicarFiltrosMiembros()" placeholder="Rol"
+                                        (onChange)="aplicarFiltrosMiembros()" optionLabel="label" optionValue="value"
+                                        placeholder="Rol" append
                                         [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
-                                        class="w-full"></p-dropdown>
+                                        appendTo="body"></p-dropdown>
                                 </div>
 
                                 <div class="flex-1 flex align-items-center">
                                     <p-dropdown [options]="grupoOptions" [(ngModel)]="filtroGrupo" [showClear]="true"
-                                        (onChange)="aplicarFiltrosMiembros()" placeholder="Grupo"
+                                        (onChange)="aplicarFiltrosMiembros()" optionLabel="label" optionValue="value"
+                                        placeholder="Grupo"
                                         [style]="{'border':'none', 'background':'transparent', 'width':'100%', 'color':'#334155', 'font-weight':'700'}"
                                         class="w-full"></p-dropdown>
                                 </div>
                             </div>
                         </div>
-                        <div
-                            class="surface-100 p-2 flex justify-content-between align-items-center border-bottom-1 surface-border">
+
+                        <div class="surface-100 p-2 flex justify-content-between align-items-center border-bottom-1 surface-border">
                             <span class="text-xs font-bold text-500 ml-2 uppercase">Miembros</span>
                             <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
                             hover:bg-green-700 hover:border-green-600" label="Exportar" icon="pi pi-file-excel"
-                                (onClick)="exportar()">
+                                (onClick)="exportarMiembros()">
                             </p-button>
                         </div>
+
                         <p-table #dt [value]="miembrosFiltrados" class="tabla-personalizada">
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th class="text-center bg-white border-bottom-1 surface-border" style="width: 3rem">
                                         <p-checkbox [binary]="true"></p-checkbox>
                                     </th>
-                                    <th style="width: 15%"
-                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
-                                        Nombre</th>
-                                    <th style="width: 15%"
-                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
-                                        Correo</th>
-                                    <th style="width: 15%"
-                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
-                                        Contraseña</th>
-                                    <th style="width: 15%"
-                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
-                                        Rol</th>
-                                    <th style="width: 15%"
-                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
-                                        Grupo</th>
+                                    <th style="width: 15%" class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Nombre</th>
+                                    <th style="width: 15%" class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Correo</th>
+                                    <th style="width: 15%" class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Contraseña</th>
+                                    <th style="width: 15%" class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Rol</th>
+                                    <th style="width: 15%" class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Grupo</th>
                                     <th class="bg-white border-bottom-1 surface-border" style="width: 17%"></th>
                                 </tr>
                             </ng-template>
 
-                            <ng-template pTemplate="body" let-equipo>
+                            <ng-template pTemplate="body" let-equipo let-i="rowIndex">
                                 <tr>
                                     <td><p-checkbox [binary]="true"></p-checkbox></td>
                                     <td>{{ equipo.nombre }}</td>
@@ -100,11 +93,11 @@
                                     <td>
                                         <ng-container *ngIf="miembroEnEdicion === equipo.id; else verRol">
                                             <p-dropdown [options]="rolesOptions" [appendTo]="'body'"
+                                                optionLabel="label" optionValue="value"
                                                 [(ngModel)]="equipo.rol"></p-dropdown>
                                         </ng-container>
                                         <ng-template #verRol>
-                                            <span [ngClass]="{'text-400 font-italic': !equipo.rol}">{{ equipo.rol ||
-                                                'Sin rol' }}</span>
+                                            <span [ngClass]="{'text-400 font-italic': !equipo.rol}">{{ equipo.rol || 'Sin rol' }}</span>
                                         </ng-template>
                                     </td>
                                     <td>
@@ -114,10 +107,8 @@
                                                 placeholder="Grupos"></p-multiSelect>
                                         </ng-container>
                                         <ng-template #verGrupos>
-                                            <span *ngFor="let gid of equipo.grupoIds; let last = last">{{
-                                                getNombreGrupo(gid) }}{{ !last ? ', ' : '' }}</span>
-                                            <span *ngIf="!equipo.grupoIds?.length" class="text-400 font-italic">Sin
-                                                grupo</span>
+                                            <span *ngFor="let gid of equipo.grupoIds; let last = last">{{ getNombreGrupo(gid) }}{{ !last ? ', ' : '' }}</span>
+                                            <span *ngIf="!equipo.grupoIds?.length" class="text-400 font-italic">Sin grupo</span>
                                         </ng-template>
                                     </td>
                                     <td class="acciones-celda">
@@ -126,7 +117,7 @@
                                             (click)="guardarCambiosMiembro(equipo); miembroEnEdicion = null"></button>
                                         <button *ngIf="miembroEnEdicion !== equipo.id" pButton icon="pi pi-pencil"
                                             class="p-button-text p-button-secondary"
-                                            (click)="miembroEnEdicion = equipo.id"></button>
+                                            (click)="editarMiembro(equipo.id)"></button>
                                         <button pButton icon="pi pi-lock" class="p-button-text p-button-danger"
                                             (click)="desactivarMiembro(equipo.id)"></button>
                                     </td>
@@ -135,7 +126,7 @@
                         </p-table>
                     </div>
 
-                    <div class="" [hidden]="tabactivo?.id !== 1">
+                    <div [hidden]="tabactivo?.id !== 1">
                         <div class="barra-herramientas m-3">
                             <div class="busqueda-filtros">
                                 <span class="p-input-icon-left">
@@ -156,15 +147,11 @@
                             <ng-template pTemplate="header">
                                 <tr class="cabecera-gris">
                                     <th style="width: 4rem"><p-checkbox [binary]="true"></p-checkbox></th>
-                                    <th
-                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
-                                        Nombre</th>
-                                    <th
-                                        class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
-                                        Miembros</th>
+                                    <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Nombre</th>
+                                    <th class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">Miembros</th>
                                     <th style="width: 8rem">
                                         <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
-                            hover:bg-green-700 hover:border-green-600" label="Exportar" icon="pi pi-file-excel"
+                                        hover:bg-green-700 hover:border-green-600" label="Exportar" icon="pi pi-file-excel"
                                             (onClick)="exportarGrupos()">
                                         </p-button>
                                     </th>
@@ -181,8 +168,7 @@
                                                 [(ngModel)]="grupo.miembrosIds"></p-multiSelect>
                                         </ng-container>
                                         <ng-template #verMiembrosG>
-                                            <span *ngFor="let m of grupo.miembros; let last = last">{{ m.nombre }}{{
-                                                !last ? ', ' : '' }}</span>
+                                            <span *ngFor="let m of grupo.miembros; let last = last">{{ m.nombre }}{{ !last ? ', ' : '' }}</span>
                                         </ng-template>
                                     </td>
                                     <td class="acciones-celda">
@@ -218,7 +204,10 @@
     <div class="flex flex-column gap-3 mt-2">
         <input pInputText type="text" [(ngModel)]="nuevoMiembro.nombre" placeholder="Nombre completo" />
         <input pInputText type="email" [(ngModel)]="nuevoMiembro.correo" placeholder="Correo electrónico" />
-        <input pInputText type="password" [(ngModel)]="nuevoMiembro.contrasena" placeholder="Correo contraseña" />
+        <input pInputText type="password" [(ngModel)]="nuevoMiembro.contrasena" placeholder="Contraseña" />
+        
+        <p-dropdown [options]="rolesOptions" [(ngModel)]="nuevoMiembro.rol" 
+            optionLabel="label" optionValue="value" placeholder="Seleccionar Rol" appendTo="body"></p-dropdown>
     </div>
     <ng-template pTemplate="footer">
         <p-button label="Cancelar" class="p-button-text" (click)="mostrarModalMiembro = false"></p-button>

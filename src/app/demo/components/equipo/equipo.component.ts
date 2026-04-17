@@ -19,8 +19,6 @@ import { Miembros, RolNombre } from '../../model/Miembro';
 import { Grupo } from '../../model/Grupo';
 import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
 
-
-
 @Component({
   selector: 'app-equipo',
   standalone: true,
@@ -48,16 +46,12 @@ export class EquipoComponent implements OnInit {
   gruposFiltrados: Grupo[] = [];
 
   // Modelos de Filtro
-  filtroTodo: string = 'todos';
+  filtroTodo: any = 'todos'; // Cambiado a any para soportar nombres
   filtroRol: RolNombre | null = null;
   filtroGrupo: number | null = null;
   filtroBusquedaGrupo: string = '';
 
   // Opciones Dropdowns
-  todoOptions = [
-    { label: 'Todos', value: 'todos' },
-    { label: 'Ninguno', value: 'ninguno' }
-  ];
   rolesOptions = Object.values(RolNombre).map(rol => ({ label: rol, value: rol }));
   grupoOptions: { label: string; value: number }[] = [];
   miembrosOptions: { nombre: string; id: number }[] = [];
@@ -105,6 +99,16 @@ export class EquipoComponent implements OnInit {
       .map(m => ({ nombre: m.nombre, id: m.id }));
   }
 
+  // --- GETTER DINÁMICO PARA EL DROPDOWN "TODOS" ---
+  get todoOptions() {
+    const listaMiembros = this.miembros.map(m => ({ label: m.nombre, value: m.nombre }));
+    return [
+      { label: 'Todos', value: 'todos' },
+      { label: 'Ninguno', value: 'ninguno' },
+      ...listaMiembros
+    ];
+  }
+
   // ── Lógica de Filtros (Todo, Rol, Grupo) ──────────────────────
 
   aplicarFiltrosMiembros() {
@@ -114,9 +118,12 @@ export class EquipoComponent implements OnInit {
     }
 
     this.miembrosFiltrados = this.miembros.filter(m => {
+      // Filtro por nombre específico (si no es 'todos')
+      const coincideMiembro = this.filtroTodo === 'todos' || m.nombre === this.filtroTodo;
       const cumpleRol = !this.filtroRol || m.rol === this.filtroRol;
       const cumpleGrupo = !this.filtroGrupo || (m.grupoIds && m.grupoIds.includes(this.filtroGrupo));
-      return cumpleRol && cumpleGrupo;
+      
+      return coincideMiembro && cumpleRol && cumpleGrupo;
     });
   }
 
@@ -143,13 +150,14 @@ export class EquipoComponent implements OnInit {
     }
 
     this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Miembro añadido' });
-    this.nuevoMiembro = { id: 0, nombre: '', correo: '',contrasena: undefined, rol: undefined, activo: true };
+    this.nuevoMiembro = { id: 0, nombre: '', correo: '', contrasena: undefined, rol: undefined, activo: true };
     this.mostrarModalMiembro = false;
     this.cargarDatos();
   }
 
   guardarCambiosMiembro(miembro: Miembros) {
     this.miembrosService.actualizarMiembro(miembro.id, miembro);
+    this.messageService.add({ severity: 'info', summary: 'Actualizado', detail: 'Cambios guardados' });
     this.cargarDatos();
   }
 
@@ -200,6 +208,7 @@ export class EquipoComponent implements OnInit {
   }
 
   getNombreGrupo = (id?: number) => this.grupos.find(g => g.id === id)?.nombre || '';
+  
   CambioTab(event: any) { this.tabactivo = event; }
 
   exportarMiembros(): void {
@@ -217,6 +226,7 @@ export class EquipoComponent implements OnInit {
       'Equipo-Miembros'
     );
   }
+
   exportarGrupos(): void {
     ExtraccionExcel.desdeTabla(
       this.dts,
@@ -230,5 +240,4 @@ export class EquipoComponent implements OnInit {
       'Equipo-Grupos'
     );
   }
-
 }
