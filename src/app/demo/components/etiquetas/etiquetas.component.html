@@ -38,7 +38,7 @@
           <div class="grupo-input">
             <input type="text" pInputText [(ngModel)]="nuevaEtiquetaNombre" placeholder="Añadir nueva etiqueta"
               class="input-personalizado" (keyup.enter)="agregarEtiqueta()" />
-            <button pButton type="button" label="Añadir" class="boton-personalizado" (click)="agregarEtiqueta()">
+            <button pButton type="button" label="AÑADIR" class="boton-personalizado" (click)="agregarEtiqueta()">
             </button>
           </div>
         </div>
@@ -54,8 +54,9 @@
                 </th>
                 <th>NOMBRE</th>
                 <th style="width: 8rem">
-                  <p-button class="p-button-text p-button-danger" label="Exportar" icon="pi pi-file-excel"
-                    (onClick)="exportar()">
+                  <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
+                            hover:bg-green-700 h9over:border-green-600" label="Exportar" icon="pi pi-file-excel"
+                                (onClick)="exportar()">
                   </p-button>
                 </th>
               </tr>

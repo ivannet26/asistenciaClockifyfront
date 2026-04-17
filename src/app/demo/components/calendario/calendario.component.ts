@@ -169,16 +169,28 @@ export class CalendarioComponent implements OnInit {
   refrescarTodo() { this.generarDias(); this.actualizarTextoFecha(); }
 
   generarDias() {
-    this.diasSemana = [];
+    const nuevosDias = [];
     const nombres = ['lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.', 'dom.'];
+    
+    // Calculamos el lunes de la semana de la fechaActual
     const base = new Date(this.fechaActual);
-    const ds = base.getDay();
-    const diff = base.getDate() - (ds === 0 ? 6 : ds - 1);
+    const diaSemana = base.getDay();
+    const diff = base.getDate() - (diaSemana === 0 ? 6 : diaSemana - 1);
+    
     const lunes = new Date(base.setDate(diff));
+    lunes.setHours(0, 0, 0, 0);
+
     for (let i = 0; i < 7; i++) {
-      const d = new Date(lunes); d.setDate(lunes.getDate() + i);
-      this.diasSemana.push({ nombre: nombres[i], fecha: d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }), completa: d });
+      const d = new Date(lunes);
+      d.setDate(lunes.getDate() + i);
+      nuevosDias.push({
+        nombre: nombres[i],
+        fecha: d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }),
+        completa: d
+      });
     }
+    
+    this.diasSemana = nuevosDias;
   }
 
   actualizarTextoFecha() {
@@ -186,9 +198,26 @@ export class CalendarioComponent implements OnInit {
     this.textoFecha = act.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
-  irHoy() { this.fechaActual = new Date(); this.refrescarTodo(); }
-  irSiguiente() { this.fechaActual.setDate(this.fechaActual.getDate() + 1); this.refrescarTodo(); }
-  irAnterior() { this.fechaActual.setDate(this.fechaActual.getDate() - 1); this.refrescarTodo(); }
+  irHoy() {
+  this.fechaActual = new Date();
+  this.vista = 'dia'; // Esto fuerza a mostrar solo la columna de hoy
+  this.refrescarTodo();
+  }
+  irSiguiente() {
+    const salto = this.vista === 'semana' ? 7 : 1;
+    // CREAMOS un nuevo objeto Date para que Angular detecte el cambio de referencia
+    const nuevaFecha = new Date(this.fechaActual);
+    nuevaFecha.setDate(nuevaFecha.getDate() + salto);
+    this.fechaActual = nuevaFecha;
+    this.refrescarTodo();
+  }
+  irAnterior() {
+    const salto = this.vista === 'semana' ? 7 : 1;
+    const nuevaFecha = new Date(this.fechaActual);
+    nuevaFecha.setDate(nuevaFecha.getDate() - salto);
+    this.fechaActual = nuevaFecha;
+    this.refrescarTodo();
+  }
   cambiarFecha(fecha: Date) { this.fechaActual = new Date(fecha); this.refrescarTodo(); }
   sumarMinutos(h: string, m: number): string {
     const [h1, m1] = h.split(':').map(Number);
@@ -197,7 +226,10 @@ export class CalendarioComponent implements OnInit {
   }
 
   esMismoDia = (f1: Date, f2: Date) => f1.toDateString() === f2.toDateString();
-  esMismaHora = (f: Date, hStr: string) => f.getHours() === parseInt(hStr.split(':')[0]);
+  esMismaHora(fechaRegistro: Date, horaCelda: string): boolean {
+    const [hCelda, mCelda] = horaCelda.split(':').map(Number);
+    return fechaRegistro.getHours() === hCelda && fechaRegistro.getMinutes() === mCelda;
+  }
   esHoy = (f: Date) => f.toDateString() === new Date().toDateString();
   aumentarZoom() { if (this.zoomNivel < 3) { this.zoomNivel++; this.generarHoras(); } }
   disminuirZoom() { if (this.zoomNivel > 0) { this.zoomNivel--; this.generarHoras(); } }

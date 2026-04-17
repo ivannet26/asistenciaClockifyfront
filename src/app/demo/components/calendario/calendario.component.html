@@ -4,9 +4,12 @@
       <div class="header-toolbar flex flex-wrap align-items-center justify-content-between gap-3">
         
         <div class="view-buttons flex align-items-center gap-2">
-          <span class="titulo-calendario">CALENDARIO</span>
-          <p-button label="Semana" size="small" [ngClass]="{ 'activo': vista === 'semana' }" (onClick)="vista = 'semana'"></p-button>
-          <p-button label="Día" size="small" [ngClass]="{ 'activo': vista === 'dia' }" (onClick)="vista = 'dia'"></p-button>
+          <div class="flex align-items-center gap-2">
+          <i class="pi pi-calendar text-primary text-xl"></i>
+          <span class="titulo-calendario">Calendario</span>
+        </div>
+          
+          
         </div>
 
         <div class="nav-controls flex flex-wrap align-items-center justify-content-between gap-3 flex-grow-1 lg:flex-grow-0">
@@ -31,7 +34,8 @@
           </div>
 
           <div class="center-controls flex flex-wrap align-items-center gap-2">
-            <p-button label="Hoy" size="small" (onClick)="irHoy()"></p-button>
+            <p-button label="Hoy" size="small" [ngClass]="{ 'activo': vista === 'dia' }" (onClick)="vista = 'dia'"></p-button>
+            <p-button label="Semana" size="small" [ngClass]="{ 'activo': vista === 'semana' }" (onClick)="vista = 'semana'"></p-button>
             <div class="flex align-items-center">
               <p-button icon="pi pi-chevron-left" [text]="true" (onClick)="irAnterior()"></p-button>
               <p-button icon="pi pi-chevron-right" [text]="true" (onClick)="irSiguiente()"></p-button>

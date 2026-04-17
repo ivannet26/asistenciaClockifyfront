@@ -66,11 +66,10 @@
 }
 
 .titulo-calendario {
+  font-size: 1.7rem;
   font-weight: 600;
-  color: #000;
-  margin-right: 10px;
-  display: flex;
-  align-items: center;
+  color: #3c4043; 
+  letter-spacing: 0.5px;
 }
 
 ::ng-deep .view-buttons .p-button {
