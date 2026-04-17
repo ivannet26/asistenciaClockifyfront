@@ -4,26 +4,6 @@
 
     <div class="clientes-contenido">
 
-      <div class="barra-herramientas" *ngIf="mostrarLista">
-        <div class="busqueda-filtros">
-          <p-dropdown [options]="opcionesFiltro" [(ngModel)]="filtroSeleccionado" (onChange)="filtrarClientes()"
-            placeholder="Mostrar activo">
-          </p-dropdown>
-
-          <span class="p-input-icon-left">
-            <i class="pi pi-search"></i>
-            <input type="text" pInputText [(ngModel)]="textoBusqueda" (input)="filtrarClientes()"
-              placeholder="Buscar por nombre" class="input-busqueda" />
-          </span>
-        </div>
-
-        <div class="grupo-input">
-          <input type="text" pInputText [(ngModel)]="nuevoClienteNombre" placeholder="Añadir nuevo cliente"
-            class="input-personalizado" />
-          <button pButton type="button" label="Añadir" class="boton-personalizado" (click)="agregarCliente()">
-          </button>
-        </div>
-      </div>
 
       <p-card styleClass="card-tabla-estandar">
 
@@ -43,9 +23,28 @@
           </div>
         </div>
 
-        <div class="contenedor-tabla" *ngIf="mostrarLista">
-          <p-table #dt [value]="clientesFiltrados" [scrollable]="true" scrollHeight="450px" class="tabla-personalizada">
+        <div  *ngIf="mostrarLista">
+          <div class="barra-herramientas">
+            <div class="busqueda-filtros">
+              <p-dropdown [options]="opcionesFiltro" [(ngModel)]="filtroSeleccionado" (onChange)="filtrarClientes()"
+                placeholder="Mostrar activo">
+              </p-dropdown>
 
+              <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input type="text" pInputText [(ngModel)]="textoBusqueda" (input)="filtrarClientes()"
+                  placeholder="Buscar por nombre" class="input-busqueda" />
+              </span>
+            </div>
+
+            <div class="grupo-input">
+              <input type="text" pInputText [(ngModel)]="nuevoClienteNombre" placeholder="Añadir nuevo cliente"
+                class="input-personalizado" />
+              <button pButton type="button" label="Añadir" class="boton-personalizado" (click)="agregarCliente()">
+              </button>
+            </div>
+          </div>
+          <p-table #dt [value]="clientesFiltrados" [scrollable]="true" scrollHeight="450px">
             <ng-template pTemplate="header">
               <tr class="cabecera-gris">
                 <th style="width: 4rem">
@@ -57,7 +56,7 @@
                 <th style="width: 8rem">
                   <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
                             hover:bg-green-700 h9over:border-green-600" label="Exportar" icon="pi pi-file-excel"
-                                (onClick)="exportar()">
+                    (onClick)="exportar()">
                   </p-button>
                 </th>
               </tr>

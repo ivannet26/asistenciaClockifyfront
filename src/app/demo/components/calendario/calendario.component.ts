@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
@@ -45,10 +46,16 @@ export class CalendarioComponent implements OnInit {
   duracionInicio: string = '00:00';
   duracionFin: string = '00:00';
 
+  constructor(private router: Router) {}
+
   ngOnInit() {
     this.cargarDesdeLocalStorage();
     this.generarHoras();
     this.refrescarTodo();
+  }
+
+  irAlRastreador() {
+    this.router.navigate(['/menu-layout/rastreador']);
   }
 
   cargarDesdeLocalStorage() {

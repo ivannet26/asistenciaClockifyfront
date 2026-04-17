@@ -1,22 +1,21 @@
-<div class="grid p-2 md:p-3 layout-calendario">
+<div>
   <div class="col-12">
-    <div class="calendar-header card p-2 md:p-3">
+    <div class="calendar-header card p-2 md:p-3" *ngIf="registros.length > 0">
       <div class="header-toolbar flex flex-wrap align-items-center justify-content-between gap-3">
-        
+
         <div class="view-buttons flex align-items-center gap-2">
           <div class="flex align-items-center gap-2">
-          <i class="pi pi-calendar text-primary text-xl"></i>
-          <span class="titulo-calendario">Calendario</span>
+            <i class="pi pi-calendar text-primary text-xl"></i>
+            <span class="titulo-calendario">Calendario</span>
+          </div>
         </div>
-          
-          
-        </div>
-
-        <div class="nav-controls flex flex-wrap align-items-center justify-content-between gap-3 flex-grow-1 lg:flex-grow-0">
+        <div
+          class="nav-controls flex flex-wrap align-items-center justify-content-between gap-3 flex-grow-1 lg:flex-grow-0">
           <div class="left-controls flex align-items-center gap-2">
             <p-button icon="pi pi-cog" [text]="true"></p-button>
-            <p-button label="Compañeros" icon="pi pi-chevron-down" iconPos="right" [outlined]="true" (onClick)="op.toggle($event)"></p-button>
-            
+            <p-button label="Compañeros" icon="pi pi-chevron-down" iconPos="right" [outlined]="true"
+              (onClick)="op.toggle($event)"></p-button>
+
             <p-overlayPanel #op [style]="{ width: 'min(300px, 90vw)' }" styleClass="custom-overlay" appendTo="body">
               <ng-template pTemplate="content">
                 <div class="p-fluid">
@@ -34,19 +33,22 @@
           </div>
 
           <div class="center-controls flex flex-wrap align-items-center gap-2">
-            <p-button label="Hoy" size="small" [ngClass]="{ 'activo': vista === 'dia' }" (onClick)="vista = 'dia'"></p-button>
-            <p-button label="Semana" size="small" [ngClass]="{ 'activo': vista === 'semana' }" (onClick)="vista = 'semana'"></p-button>
+            <p-button label="Hoy" size="small" [ngClass]="{ 'activo': vista === 'dia' }"
+              (onClick)="vista = 'dia'"></p-button>
+            <p-button label="Semana" size="small" [ngClass]="{ 'activo': vista === 'semana' }"
+              (onClick)="vista = 'semana'"></p-button>
             <div class="flex align-items-center">
               <p-button icon="pi pi-chevron-left" [text]="true" (onClick)="irAnterior()"></p-button>
               <p-button icon="pi pi-chevron-right" [text]="true" (onClick)="irSiguiente()"></p-button>
             </div>
-            <p-calendar [(ngModel)]="fechaActual" (onSelect)="cambiarFecha($event)" [showIcon]="true" dateFormat="dd M yy" appendTo="body" class="responsive-calendar"></p-calendar>
+            <p-calendar [(ngModel)]="fechaActual" (onSelect)="cambiarFecha($event)" [showIcon]="true"
+              dateFormat="dd M yy" appendTo="body" class="responsive-calendar"></p-calendar>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="calendar-body card mt-3">
+    <div class="calendar-body card mt-3" *ngIf="registros.length > 0">
       <p-table [value]="horas" class="custom-table">
         <ng-template pTemplate="header">
           <tr>
@@ -56,7 +58,8 @@
                 <button class="zoom-btn" (click)="aumentarZoom()">+</button>
               </div>
             </th>
-            <th *ngFor="let dia of diasSemana" class="day-col" [ngClass]="{ 'oculto': vista === 'dia' && !esHoy(dia.completa), 'hoy': esHoy(dia.completa) }">
+            <th *ngFor="let dia of diasSemana" class="day-col"
+              [ngClass]="{ 'oculto': vista === 'dia' && !esHoy(dia.completa), 'hoy': esHoy(dia.completa) }">
               <div class="header-day text-center">
                 {{ dia.nombre }}, {{ dia.fecha }}
                 <span class="time-sub">00:00:00</span>
@@ -68,22 +71,23 @@
         <ng-template pTemplate="body" let-hora>
           <tr>
             <td class="time-col text-xs text-400 text-center">{{ hora }}</td>
-            <td *ngFor="let dia of diasSemana" class="slot-cell" (click)="onSlotClick(dia, hora)" [ngClass]="{ 'oculto': vista === 'dia' && !esHoy(dia.completa) }" style="position: relative; height: 60px; border: 0.5px dashed #eee;">
-              
+            <td *ngFor="let dia of diasSemana" class="slot-cell" (click)="onSlotClick(dia, hora)"
+              [ngClass]="{ 'oculto': vista === 'dia' && !esHoy(dia.completa) }"
+              style="position: relative; height: 60px; border: 0.5px dashed #eee;">
+
               <ng-container *ngFor="let reg of registros">
-                <div *ngIf="esMismoDia(reg.inicio, dia.completa) && esMismaHora(reg.inicio, hora)"
-                     class="event-block"
-                     [ngStyle]="calcularEstiloEvento(reg)"
-                     (click)="$event.stopPropagation(); onSlotClick(dia, hora, reg)"
-                     [pTooltip]="tip" tooltipPosition="bottom">
-                  
+                <div *ngIf="esMismoDia(reg.inicio, dia.completa) && esMismaHora(reg.inicio, hora)" class="event-block"
+                  [ngStyle]="calcularEstiloEvento(reg)" (click)="$event.stopPropagation(); onSlotClick(dia, hora, reg)"
+                  [pTooltip]="tip" tooltipPosition="bottom">
+
                   <div class="font-bold text-xs white-space-nowrap overflow-hidden">{{ reg.descripcion }}</div>
                   <div style="font-size: 0.6rem;">{{ reg.proyecto?.nombre || reg.proyecto }}</div>
 
                   <ng-template #tip>
                     <div class="text-center p-2">
                       <div class="font-bold">{{ reg.descripcion }}</div>
-                      <div class="text-xs">{{ calcularDuracion(reg) }} ({{ reg.inicio | date:'HH:mm' }} - {{ reg.fin | date:'HH:mm' }})</div>
+                      <div class="text-xs">{{ calcularDuracion(reg) }} ({{ reg.inicio | date:'HH:mm' }} - {{ reg.fin |
+                        date:'HH:mm' }})</div>
                     </div>
                   </ng-template>
                 </div>
@@ -93,24 +97,53 @@
         </ng-template>
       </p-table>
     </div>
+
+    <div *ngIf="registros.length == 0">
+      <div class="flex flex-column align-items-center justify-content-center" style="min-height: 50vh; padding: 2rem;">
+        <div class="card shadow-2 p-6 bg-white border-1 border-300 text-center"
+          style="max-width: 500px; border-radius: 12px;">
+          <div class="flex justify-content-center mb-4">
+            <div
+              style="background: #e3f2fd; width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+              <i class="pi pi-clock text-5xl" style="color: #00BCD4;"></i>
+            </div>
+          </div>
+          <h2 class="text-900 font-bold mb-2">Bienvenido a tu calendario</h2>
+          <p class="text-600 line-height-3 mb-5">
+            Parece que aún no tienes registros de tiempo guardados. Comienza a rastrear tus actividades para ver tu
+            calendario.
+          </p>
+          <button pButton label="Comenzar a rastrear" icon="pi pi-play"
+            class="p-button-raised p-button-info px-5 py-3 font-bold" (click)="irAlRastreador()" style="width: auto;">
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
+
+
 </div>
 
-<p-dialog [header]="registroActivo ? 'Editar entrada de tiempo' : 'Añadir entrada de tiempo'" [(visible)]="mostrarModal" [modal]="true" [style]="{ width: 'min(550px, 95vw)' }" [breakpoints]="{'960px': '75vw', '640px': '95vw'}">
+<p-dialog [header]="registroActivo ? 'Editar entrada de tiempo' : 'Añadir entrada de tiempo'" [(visible)]="mostrarModal"
+  [modal]="true" [style]="{ width: 'min(550px, 95vw)' }" [breakpoints]="{'960px': '75vw', '640px': '95vw'}">
   <div class="p-fluid">
     <div class="field mb-4">
       <label class="text-xs font-bold text-500 mb-2 block">Hora y fecha</label>
       <div class="flex flex-wrap gap-2 align-items-center">
-        <input pInputText [value]="getDuracionTotalModal()" class="w-full sm:w-4 bg-gray-100 font-bold" readonly tabindex="-1" />
-        
+        <input pInputText [value]="getDuracionTotalModal()" class="w-full sm:w-4 bg-gray-100 font-bold" readonly
+          tabindex="-1" />
+
         <div class="flex border-1 border-300 border-round p-1 bg-gray-100 align-items-center">
-          <input pInputText [ngModel]="duracionInicio" class="w-3rem border-none text-center p-1 bg-transparent" readonly tabindex="-1" />
+          <input pInputText [ngModel]="duracionInicio" class="w-3rem border-none text-center p-1 bg-transparent"
+            readonly tabindex="-1" />
           <span>-</span>
-          <input pInputText [ngModel]="duracionFin" class="w-3rem border-none text-center p-1 bg-transparent" readonly tabindex="-1" />
+          <input pInputText [ngModel]="duracionFin" class="w-3rem border-none text-center p-1 bg-transparent" readonly
+            tabindex="-1" />
         </div>
 
         <div class="p-inputgroup flex-grow-1">
-          <input pInputText [value]="fechaSeleccionada | date:'dd/MM/yyyy'" class="bg-gray-100" readonly tabindex="-1" />
+          <input pInputText [value]="fechaSeleccionada | date:'dd/MM/yyyy'" class="bg-gray-100" readonly
+            tabindex="-1" />
           <span class="p-inputgroup-addon bg-gray-100"><i class="pi pi-calendar"></i></span>
         </div>
       </div>
@@ -124,14 +157,16 @@
     <div class="field grid mb-3 align-items-center">
       <label class="col-12 sm:col-3 text-xs font-bold text-500">Proyecto</label>
       <div class="col-12 sm:col-9">
-        <p-dropdown [options]="listaProyectos" [(ngModel)]="proyectoSeleccionado" optionLabel="nombre" placeholder="Seleccionar proyecto" [showClear]="true"></p-dropdown>
+        <p-dropdown [options]="listaProyectos" [(ngModel)]="proyectoSeleccionado" optionLabel="nombre"
+          placeholder="Seleccionar proyecto" [showClear]="true"></p-dropdown>
       </div>
     </div>
 
     <div class="field grid mb-4 align-items-center">
       <label class="col-12 sm:col-3 text-xs font-bold text-500">Etiquetas</label>
       <div class="col-12 sm:col-9">
-        <p-multiSelect [options]="listaEtiquetas" [(ngModel)]="etiquetasSeleccionadas" optionLabel="nombre" placeholder="Añadir etiquetas" display="chip"></p-multiSelect>
+        <p-multiSelect [options]="listaEtiquetas" [(ngModel)]="etiquetasSeleccionadas" optionLabel="nombre"
+          placeholder="Añadir etiquetas" display="chip"></p-multiSelect>
       </div>
     </div>
   </div>

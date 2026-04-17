@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-
+import { Router } from '@angular/router';
 import { TabMenuModule } from "primeng/tabmenu";
 import { DropdownModule } from "primeng/dropdown";
 import { CalendarModule } from "primeng/calendar";
@@ -78,7 +78,7 @@ export class InformesComponent implements OnInit {
 
   opcionSeleccionada: number = 1;
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute, private link: Router) {
     this.tabactivot = this.tabsT[0];
     this.tabactivoe = this.tabsE[0];
   }
@@ -159,6 +159,10 @@ export class InformesComponent implements OnInit {
 
       this.cargarTodoDesdeStorage(inicio, fin);
     }
+  }
+
+    irAlRastreador() {
+    this.link.navigate(['/menu-layout/rastreador']);
   }
 
   cambiarSemana(dir: number) {
