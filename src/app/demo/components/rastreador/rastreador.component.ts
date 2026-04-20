@@ -14,6 +14,7 @@ import { Registro } from '../../model/Registro';
 import { ClientesService } from '../../service/clientes.service';
 import { Clientes } from '../../model/Clientes';
 import { ProyectosService } from '../../service/proyectos.service';
+import { TimerService } from '../../service/timer.service'; // Asegúrate de la ruta correcta
 
 @Component({
   selector: 'app-rastreador',
@@ -28,16 +29,13 @@ import { ProyectosService } from '../../service/proyectos.service';
 export class RastreadorComponent implements OnInit, OnDestroy {
 
   private STORAGE_REGISTROS = 'registros';
-  private STORAGE_CLIENTES = 'clientes';
   private STORAGE_ETIQUETAS = 'etiquetas';
   private STORAGE_TIMER_ACTIVO = 'timer_activo';
 
   tareaActual: string = '';
-  tiempoTranscurrido: string = '00:00:00';
   esFacturable: boolean = false;
   busquedaProyecto: string = '';
   proyectos: Proyecto[] = [];
-  sinProyecto: Proyecto
   proyectoSeleccionado: Proyecto | null = PROYECTO_SIN_PROYECTO;
   mostrarModalProyecto: boolean = false;
   clientes: Clientes[] = [];
@@ -45,27 +43,22 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   etiquetasSeleccionadas: string[] = [];
   busquedaEtiqueta: string = '';
 
-  intervalo: any = null;
-  corriendo: boolean = false;
   inicioTiempo!: Date;
   registros: Registro[] = [];
-
-  //  NUEVO: agrupados
   registrosAgrupados: any[] = [];
 
-  nuevoProyecto: {
-    nombre: string;
-    cliente: Clientes | null;
-    color: string;
-    publico: boolean;
-  } = {
-      nombre: '',
-      cliente: null,
-      color: '#2196F3',
-      publico: true
-    };
+  nuevoProyecto = {
+    nombre: '',
+    cliente: null as Clientes | null,
+    color: '#2196F3',
+    publico: true
+  };
 
-  constructor(private proyectosService: ProyectosService, private clientesService: ClientesService) { }
+  constructor(
+    private proyectosService: ProyectosService, 
+    private clientesService: ClientesService,
+    public timerService: TimerService // Inyectamos el servicio global
+  ) { }
 
   ngOnInit() {
     this.cargarProyectos();
@@ -76,42 +69,90 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     this.agruparRegistros();
   }
 
-
   ngOnDestroy() {
-    if (this.intervalo) clearInterval(this.intervalo);
+    // Ya no limpiamos el intervalo aquí para que siga corriendo en la pestaña
   }
 
-  // =========================
-  //  AGRUPACIÓN OPTIMIZADA
-  // =========================
-  cargarProyectos(): void {
-    this.proyectos = this.proyectosService.getProyectos();
+  // Getter para que el HTML siga funcionando con tu variable original
+  get tiempoTranscurrido(): string {
+    return this.timerService.tiempoTranscurrido();
   }
 
-  guardarProyecto(): void {
-    if (!this.nuevoProyecto.nombre?.trim()) return;
-
-    const clienteId = this.nuevoProyecto.cliente?.id ?? 0;
-
-    this.proyectos = this.proyectosService.agregarProyecto(
-      this.nuevoProyecto.nombre,
-      clienteId,
-      this.nuevoProyecto.color,
-      this.nuevoProyecto.publico,
-      0,
-      true,
-      new Date(),
-    );
-
-    this.proyectoSeleccionado = this.proyectos[this.proyectos.length - 1];
-    this.mostrarModalProyecto = false;
-    this.nuevoProyecto = { nombre: '', cliente: null, color: '#2196F3', publico: true };
+  get corriendo(): boolean {
+    return this.timerService.corriendo();
   }
 
-  abrirModalNuevoProyecto() {
-    this.cargarClientes();
-    this.mostrarModalProyecto = true;
+  verificarTimerPersistente() {
+    const guardado = localStorage.getItem(this.STORAGE_TIMER_ACTIVO);
+    if (guardado) {
+      const data = JSON.parse(guardado);
+      this.inicioTiempo = new Date(data.inicio);
+      this.tareaActual = data.descripcion;
+      this.proyectoSeleccionado = data.proyecto;
+      this.esFacturable = data.facturable;
+      this.etiquetasSeleccionadas = data.etiquetas || [];
+      
+      // Reconectamos el servicio con los datos guardados
+      this.timerService.start(
+        this.inicioTiempo, 
+        this.tareaActual, 
+        this.proyectoSeleccionado, 
+        this.esFacturable, 
+        this.etiquetasSeleccionadas
+      );
+    }
   }
+
+  toggleTimer() {
+    // IMPORTANTE: Preguntar al servicio, no a la variable local
+    if (!this.timerService.corriendo()) {
+        this.inicioTiempo = new Date();
+        this.timerService.start(
+            this.inicioTiempo, 
+            this.tareaActual, 
+            this.proyectoSeleccionado, 
+            this.esFacturable, 
+            this.etiquetasSeleccionadas
+        );
+    } else {
+        // Obtenemos la info del servicio antes de pararlo
+        const inicio = this.timerService.inicioTiempo; 
+        const finTiempo = new Date();
+        
+        if (inicio) {
+            const diffMs = finTiempo.getTime() - inicio.getTime();
+            const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+            
+            const nuevoRegistro: Registro = {
+                descripcion: this.tareaActual?.trim() || 'Sin descripción',
+                proyecto: this.proyectoSeleccionado,
+                miembroId: session.userData?.id,
+                miembroNombre: session.userData?.nombre,
+                inicio: inicio,
+                fin: finTiempo,
+                duracion: this.formatearTiempo(diffMs),
+                facturable: this.esFacturable,
+                etiquetas: [...this.etiquetasSeleccionadas]
+            };
+
+            this.guardarRegistro(nuevoRegistro);
+        }
+
+        // DETENEMOS EL SERVICIO
+        this.timerService.stop(); 
+        
+        // Refrescamos la lista
+        this.cargarRegistros();
+        this.agruparRegistros();
+
+        // Limpiamos los campos
+        this.tareaActual = '';
+        this.proyectoSeleccionado = PROYECTO_SIN_PROYECTO;
+        this.etiquetasSeleccionadas = [];
+    }
+}
+
+  // --- Lógica de Agrupación y Carga (Sin cambios) ---
 
   agruparRegistros() {
     const grupos: any[] = [];
@@ -125,15 +166,11 @@ export class RastreadorComponent implements OnInit, OnDestroy {
       let clave = '';
       let label = '';
 
-      if (this.esMismaFecha(fecha, hoy)) {
-        clave = 'hoy'; label = 'Hoy';
-      } else if (this.esMismaFecha(fecha, ayer)) {
-        clave = 'ayer'; label = 'Ayer';
-      } else {
+      if (this.esMismaFecha(fecha, hoy)) { clave = 'hoy'; label = 'Hoy'; } 
+      else if (this.esMismaFecha(fecha, ayer)) { clave = 'ayer'; label = 'Ayer'; } 
+      else {
         clave = fecha.toDateString();
-        label = fecha.toLocaleDateString('es-PE', {
-          weekday: 'short', day: 'numeric', month: 'short'
-        });
+        label = fecha.toLocaleDateString('es-PE', { weekday: 'short', day: 'numeric', month: 'short' });
       }
 
       if (!mapa.has(clave)) {
@@ -149,113 +186,9 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     this.registrosAgrupados = grupos.sort((a, b) => b.fecha.getTime() - a.fecha.getTime());
   }
 
-  esMismaFecha(f1: Date, f2: Date): boolean {
-    return f1.getFullYear() === f2.getFullYear() &&
-      f1.getMonth() === f2.getMonth() &&
-      f1.getDate() === f2.getDate();
-  }
-
-  cargarEtiquetas() {
-    this.etiquetasDisponibles = JSON.parse(localStorage.getItem(this.STORAGE_ETIQUETAS) || '[]');
-  }
-
-  toggleEtiqueta(etiquetaNombre: string) {
-    const index = this.etiquetasSeleccionadas.indexOf(etiquetaNombre);
-    if (index > -1) this.etiquetasSeleccionadas.splice(index, 1);
-    else this.etiquetasSeleccionadas.push(etiquetaNombre);
-  }
-
-  get etiquetasFiltradas(): any[] {
-    const busqueda = this.busquedaEtiqueta.toLowerCase().trim();
-    if (!busqueda) return this.etiquetasDisponibles;
-    return this.etiquetasDisponibles.filter((tag: any) =>
-      tag.nombre.toLowerCase().includes(busqueda)
-    );
-  }
-
-  verificarTimerPersistente() {
-    const guardado = localStorage.getItem(this.STORAGE_TIMER_ACTIVO);
-    if (guardado) {
-      const data = JSON.parse(guardado);
-      this.corriendo = true;
-      this.inicioTiempo = new Date(data.inicio);
-      this.tareaActual = data.descripcion;
-      this.proyectoSeleccionado = data.proyecto;
-      this.esFacturable = data.facturable;
-      this.etiquetasSeleccionadas = data.etiquetas || [];
-      this.iniciarIntervalo();
-    }
-  }
-
-  actualizarReloj() {
-    if (!this.inicioTiempo) return;
-    const diffMs = new Date().getTime() - this.inicioTiempo.getTime();
-    this.tiempoTranscurrido = this.formatearTiempo(diffMs);
-  }
-
-  iniciarIntervalo() {
-    if (this.intervalo) clearInterval(this.intervalo);
-    this.actualizarReloj();
-    this.intervalo = setInterval(() => this.actualizarReloj(), 500);
-  }
-
-  toggleTimer() {
-    if (!this.corriendo) {
-      this.corriendo = true;
-      this.inicioTiempo = new Date();
-
-      localStorage.setItem(this.STORAGE_TIMER_ACTIVO, JSON.stringify({
-        inicio: this.inicioTiempo,
-        descripcion: this.tareaActual,
-        proyecto: this.proyectoSeleccionado,
-        facturable: this.esFacturable,
-        etiquetas: this.etiquetasSeleccionadas
-      }));
-
-      this.iniciarIntervalo();
-    } else {
-      this.corriendo = false;
-      if (this.intervalo) { clearInterval(this.intervalo); this.intervalo = null; }
-
-      const finTiempo = new Date();
-      const diffMs = finTiempo.getTime() - this.inicioTiempo.getTime();
-      const session = JSON.parse(localStorage.getItem('userSession') || '{}');
-      const nuevoRegistro: Registro = {
-        descripcion: this.tareaActual?.trim() || 'Sin descripción',
-        proyecto: this.proyectoSeleccionado,
-        miembroId: session.userData?.id,
-        miembroNombre: session.userData?.nombre,
-        inicio: this.inicioTiempo,
-        fin: finTiempo,
-        duracion: this.formatearTiempo(diffMs),
-        facturable: this.esFacturable,
-        etiquetas: [...this.etiquetasSeleccionadas]
-      };
-
-      this.guardarRegistro(nuevoRegistro);
-      this.cargarRegistros(); // vuelve a traer solo los del usuario
-      this.agruparRegistros();
-      localStorage.removeItem(this.STORAGE_TIMER_ACTIVO);
-
-      this.tiempoTranscurrido = '00:00:00';
-      this.tareaActual = '';
-      this.proyectoSeleccionado = PROYECTO_SIN_PROYECTO;
-      this.etiquetasSeleccionadas = [];
-    }
-  }
-
-  // =========================
-  // STORAGE
-  // =========================
-
-  cargarClientes(): void {
-    this.clientes = this.clientesService.getClientes();
-  }
-
   cargarRegistros() {
     const session = JSON.parse(localStorage.getItem('userSession') || '{}');
     const miembroId = session.userData?.id;
-
     const data = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
     this.registros = data
       .filter((r: any) => r.miembroId === miembroId)
@@ -269,17 +202,22 @@ export class RastreadorComponent implements OnInit, OnDestroy {
 
   guardarRegistro(nuevoRegistro: Registro) {
     const data = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
-
     data.unshift(nuevoRegistro);
-
     localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(data));
   }
-/*
-  actualizarRegistrosStorage() {
-    localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(this.registros));
-  }
-*/
 
+  eliminarRegistro(registro: Registro) {
+    const todosLosRegistros = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
+    const dataActualizada = todosLosRegistros.filter((r: any) => {
+        return new Date(r.inicio).getTime() !== new Date(registro.inicio).getTime() || 
+               r.descripcion !== registro.descripcion;
+    });
+    localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(dataActualizada));
+    this.cargarRegistros();
+    this.agruparRegistros();
+  }
+
+  // --- Helpers ---
   formatearTiempo(ms: number): string {
     const totalS = Math.floor(ms / 1000);
     const h = Math.floor(totalS / 3600).toString().padStart(2, '0');
@@ -292,13 +230,25 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     return fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
-  seleccionarProyecto(proyecto: Proyecto, panel: any) {
-    this.proyectoSeleccionado = proyecto;
-    panel.hide();
+  esMismaFecha(f1: Date, f2: Date): boolean {
+    return f1.getFullYear() === f2.getFullYear() && f1.getMonth() === f2.getMonth() && f1.getDate() === f2.getDate();
   }
 
-  alternarFacturable() {
-    this.esFacturable = !this.esFacturable;
+  cargarProyectos() { this.proyectos = this.proyectosService.getProyectos(); }
+  cargarClientes() { this.clientes = this.clientesService.getClientes(); }
+  cargarEtiquetas() { this.etiquetasDisponibles = JSON.parse(localStorage.getItem(this.STORAGE_ETIQUETAS) || '[]'); }
+
+  seleccionarProyecto(proyecto: Proyecto, panel: any) { this.proyectoSeleccionado = proyecto; panel.hide(); }
+
+  toggleEtiqueta(nombre: string) {
+    const i = this.etiquetasSeleccionadas.indexOf(nombre);
+    if (i > -1) this.etiquetasSeleccionadas.splice(i, 1);
+    else this.etiquetasSeleccionadas.push(nombre);
+  }
+
+  get etiquetasFiltradas() {
+    const b = this.busquedaEtiqueta.toLowerCase();
+    return b ? this.etiquetasDisponibles.filter(t => t.nombre.toLowerCase().includes(b)) : this.etiquetasDisponibles;
   }
 
   repetirTarea(r: any) {
@@ -310,30 +260,22 @@ export class RastreadorComponent implements OnInit, OnDestroy {
 
   get totalHoy(): string {
     const hoy = new Date().toDateString();
-    const msTotal = this.registros
+    const ms = this.registros
       .filter(r => new Date(r.inicio).toDateString() === hoy)
       .reduce((acc, r) => acc + (new Date(r.fin).getTime() - new Date(r.inicio).getTime()), 0);
-    return this.formatearTiempo(msTotal);
+    return this.formatearTiempo(ms);
   }
 
-  eliminarRegistro(registro: Registro) {
-    
-    this.registros = this.registros.filter(r => r !== registro);
+  abrirModalNuevoProyecto() { this.cargarClientes(); this.mostrarModalProyecto = true; }
 
-    
-    // Obtener todos los registros del localstorage
-    const todosLosRegistros = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
-    
-    
-    
-    const dataActualizada = todosLosRegistros.filter((r: any) => {
-        return new Date(r.inicio).getTime() !== new Date(registro.inicio).getTime() || 
-               r.descripcion !== registro.descripcion;
-    });
-
-    localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(dataActualizada));
-
-    // 3. Volver a agrupar para que la vista se actualice
-    this.agruparRegistros();
+  guardarProyecto() {
+    if (!this.nuevoProyecto.nombre?.trim()) return;
+    this.proyectos = this.proyectosService.agregarProyecto(
+      this.nuevoProyecto.nombre, this.nuevoProyecto.cliente?.id ?? 0, 
+      this.nuevoProyecto.color, this.nuevoProyecto.publico, 0, true, new Date()
+    );
+    this.proyectoSeleccionado = this.proyectos[this.proyectos.length - 1];
+    this.mostrarModalProyecto = false;
+    this.nuevoProyecto = { nombre: '', cliente: null, color: '#2196F3', publico: true };
   }
 }
