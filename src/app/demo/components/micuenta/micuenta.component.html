@@ -1,0 +1,41 @@
+<p-toast position="top-right" [baseZIndex]="9999" [preventOpenDuplicates]="true" />
+<div class="etiquetas-pagina">
+    <div class="etiquetas-panel flex flex-column justify-content-center align-items-center">
+        <h2 class="titulo-seccion"><i class="pi pi-user text-5xl"></i> Mi Cuenta</h2>
+        <div class="etiquetas-contenido">
+            <p>Tus credenciales de inicio de sesión y el nombre mostrado en los informes.</p>
+
+            <div class="flex flex-column align-items-center gap-3 p-2">
+
+                <div class="flex flex-row gap-4 align-items-start form-user">
+
+                    <div class="flex flex-column gap-3">
+                        <div class="flex flex-column gap-1">
+                            <label class="font-semibold">Nombre</label>
+                            <input type="text" pInputText formControlName="nombre" class="p-2"/>
+                        </div>
+                        <div class="flex flex-column gap-1">
+                            <label class="font-semibold">Correo Electrónico</label>
+                            <input type="text" pInputText formControlName="correo" class="p-2"/>
+                        </div>
+                    </div>
+                    <div class="delimitador"></div>
+                    <div class="flex flex-column gap-3">
+                        <div class="flex flex-column gap-1">
+                            <label class="font-semibold">Contraseña</label>
+                            <input type="password" pInputText formControlName="contrasena" class="p-2"/>
+                        </div>
+                        <div class="flex flex-column gap-1">
+                            <label class="font-semibold">Repetir Contraseña</label>
+                            <input type="password" pInputText formControlName="repetircontrasena" class="p-2"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-4 mt-2">
+                    <p-button label="Guardar" severity="info" type="submit" />
+                    <p-button label="Cancelar" severity="warning" type="button" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

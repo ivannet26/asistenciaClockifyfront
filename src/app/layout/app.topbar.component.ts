@@ -50,5 +50,9 @@ export class AppTopBarComponent implements OnInit {
         this.link.navigate(['/espaciotrabajo']);
     }
 
+    micuenta(){
+        this.link.navigate(['/menu-layout/micuenta']);
+    }
+
 
 }

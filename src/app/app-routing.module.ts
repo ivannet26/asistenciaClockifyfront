@@ -12,6 +12,7 @@ import { PanelComponent } from './demo/components/panel/panel.component';
 import { EquipoComponent } from './demo/components/equipo/equipo.component';
 import { CalendarioComponent } from './demo/components/calendario/calendario.component';
 import { InformesComponent } from './demo/components/informes/informes.component';
+import { MicuentaComponent } from './demo/components/micuenta/micuenta.component';
 
 @NgModule({
     imports: [
@@ -40,7 +41,7 @@ import { InformesComponent } from './demo/components/informes/informes.component
                     { path: 'panel', component: PanelComponent },
                     { path: 'clientes', component: ClientesComponent },
                     { path: 'etiquetas', component: EtiquetasComponent },
-                    
+                    { path: 'micuenta', component: MicuentaComponent}
                 ]
             },
 
