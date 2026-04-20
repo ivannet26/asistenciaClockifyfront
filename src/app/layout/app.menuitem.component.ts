@@ -1,48 +1,62 @@
 import { ChangeDetectorRef, Component, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { MenuService } from './app.menu.service';
 import { LayoutService } from '../demo/components/service/app.layout.service';
+import { CommonModule } from '@angular/common';
+import { RippleModule } from 'primeng/ripple';
+// Asegúrate de que esta ruta sea la correcta según tu estructura
+import { TimerService } from '../demo/service/timer.service';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
     selector: '[app-menuitem]',
     template: `
-		<ng-container>
+        <ng-container>
             <div *ngIf="root && item.visible !== false" class="layout-menuitem-root-text">{{item.label}}</div>
-			<a *ngIf="(!item.routerLink || item.items) && item.visible !== false" [attr.href]="item.url" (click)="itemClick($event)"
-			   [ngClass]="item.class" [attr.target]="item.target" tabindex="0" pRipple>
-				<i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
-				<span class="layout-menuitem-text">{{item.label}}</span>
-				<i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
-			</a>
-			<a *ngIf="(item.routerLink && !item.items) && item.visible !== false" (click)="itemClick($event)" [ngClass]="item.class"
-			   [routerLink]="item.routerLink" routerLinkActive="active-route" [routerLinkActiveOptions]="item.routerLinkActiveOptions||{ paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }"
-               [fragment]="item.fragment" [queryParamsHandling]="item.queryParamsHandling" [preserveFragment]="item.preserveFragment"
-               [skipLocationChange]="item.skipLocationChange" [replaceUrl]="item.replaceUrl" [state]="item.state" [queryParams]="item.queryParams"
-               [attr.target]="item.target" tabindex="0" pRipple>
-				<i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
-				<span class="layout-menuitem-text">{{item.label}}</span>
-				<i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
-			</a>
+            
+            <a *ngIf="(!item.routerLink || item.items) && item.visible !== false" [attr.href]="item.url" (click)="itemClick($event)"
+               [ngClass]="item.class" [attr.target]="item.target" tabindex="0" pRipple>
+                <i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
+                <span class="layout-menuitem-text">{{item.label}}</span>
+                <i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
+            </a>
 
-			<ul *ngIf="item.items && item.visible !== false" [@children]="submenuAnimation">
-				<ng-template ngFor let-child let-i="index" [ngForOf]="item.items">
-					<li app-menuitem [item]="child" [index]="i" [parentKey]="key" [class]="child.badgeClass"></li>
-				</ng-template>
-			</ul>
-		</ng-container>
+            <a *ngIf="(item.routerLink && !item.items) && item.visible !== false" (click)="itemClick($event)" [ngClass]="item.class"
+               [routerLink]="item.routerLink" routerLinkActive="active-route" 
+               [routerLinkActiveOptions]="item.routerLinkActiveOptions||{ paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }"
+               [attr.target]="item.target" tabindex="0" pRipple>
+                
+                <i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
+                
+                <div class="flex flex-column" style="flex-grow: 1;">
+                    <ng-container *ngIf="item.label === 'RASTREADOR' && timerService.corriendo(); else mostrarTextoNormal">
+                        <span class="layout-menuitem-text" style="color: #03a9f4; font-weight: 800; font-family: bold, monospace;font-size: 1.2rem;letter-spacing: 1px;">
+                            {{ timerService.tiempoTranscurrido() }}
+                        </span>
+                    </ng-container>
+
+                    <ng-template #mostrarTextoNormal>
+                        <span class="layout-menuitem-text">{{item.label}}</span>
+                    </ng-template>
+                </div>
+
+                <i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
+            </a>
+
+            <ul *ngIf="item.items && item.visible !== false" [@children]="submenuAnimation">
+                <ng-template ngFor let-child let-i="index" [ngForOf]="item.items">
+                    <li app-menuitem [item]="child" [index]="i" [parentKey]="key" [class]="child.badgeClass"></li>
+                </ng-template>
+            </ul>
+        </ng-container>
     `,
     animations: [
         trigger('children', [
-            state('collapsed', style({
-                height: '0'
-            })),
-            state('expanded', style({
-                height: '*'
-            })),
+            state('collapsed', style({ height: '0' })),
+            state('expanded', style({ height: '*' })),
             transition('collapsed <=> expanded', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)'))
         ])
     ]
@@ -50,22 +64,22 @@ import { LayoutService } from '../demo/components/service/app.layout.service';
 export class AppMenuitemComponent implements OnInit, OnDestroy {
 
     @Input() item: any;
-
     @Input() index!: number;
-
     @Input() @HostBinding('class.layout-root-menuitem') root!: boolean;
-
     @Input() parentKey!: string;
 
     active = false;
-
     menuSourceSubscription: Subscription;
-
     menuResetSubscription: Subscription;
-
     key: string = "";
 
-    constructor(public layoutService: LayoutService, private cd: ChangeDetectorRef, public router: Router, private menuService: MenuService) {
+    constructor(
+        public layoutService: LayoutService, 
+        private cd: ChangeDetectorRef, 
+        public router: Router, 
+        private menuService: MenuService,
+        public timerService: TimerService // Servicio inyectado
+    ) {
         this.menuSourceSubscription = this.menuService.menuSource$.subscribe(value => {
             Promise.resolve(null).then(() => {
                 if (value.routeEvent) {
@@ -92,14 +106,14 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-    this.key = this.parentKey 
-        ? this.parentKey + '-' + this.index + '-' + this.item.label
-        : this.index + '-' + this.item.label;
+        this.key = this.parentKey 
+            ? this.parentKey + '-' + this.index + '-' + this.item.label
+            : this.index + '-' + this.item.label;
 
-    if (this.item.routerLink) {
-        this.updateActiveStateFromRoute();
+        if (this.item.routerLink) {
+            this.updateActiveStateFromRoute();
+        }
     }
-}
 
     updateActiveStateFromRoute() {
         let activeRoute = this.router.isActive(this.item.routerLink[0], { paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' });
@@ -110,7 +124,6 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
     }
 
     itemClick(event: Event) {
-
         if (this.item.disabled) {
             event.preventDefault();
             return;
@@ -140,7 +153,6 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
         if (this.menuSourceSubscription) {
             this.menuSourceSubscription.unsubscribe();
         }
-
         if (this.menuResetSubscription) {
             this.menuResetSubscription.unsubscribe();
         }

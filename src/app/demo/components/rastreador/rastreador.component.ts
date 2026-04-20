@@ -67,10 +67,14 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     this.cargarEtiquetas();
     this.verificarTimerPersistente();
     this.agruparRegistros();
+    if (this.timerService.corriendo()) {
+        this.tareaActual = this.timerService.tareaActual();
+        this.proyectoSeleccionado = this.timerService.proyectoSeleccionado();
+    }
   }
 
   ngOnDestroy() {
-    // Ya no limpiamos el intervalo aquí para que siga corriendo en la pestaña
+    // Ya no limpiamos el intervalo aquí para quesiga corriendo en la pestaña
   }
 
   // Getter para que el HTML siga funcionando con tu variable original
