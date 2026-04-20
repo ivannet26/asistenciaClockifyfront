@@ -1,9 +1,9 @@
 
 export enum RolNombre {
     OWNER = 'OWNER',
-    ADMIN = 'ADMIN',
-    USER = 'USER',
-    SUPERVISOR = 'SUPERVISOR'
+    ADMINISTRADOR = 'ADMINISTRADOR',
+    EMPLEADO= 'EMPLEADO',
+    GERENTE = 'GERENTE'
 }
 
 export interface Miembros {

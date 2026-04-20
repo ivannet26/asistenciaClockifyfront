@@ -75,7 +75,7 @@ export class MiembrosService {
                 nombre: 'Administrador',
                 correo: 'admin@correo.com',
                 contrasena: 'admin123',
-                rol: RolNombre.ADMIN,
+                rol: RolNombre.ADMINISTRADOR,
                 grupoIds: [],
                 activo: true
             };
