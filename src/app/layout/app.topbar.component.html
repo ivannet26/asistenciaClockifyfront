@@ -1,20 +1,25 @@
 <div class="layout-topbar" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+    
     <div class="left-section" style="display: flex; align-items: center; gap: 10px;">
+        
         <button #menubutton class="p-link layout-menu-button layout-topbar-button"
             (click)="layoutService.onMenuToggle()">
             <i class="pi pi-bars"></i>
         </button>
-        <p-splitButton [appendTo]="'body'" label="Clockify" (onClick)="espaciostrabajo()" [model]="proyectos" size="lg"
-            text>
+
+        <p-splitButton [appendTo]="'body'" label="Clockify" (onClick)="espaciostrabajo()" [model]="proyectos" size="lg" text>
             <ng-template pTemplate="content">
-                <span class="flex align-items-center font-bold" class="text-primary-600">
+                <span class="flex align-items-center font-bold text-primary-600">
                     <span>Clockify</span>
                 </span>
             </ng-template>
         </p-splitButton>
-        <button class="p-link layout-menu-button layout-topbar-button">
+
+        <button class="p-link layout-menu-button layout-topbar-button" (click)="menuTuerca.toggle($event)">
             <i class="pi pi-cog" style="font-size: 2rem"> </i>
         </button>
+
+        <p-tieredMenu #menuTuerca [model]="opcionesTuerca" [popup]="true" appendTo="body"></p-tieredMenu>
     </div>
 
     <div class="right-section" style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
@@ -28,17 +33,21 @@
             <div class="flex align-items-center justify-content-center w-5rem h-5rem border-circle surface-200 ">
                 <i class="pi pi-user text-5xl"></i>
             </div>
-            <div>
-                <div class="text-2xl font-medium">{{nombre}}</div>
+            
+            <div class="mt-3">
+                <div class="text-2xl font-medium text-center">{{nombre}}</div>
             </div>
         </div>
+
         <div class="border-top-1 surface-border my-2">
             <p-button severity="info" text="true" label="Mi cuenta" (click)="micuenta()"
                 styleClass="w-full border-round-lg">
             </p-button>
         </div>
+
         <p-button severity="danger" label="Cerrar Sesión" icon="pi pi-sign-out" (click)="cerrarSesion()"
                 styleClass="w-full border-round-lg">
         </p-button>
     </p-overlayPanel>
+
 </div>

@@ -1,0 +1,72 @@
+<div class="card p-4">
+    <h1 class="text-3xl font-normal mb-4" style="color: #444;">Configuración del espacio de trabajo</h1>
+
+    <p-tabView>
+        <p-tabPanel header="GENERAL">
+            <div class="p-3">
+                <section class="mb-5">
+                    <h3 class="text-lg font-bold mb-1">Organizar el tiempo por</h3>
+                    <p class="text-500 mb-3" style="font-size: 0.9rem;">Elige cómo quieres agrupar el tiempo y establece las condiciones de uso.</p>
+                    <div class="flex flex-column gap-2 md:w-20rem">
+                        <p-dropdown [options]="opcionesJerarquia" placeholder="Cliente" class="w-full"></p-dropdown>
+                        <p-dropdown [options]="opcionesJerarquia" placeholder="Proyecto" class="w-full"></p-dropdown>
+                        <p-dropdown [options]="opcionesJerarquia" placeholder="Tarea" class="w-full"></p-dropdown>
+                    </div>
+                </section>
+
+                <hr class="border-300 my-4">
+
+                <section class="mb-5">
+                    <h3 class="text-lg font-bold mb-1">Formato de duración</h3>
+                    <p class="text-500 mb-3" style="font-size: 0.9rem;">Mostrar la hora en formato de reloj (con o sin segundos).</p>
+                    <p-dropdown [options]="formatosHora" [(ngModel)]="formatoSeleccionado" class="md:w-20rem block"></p-dropdown>
+                </section>
+
+                <hr class="border-300 my-4">
+
+                <section class="mb-5 bg-gray-50 p-3 border-round">
+                    <h3 class="text-lg font-bold mb-1">Proyecto y Tarea favoritos</h3>
+                    <p class="text-500 mb-3" style="font-size: 0.85rem;">Permite que las personas marquen sus más utilizados para que aparezcan arriba.</p>
+                    <div class="flex align-items-center gap-2">
+                        <p-inputSwitch [(ngModel)]="favoritosActivo"></p-inputSwitch>
+                        <span class="text-700">Activar Proyecto y Tarea favoritos</span>
+                    </div>
+                </section>
+            </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="PERMISOS">
+            <div class="p-3">
+                <section class="mb-5">
+                    <h3 class="text-lg font-bold mb-1">Quién puede crear Proyectos y Clientes</h3>
+                    <p class="text-500 mb-3" style="font-size: 0.85rem;">Permite que las personas creen y administren nuevos registros.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex align-items-center gap-2">
+                            <p-radioButton name="proyectos" value="admin" [(ngModel)]="crearProyectos"></p-radioButton>
+                            <label>Administradores</label>
+                        </div>
+                        <div class="flex align-items-center gap-2">
+                            <p-radioButton name="proyectos" value="gerente" [(ngModel)]="crearProyectos"></p-radioButton>
+                            <label>Administradores y gerentes</label>
+                        </div>
+                        <div class="flex align-items-center gap-2">
+                            <p-radioButton name="proyectos" value="todos" [(ngModel)]="crearProyectos"></p-radioButton>
+                            <label>Cualquiera</label>
+                        </div>
+                    </div>
+                </section>
+
+                <hr class="border-300 my-4">
+
+                <section class="mb-5">
+                    <h3 class="text-lg font-bold mb-1" style="color: #888;">Temporizador forzado</h3>
+                    <p class="text-500 mb-3" style="font-size: 0.85rem;">Evita que los usuarios añadan tiempo manualmente.</p>
+                    <div class="flex align-items-center gap-2">
+                        <p-inputSwitch [(ngModel)]="temporizadorForzado"></p-inputSwitch>
+                        <span class="text-500 italic">Deshabilitar añadir y editar el tiempo manualmente</span>
+                    </div>
+                </section>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</div>

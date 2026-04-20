@@ -13,6 +13,7 @@ import { EquipoComponent } from './demo/components/equipo/equipo.component';
 import { CalendarioComponent } from './demo/components/calendario/calendario.component';
 import { InformesComponent } from './demo/components/informes/informes.component';
 import { MicuentaComponent } from './demo/components/micuenta/micuenta.component';
+import { ConfiguracionEspaciosComponent } from './demo/components/configuracion-espacios/configuracion-espacios.component';
 
 @NgModule({
     imports: [
@@ -41,7 +42,9 @@ import { MicuentaComponent } from './demo/components/micuenta/micuenta.component
                     { path: 'panel', component: PanelComponent },
                     { path: 'clientes', component: ClientesComponent },
                     { path: 'etiquetas', component: EtiquetasComponent },
-                    { path: 'micuenta', component: MicuentaComponent}
+                    { path: 'micuenta', component: MicuentaComponent},
+                    { path: 'configuracion-espacios', component: ConfiguracionEspaciosComponent },
+                    
                 ]
             },
 
