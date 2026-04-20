@@ -1,4 +1,4 @@
-/* Estilos existentes que no se tocan */
+/* --- Estilos Base y Layout --- */
 :host {
   display: block;
   position: relative;
@@ -8,13 +8,15 @@
 }
 
 .equipo-pagina {
-  margin: 0 80px 0 80px;
+  /* He ajustado el margen lateral a porcentajes para evitar que "empuje" 
+     la tabla hacia afuera en pantallas no tan grandes */
+  margin: 0 4%; 
   transition: margin 0.3s ease;
 }
 
 @media (max-width: 1024px) {
   .equipo-pagina {
-    margin: 0 25px 0 80px;
+    margin: 0 20px;
   }
 }
 
@@ -30,8 +32,59 @@
   box-shadow: 0 1px 4px rgba(0,0,0,.08);
   padding: 1.25rem;
   min-height: 300px;
+  overflow: hidden; /* CRUCIAL: No permite que hijos salgan del panel */
 }
 
+/* --- Contenedores de Tabla y Cards --- */
+.equipo-contenido {
+  width: 100%;
+}
+
+.tabla {
+  display: block;
+  width: 100%;
+  min-height: 430px;
+  /* Eliminamos el height fijo para que no corte contenido o lo forzamos 
+     a comportarse bien con el flex interno */
+}
+
+.contenedor-tabla {
+  width: 100%;
+  overflow-x: auto; /* Habilita scroll horizontal si la tabla es muy ancha */
+  background: white;
+}
+
+/* --- Ajustes específicos de PrimeNG (Deep) --- */
+:host ::v-deep .p-card {
+  box-shadow: none;
+  border: 1px solid #f1f5f9;
+}
+
+:host ::v-deep .p-card-body {
+  padding: 0;
+}
+
+:host ::v-deep .p-datatable {
+  width: 100%;
+  table-layout: auto; /* Permite que las columnas se ajusten al contenido */
+}
+
+:host ::v-deep .cabecera-gris th {
+  background-color: #f1f5f9 !important;
+  color: #64748b !important;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none !important;
+  padding: 1rem;
+}
+
+:host ::v-deep .p-datatable .p-datatable-tbody > tr > td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  white-space: nowrap; /* Evita que el texto rompa en mil líneas */
+}
+
+/* --- Gestión de Miembros en Celdas (Chips) --- */
 .miembros-cell {
   position: relative;
   max-width: 280px;
@@ -73,7 +126,7 @@
   display: flex;
   gap: 6px;
   overflow-x: auto;
-  padding: 0;
+  padding: 4px 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
   align-items: center;
@@ -88,15 +141,70 @@
   white-space: nowrap;
   padding: 3px 10px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   flex-shrink: 0;
-  line-height: 1;        /* evita que el line-height infle la altura */
-  height: 12px;  
   background-color: #e3f2fd;
   color: #0277bd;
 }
 
+/* --- Barra de Herramientas e Inputs --- */
+.barra-herramientas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.busqueda-filtros {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.grupo-input {
+  display: flex;
+  max-width: 400px;
+  width: 100%;
+}
+
+.input-personalizado2 {
+  flex: 1;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+/* --- Botones --- */
+.boton-personalizado {
+  background-color: #2196F3 !important;
+  border-radius: 4px !important;
+  border: none;
+  color: white !important;
+  font-weight: bold;
+  height: 40px;
+  padding: 0 1.5rem;
+  transition: background 0.2s;
+}
+
+.boton-personalizado2 {
+  background-color: #2196F3 !important;
+  border-radius: 4px !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border: none;
+  color: white !important;
+  font-weight: bold;
+  height: 40px;
+  padding: 0 1.5rem;
+}
+
+.boton-personalizado:hover, .boton-personalizado2:hover {
+  background-color: #0d89ec !important;
+}
+
+/* --- Estado Vacío --- */
 .contenedor-vacio {
   display: flex;
   flex-direction: column;
@@ -113,78 +221,10 @@
   margin-bottom: 0.5rem;
 }
 
-.subtitulo {
-  color: #64748b;
-  font-size: 1rem;
-  margin-bottom: 2rem;
-}
-
-
-:host ::v-deep .p-card-body {
-  padding: 0;
-}
-
-.barra-herramientas {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.busqueda-filtros {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.input-busqueda {
-  width: 200px;
-}
-
-.grupo-input {
-  display: flex;
-  max-width: 400px;
-}
-
-/* Estilos para la Tabla */
-.contenedor-tabla {
-  width: 100%;
-}
-
-.tabla{
-  display: block;
-  height: 430px;
-}
-
-:host ::v-deep .cabecera-gris th {
-  background-color: #f1f5f9 !important;
-  color: #64748b !important;
-  font-size: 0.85rem;
-  font-weight: 600;
-  border: none !important;
-  padding: 1rem;
-}
-
-:host ::v-deep .p-datatable .p-datatable-tbody > tr > td {
-  padding: 1rem;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-
+/* --- Responsividad Mobile --- */
 @media (max-width: 768px) {
-
   .equipo-panel {
     padding: 1rem;
-  }
-
-  .titulo-principal {
-    font-size: 1.4rem;
-  }
-
-  .subtitulo {
-    font-size: 0.9rem;
   }
 
   .barra-herramientas {
@@ -195,64 +235,18 @@
   .busqueda-filtros {
     width: 100%;
     flex-direction: column;
-    align-items: stretch;
   }
 
-  .input-busqueda {
-    width: 100%;
-  }
-
-  .grupo-input,
-  .grupo-input-compacto {
-    flex-direction: column;
+  .grupo-input {
     max-width: 100%;
-    gap: 0.5rem;
   }
 
+  /* Asegura que en móviles la tabla sea navegable */
   .contenedor-tabla {
     overflow-x: auto;
   }
 
   :host ::v-deep .p-datatable {
-    min-width: 600px;
+    min-width: 700px; /* Fuerza el scroll horizontal en móviles */
   }
-}
-
-.boton-personalizado {
-  background-color: #2196F3 !important;
-  border-radius: 4px !important;
-  /* El lado izquierdo debe ser recto cuando está pegado al input */
-  border: none;
-  color: white !important;
-  font-weight: bold;
-  font-size: 0.9rem;
-  padding: 0 1.5rem;
-  height: 40px;
-  /* Misma altura que el input */
-  transition: background 0.2s;
-  width: auto;
-}
-
-.boton-personalizado:hover {
-  background-color: #0d89ec !important;
-}
-
-.boton-personalizado2 {
-  background-color: #2196F3 !important;
-  border-radius: 4px !important;
-  /* El lado izquierdo debe ser recto cuando está pegado al input */
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-  border: none;
-  color: white !important;
-  font-weight: bold;
-  font-size: 0.9rem;
-  padding: 0 1.5rem;
-  height: 40px;
-  transition: background 0.2s;
-  width: auto;
-}
-
-.boton-personalizado2:hover {
-  background-color: #0d89ec !important;
 }
