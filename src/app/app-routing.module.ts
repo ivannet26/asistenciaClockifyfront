@@ -14,6 +14,7 @@ import { CalendarioComponent } from './demo/components/calendario/calendario.com
 import { InformesComponent } from './demo/components/informes/informes.component';
 import { MicuentaComponent } from './demo/components/micuenta/micuenta.component';
 import { ConfiguracionEspaciosComponent } from './demo/components/configuracion-espacios/configuracion-espacios.component';
+import { CerrarAsistenciaComponent } from './demo/components/cerrar-asistencia/cerrar-asistencia.component';
 
 @NgModule({
     imports: [
@@ -44,6 +45,7 @@ import { ConfiguracionEspaciosComponent } from './demo/components/configuracion-
                     { path: 'etiquetas', component: EtiquetasComponent },
                     { path: 'micuenta', component: MicuentaComponent},
                     { path: 'configuracion-espacios', component: ConfiguracionEspaciosComponent },
+                    {path: 'cerrar-asistencia',component:CerrarAsistenciaComponent},
                     
                 ]
             },
