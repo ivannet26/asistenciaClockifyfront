@@ -53,7 +53,8 @@
 
                 <div class="botones-control flex align-items-center gap-1">
                     <button pButton [label]="timerService.corriendo() ? 'DETENER' : 'INICIO'"
-                        [ngClass]="timerService.corriendo() ? 'p-button-danger' : 'p-button-info'" (click)="toggleTimer()">
+                        [ngClass]="timerService.corriendo() ? 'p-button-danger' : 'p-button-info'" 
+                        (click)="toggleTimer()">
                     </button>
 
                     <button pButton icon="pi pi-ellipsis-v" class="p-button-text" (click)="menuModos.toggle($event)">
@@ -128,7 +129,7 @@
                 </div>
                 <h2 class="text-900 font-bold mb-2">¡Empecemos a rastrear!</h2>
                 <p class="text-600 line-height-3 mb-5">
-                    Bienvenido aqui podras inicializar tu rastreador donde podras contabilizar tu tiempo invertido en un proyecto
+                    Bienvenida Alejandra. Aquí podrás inicializar tu rastreador para contabilizar tu tiempo invertido en tus proyectos.
                 </p>
             </div>
         </div>

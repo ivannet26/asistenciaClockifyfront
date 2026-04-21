@@ -7,8 +7,6 @@ export class TimerService {
   
   corriendo = signal<boolean>(false);
   tiempoTranscurrido = signal<string>('00:00:00');
-  
-  // ESTAS SON LAS LÍNEAS QUE FALTABAN:
   tareaActual = signal<string>('');
   proyectoSeleccionado = signal<any>(null);
 
@@ -16,22 +14,16 @@ export class TimerService {
   private intervalo: any = null;
 
   constructor(private titleService: Title) {
-    this.revivirTimer();
+    
   }
 
-  private revivirTimer() {
-    const guardado = localStorage.getItem(this.STORAGE_KEY);
-    if (guardado) {
-      const data = JSON.parse(guardado);
-      this.inicioTiempo = new Date(data.inicio);
-      
-      // Recuperamos también la descripción y el proyecto
-      this.tareaActual.set(data.descripcion || '');
-      this.proyectoSeleccionado.set(data.proyecto || null);
-      
-      this.corriendo.set(true);
-      this.iniciarIntervalo();
-    }
+  // Método para que el componente le ordene revivir
+  remanecer(data: any) {
+    this.inicioTiempo = new Date(data.inicio);
+    this.tareaActual.set(data.descripcion || '');
+    this.proyectoSeleccionado.set(data.proyecto || null);
+    this.corriendo.set(true);
+    this.iniciarIntervalo();
   }
 
   start(inicio: Date, descripcion: string, proyecto: any, facturable: boolean, etiquetas: string[]) {
@@ -39,35 +31,41 @@ export class TimerService {
     this.tareaActual.set(descripcion);
     this.proyectoSeleccionado.set(proyecto);
     this.corriendo.set(true);
-    
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
-      inicio: this.inicioTiempo,
-      descripcion,
-      proyecto,
-      facturable,
-      etiquetas
-    }));
-
+    this.guardarProgreso(facturable, etiquetas);
     this.iniciarIntervalo();
   }
 
   iniciarIntervalo() {
     if (this.intervalo) clearInterval(this.intervalo);
-    
     this.intervalo = setInterval(() => {
       if (!this.inicioTiempo) return;
-      const diffMs = new Date().getTime() - this.inicioTiempo.getTime();
+      const ahora = new Date();
+      const diffMs = ahora.getTime() - this.inicioTiempo.getTime();
       const tiempoStr = this.formatear(diffMs);
       this.tiempoTranscurrido.set(tiempoStr);
       this.titleService.setTitle(`${tiempoStr} • Clockify`);
+      this.guardarProgreso();
     }, 1000);
+  }
+
+  private guardarProgreso(facturable?: boolean, etiquetas?: string[]) {
+    const actual = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}');
+    const backup = {
+      inicio: this.inicioTiempo,
+      fin: new Date().getTime(),
+      descripcion: this.tareaActual(),
+      proyecto: this.proyectoSeleccionado(),
+      facturable: facturable !== undefined ? facturable : actual.facturable,
+      etiquetas: etiquetas || actual.etiquetas || []
+    };
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(backup));
   }
 
   stop() {
     if (this.intervalo) clearInterval(this.intervalo);
     this.corriendo.set(false);
     this.tiempoTranscurrido.set('00:00:00');
-    this.tareaActual.set(''); // Limpiamos al detener
+    this.tareaActual.set('');
     this.proyectoSeleccionado.set(null);
     this.titleService.setTitle('Clockify');
     localStorage.removeItem(this.STORAGE_KEY);
