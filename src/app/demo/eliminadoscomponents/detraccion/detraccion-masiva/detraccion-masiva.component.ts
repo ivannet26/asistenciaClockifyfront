@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { DetraccionMasiva} from '../../../model/DetraccionMasiva';
-import { DetraccionService } from '../../../service/detraccion.service';
+//import { DetraccionMasiva} from '../../../model/DetraccionMasiva';
+//import { DetraccionService } from '../../../service/detraccion.service';
 import { ToastModule } from 'primeng/toast';
 import { TableModule } from 'primeng/table';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule,Validators } from '@angular/forms';
@@ -17,12 +17,12 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CheckboxModule } from 'primeng/checkbox';
-import { verMensajeInformativo } from '../../utilities/funciones_utilitarias';
+//import { verMensajeInformativo } from '../../utilities/funciones_utilitarias';
 import { ConfirmarPagoComponent } from '../../presupuesto/confirmar-pago/confirmar-pago.component';
 import { DialogModule } from 'primeng/dialog';
-import { insert_presupuesto } from '../../../model/presupuesto';
-import { PresupuestoService } from 'src/app/demo/service/presupuesto.service';
-import { ConfigService } from 'src/app/demo/service/config.service';
+//import { insert_presupuesto } from '../../../model/presupuesto';
+//import { PresupuestoService } from 'src/app/demo/service/presupuesto.service';
+//import { ConfigService } from 'src/app/demo/service/appajustes.service';
 import { HttpResponse } from '@angular/common/http';
 import { TagModule } from 'primeng/tag';
 @Component({
@@ -39,25 +39,25 @@ import { TagModule } from 'primeng/tag';
   providers:[MessageService, ConfirmationService,DatePipe]
 })
 export class DetraccionMasivaComponent implements OnInit {
-detraccionMasivaList: DetraccionMasiva[] = [];
+//detraccionMasivaList: DetraccionMasiva[] = [];
 rowsPerPage : number = 10;
  confirmarpagocomponente: ConfirmarPagoComponent;
  verConfirmarPago: boolean = false;
  selectedPagoNumero: string = '';
- presupuestoCabDetraccion: insert_presupuesto;
+ //presupuestoCabDetraccion: insert_presupuesto;
  selectedNumeroLote: string  = '';
  anioPeriodo: string = '';
  mesPeriodo:string = '';
 loading: boolean = false;
-selectedOption: DetraccionMasiva[] = []; // row selection multiple
+//selectedOption: DetraccionMasiva[] = []; // row selection multiple
 //item para breadcrumb
 items: any[] = [];
 
-  constructor(private detraccionMasivaService: DetraccionService,
+  constructor(//private detraccionMasivaService: DetraccionService,
     private bs:BreadcrumbService, 
     private globalService:GlobalService,
     private router:Router, private messageService:MessageService, 
-    private presupuestoService: PresupuestoService,
+    //private presupuestoService: PresupuestoService,
     private datePipe:DatePipe,
     private confirmationService:ConfirmationService
   )
@@ -79,14 +79,14 @@ items: any[] = [];
           this.anioPeriodo = date.getFullYear().toString();
           this.mesPeriodo = (date.getMonth()+1).toString().padStart(2,'0');
           
-          this.cargar(this.anioPeriodo, this.mesPeriodo);
+          //this.cargar(this.anioPeriodo, this.mesPeriodo);
         }
     });
     
     
 
   }
-
+/*
   cargar(anio:string, mes:string):void{
     this.loading = true;
     const codigoEmpresa: string = this.globalService.getCodigoEmpresa();
@@ -276,4 +276,5 @@ onCloseModal() {
              }
 
 
+}*/
 }

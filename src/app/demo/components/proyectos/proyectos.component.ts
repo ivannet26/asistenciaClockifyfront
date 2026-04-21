@@ -20,6 +20,9 @@ import { CardModule } from "primeng/card";
 import { MessageService } from 'primeng/api';
 import { ToastModule } from "primeng/toast";
 
+import { PermissionService } from '../../service/permision.service';
+import { Observable } from 'rxjs';
+
 @Component({
   selector: 'app-proyectos',
   standalone: true,
@@ -83,18 +86,23 @@ export class ProyectosComponent implements OnInit {
     progreso: number;
   } = { nombre: '', cliente: null, publico: true, progreso: 0 };
 
-
+  canCreate$!: Observable<boolean>;
 
   constructor(
     private proyectosService: ProyectosService,
     private clientesService: ClientesService,
     private datepipe: DatePipe,
     private messageService: MessageService,
+    private permissionService: PermissionService,
   ) { }
 
   ngOnInit(): void {
     this.cargarClientes();
     this.cargarProyectos();
+    this.canCreate$ = this.permissionService.canDo('createProject');
+    this.permissionService.canDo('createProject').subscribe(v => {
+        console.log('canCreate cambió a:', v);
+    });
   }
 
   get mostrarLista(): boolean {
@@ -301,3 +309,4 @@ export class ProyectosComponent implements OnInit {
   }
 
 }
+

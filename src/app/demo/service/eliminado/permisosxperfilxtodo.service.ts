@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { ApiResponse } from '../model/api_response';
 import { perfilxpermisos, permisosxperfilxtodo } from '../model/permisosxperfilxtodo';
-import { ConfigService } from './config.service';
+import { ConfigService } from '../config.service';
 
 @Injectable({
   providedIn: 'root'

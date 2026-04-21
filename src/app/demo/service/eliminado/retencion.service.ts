@@ -5,7 +5,7 @@ import {
     Observable,
     throwError,
 } from 'rxjs';
-import { ConfigService } from './config.service';
+import { ConfigService } from '../config.service';
 import { formatDateForFilename, RespuestaAPIBase } from '../components/utilities/funciones_utilitarias';
 import { Injectable, inject } from "@angular/core";
 import { RetencionCab, RetencionDet, Retencion } from "../model/retencion";

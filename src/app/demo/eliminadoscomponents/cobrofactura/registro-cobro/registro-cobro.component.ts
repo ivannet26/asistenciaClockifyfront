@@ -13,48 +13,51 @@ import { CalendarModule } from 'primeng/calendar';
 import { InputTextModule } from 'primeng/inputtext';
 import { GlobalService } from 'src/app/demo/service/global.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ClienteconFactura, RegistroCobro } from 'src/app/demo/model/CuentaxCobrar';
+/*import { ClienteconFactura, RegistroCobro } from 'src/app/demo/model/CuentaxCobrar';
 import { mediopago_lista } from 'src/app/demo/model/presupuesto';
 import { BreadcrumbService } from 'src/app/demo/service/breadcrumb.service';
-import { ConfigService } from 'src/app/demo/service/config.service';
+import { ConfigService } from 'src/app/demo/service/appajustes.service';
 import { CobroFacturaService } from 'src/app/demo/service/cobrofactura.service';
 import { verMensajeInformativo } from '../../utilities/funciones_utilitarias';
 import { TraeRegistroCobro } from 'src/app/demo/model/CuentaxCobrar';
 import { NgIf } from '@angular/common';
 import { PresupuestoService } from 'src/app/demo/service/presupuesto.service';
 import { proveedores_lista } from 'src/app/demo/model/presupuesto';
-
+*/
 @Component({
   selector: 'app-registro-cobro',
   standalone: true,
   imports: [ConfirmDialogModule, ToastModule,
     CalendarModule,InputTextModule, DropdownModule,
   TableModule, FormsModule, ReactiveFormsModule,
-  RouterModule,BreadcrumbModule,PanelModule, NgIf],
+  RouterModule,BreadcrumbModule,PanelModule, /*NgIf*/],
   templateUrl: './registro-cobro.component.html',
   styleUrl: './registro-cobro.component.css',
   providers:[ConfirmationService, MessageService, DatePipe]
 })
 export class RegistroCobroComponent implements OnInit{
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
+  }
 
   items: any[] = [];
   prueba!: any[];
   anioFecha: string = '';
   mesFecha: string = '';
-  listaRegistroCobro: TraeRegistroCobro[] = [];
+  //listaRegistroCobro: TraeRegistroCobro[] = [];
   loading: boolean = false;
   mostrarNuevaFila: boolean = false;
   botonesDeshabilitados: boolean = false;
-  medioPagoLista: mediopago_lista[] = [];
-  selectMedioPago: string | null = null;
+  //medioPagoLista: mediopago_lista[] = [];
+  //selectMedioPago: string | null = null;
   rowsPerPage: number = 10; // Numero de filas por página
   monedaOpciones : any[] = [];
-  proveedores: proveedores_lista[];
+  //proveedores: proveedores_lista[];
   selectCliente:string | null =null;
-  listaClientes:ClienteconFactura[] =[];
-  selectedOption: proveedores_lista[] = []; // row selection multiple
+  //listaClientes:ClienteconFactura[] =[];
+  //selectedOption: proveedores_lista[] = []; // row selection multiple
 
- nuevoFormulario: RegistroCobro ={
+ /*nuevoFormulario: RegistroCobro ={
     ban03Empresa : '',
     ban03Anio: '',
     ban03Mes: '',
@@ -407,7 +410,7 @@ export class RegistroCobroComponent implements OnInit{
 
     /*let obtenerMedioPago = this.medioPagoLista.find(
         (mp: any) => mp.ban01Descripcion === registro.medioPagoDescripcion
-    );*/
+    );
     
     this.editaFormulario = {
         ban03Empresa: this.globalService.getCodigoEmpresa(),
@@ -449,5 +452,5 @@ verDetalles(registro: TraeRegistroCobro,nuevoRegistro:boolean) {
   this.selectCliente = event.value;
   // Sincroniza ambos dropdowns cuando se selecciona por RUC
   this.nuevoFormulario.ban03clienteruc = event.value;
-}
+}*/
 }

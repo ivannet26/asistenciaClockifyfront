@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { perfilxpermisos, permisosxperfilxtodo } from '../../model/permisosxperfilxtodo';
+//import { perfilxpermisos, permisosxperfilxtodo } from '../../model/permisosxperfilxtodo';
 import { GlobalService } from '../../service/global.service';
 import { ApiResponse } from '../../model/api_response';
 import { MessageService, SelectItem } from 'primeng/api';
@@ -9,16 +9,16 @@ import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { PermisosxperfilxtodoService } from '../../service/permisosxperfilxtodo.service';
+//import { PermisosxperfilxtodoService } from '../../service/permisosxperfilxtodo.service';
 import { ToastModule } from 'primeng/toast';
 import { CheckboxModule } from 'primeng/checkbox';
 import { BreadcrumbService } from '../../service/breadcrumb.service';
 import { PanelModule } from 'primeng/panel';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
-import { PermisosxPerfil } from '../../model/permisosxperfil';
+//import { PermisosxPerfil } from '../../model/permisosxperfil';
 import { DropdownModule } from 'primeng/dropdown';
 import { Router, RouterModule } from '@angular/router';
-import { ConfigService } from '../../service/config.service';
+//import { ConfigService } from '../../service/appajustes.service';
 
 @Component({
   selector: 'app-permisosxperfilxtodo',
@@ -30,16 +30,16 @@ import { ConfigService } from '../../service/config.service';
 })
 export class PermisosxperfilxtodoComponent implements OnInit {
     permisosForm: FormGroup;
-    permisos:permisosxperfilxtodo[]=[];
+    //permisos:permisosxperfilxtodo[]=[];
     loading: boolean = false;
     items:any[]=[];
-    perfiles:perfilxpermisos[] = [];
+    //perfiles:perfilxpermisos[] = [];
     selectedperfil:string = "";
     navigationData:any;
 
     constructor(
-        private configService: ConfigService,
-        private fb:FormBuilder,private ptS:PermisosxperfilxtodoService,private mS:MessageService,private bS:BreadcrumbService,private link: Router) {
+        /*private configService: ConfigService,
+        private fb:FormBuilder,private ptS:PermisosxperfilxtodoService,*/private mS:MessageService,private bS:BreadcrumbService,private link: Router) {
         const navigation=link.getCurrentNavigation();
         if(navigation?.extras?.state){
             this.navigationData=navigation.extras.state
@@ -59,26 +59,26 @@ export class PermisosxperfilxtodoComponent implements OnInit {
             this.items=bc;
         })
         this.loadPerfiles()
-        this.permisosForm = this.fb.group({
+        /*this.permisosForm = this.fb.group({
             codigoPerfil: this.navigationData.codigo,
             codModulo: this.configService.getCodigoModulo(),
         });
         this.cargarPermisos();
-
+*/
 
     }
 
     loadPerfiles(){
-        this.ptS.getPerfilesCombo().subscribe(
+        /*this.ptS.getPerfilesCombo().subscribe(
             (data:perfilxpermisos[])=>{
                 this.perfiles=data;
                 this.selectedperfil=this.navigationData.codigo;
             }
-        )
+        )*/
     }
 
 
-    onPerfilChange(event:any){
+    /*onPerfilChange(event:any){
         this.selectedperfil=event.value
         if (!this.selectedperfil) {
             // Si el perfil está vacío (cuando el botón de limpiar es presionado)
@@ -298,6 +298,6 @@ export class PermisosxperfilxtodoComponent implements OnInit {
             }
         });
     }
-
+*/
 
 }

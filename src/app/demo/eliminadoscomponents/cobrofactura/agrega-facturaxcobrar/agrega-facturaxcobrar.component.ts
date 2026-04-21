@@ -10,11 +10,11 @@ import { ButtonModule } from 'primeng/button';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { verMensajeInformativo } from 'src/app/demo/components/utilities/funciones_utilitarias';
-import { ConfigService } from 'src/app/demo/service/config.service';
+//import { ConfigService } from 'src/app/demo/service/appajustes.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { FacturaPorCobrar } from 'src/app/demo/model/CuentaxCobrar';
+/*import { FacturaPorCobrar } from 'src/app/demo/model/CuentaxCobrar';
 import { CobroFacturaService } from 'src/app/demo/service/cobrofactura.service';
-
+*/
 @Component({
   selector: 'app-agrega-facturaxcobrar',
   standalone: true,
@@ -37,9 +37,9 @@ export class AgregaFacturaxcobrarComponent implements OnInit {
   filtroFRM: FormGroup;
   items: any[] = [];
   loading: boolean = false;
-  listaFacturas: FacturaPorCobrar[] = [];
+  /*listaFacturas: FacturaPorCobrar[] = [];
   selectedItems: FacturaPorCobrar[] = [];
-
+*/
   @Input() codigoCliente: string = '';
   @Input() nombreCliente: string = '';
   @Input() cobroNro: string = '';
@@ -57,8 +57,8 @@ export class AgregaFacturaxcobrarComponent implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private datePipe: DatePipe,
-    private configService: ConfigService,
-    private cobroService: CobroFacturaService
+    /*private configService: ConfigService,
+    private cobroService: CobroFacturaService*/
   ) {
     this.filtroFRM = fb.group({
       empresa: ['', [Validators.required]],
@@ -73,8 +73,8 @@ export class AgregaFacturaxcobrarComponent implements OnInit {
   }
 
   cargarAyudaFacturas() {
-    let codempresa = this.empresa || this.globalService.getCodigoEmpresa();
-
+    /*let codempresa = this.empresa || this.globalService.getCodigoEmpresa();
+*/
     if (!this.codigoCliente) {
       verMensajeInformativo(
         this.messageService,
@@ -87,7 +87,7 @@ export class AgregaFacturaxcobrarComponent implements OnInit {
 
     this.loading = true;
 
-    this.cobroService.getListaAyudaFacturaPorCobrar(
+    /*this.cobroService.getListaAyudaFacturaPorCobrar(
       codempresa,
       'sara',
       this.codigoCliente
@@ -173,5 +173,5 @@ export class AgregaFacturaxcobrarComponent implements OnInit {
 
   formatearMoneda(valor: number): string {
     return valor.toFixed(2);
-  }
-}
+  }*/
+}}

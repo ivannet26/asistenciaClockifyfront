@@ -4,8 +4,8 @@ import { Router, RouterModule } from '@angular/router';
 import {ConfirmationService, MessageService, PrimeNGConfig} from 'primeng/api';
 import { BreadcrumbService } from 'src/app/demo/service/breadcrumb.service';
 import { GlobalService } from 'src/app/demo/service/global.service';
-import { PresupuestoService } from 'src/app/demo/service/presupuesto.service';
-import {agregar_Pago, insert_detalle, proveedores_lista,} from '../../../model/presupuesto';
+//import { PresupuestoService } from 'src/app/demo/service/presupuesto.service';
+//import {agregar_Pago, insert_detalle, proveedores_lista,} from '../../../model/presupuesto';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ToastModule } from 'primeng/toast';
 import { PanelModule } from 'primeng/panel';
@@ -18,11 +18,11 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import { calendario_traduccion } from 'src/app/shared/Calendarios';
 import { InputTextModule } from 'primeng/inputtext';
 import { verMensajeInformativo } from 'src/app/demo/components/utilities/funciones_utilitarias';
-import { ConfigService } from 'src/app/demo/service/config.service';
+//import { ConfigService } from 'src/app/demo/service/appajustes.service';
 import { DialogModule } from 'primeng/dialog';
-import { DetraccionService } from 'src/app/demo/service/detraccion.service';
-import { DetraccionIndividualDocPen } from 'src/app/demo/model/DetraccionIndividual';
-import { DocPendienteDetra } from 'src/app/demo/model/DetraccionIndividual';
+//import { DetraccionService } from 'src/app/demo/service/detraccion.service';
+//import { DetraccionIndividualDocPen } from 'src/app/demo/model/DetraccionIndividual';
+//import { DocPendienteDetra } from 'src/app/demo/model/DetraccionIndividual';
 @Component({
   selector: 'app-detraccion-individual-ayuda',
   standalone: true,
@@ -46,15 +46,18 @@ import { DocPendienteDetra } from 'src/app/demo/model/DetraccionIndividual';
   providers: [ConfirmationService, MessageService, DatePipe],
 })
 export class DetraccionIndividualAyudaComponent implements OnInit {
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
+  }
 
   loading: boolean = false;
-  proveedores: proveedores_lista[] =[];
-selectedItems:agregar_Pago[] = [];
-ayudapago: agregar_Pago[] = [];
+  //proveedores: proveedores_lista[] =[];
+//selectedItems:agregar_Pago[] = [];
+//ayudapago: agregar_Pago[] = [];
 selectedPagoNumero: string = '';
 selectedNumeroLote:string = '';
 verConfirmarPago: boolean = false;
-listaDocumentoPendiente : DetraccionIndividualDocPen[] = [];
+/*listaDocumentoPendiente : DetraccionIndividualDocPen[] = [];
 listaDocendientedtra: DocPendienteDetra[] =[];
 seleccionDetraIndividual:DetraccionIndividualDocPen = null;
 selectedOption: proveedores_lista[] = []; // row selection multiple
@@ -69,10 +72,10 @@ private fb:FormBuilder){
       ruc: [''],
       nrodoc: ['']
     });
-  }
+  }*/
 //cargar datos en dura:
   cargarDatosTablas(){
-    let registro1  : agregar_Pago ={
+    /*let registro1  : agregar_Pago ={
       clave:'xxx',
       ruc:'',
       razonSocial:'',
@@ -93,8 +96,8 @@ private fb:FormBuilder){
   }
   onProveedorChallenge(event:any){
 
-  }
-  cargarProvedores(){
+  }*/
+  /*cargarProvedores(){
      const cod_empresa = this.globalService.getCodigoEmpresa();
         this.presupuestoService
             .obtenerProveedores(cod_empresa)
@@ -184,5 +187,6 @@ onCloseModal() {
         // });
     }
 
-  
+  */
+}
 }

@@ -4,8 +4,8 @@ import { Router, RouterModule } from '@angular/router';
 import {ConfirmationService, MessageService, PrimeNGConfig} from 'primeng/api';
 import { BreadcrumbService } from 'src/app/demo/service/breadcrumb.service';
 import { GlobalService } from 'src/app/demo/service/global.service';
-import { PresupuestoService } from 'src/app/demo/service/presupuesto.service';
-import {agregar_Pago, insert_detalle, proveedores_lista,} from '../../../model/presupuesto';
+//import { PresupuestoService } from 'src/app/demo/service/presupuesto.service';
+//import {agregar_Pago, insert_detalle, proveedores_lista,} from '../../../model/presupuesto';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ToastModule } from 'primeng/toast';
 import { PanelModule } from 'primeng/panel';
@@ -18,7 +18,7 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import { calendario_traduccion } from 'src/app/shared/Calendarios';
 import { InputTextModule } from 'primeng/inputtext';
 import { verMensajeInformativo } from 'src/app/demo/components/utilities/funciones_utilitarias';
-import { ConfigService } from 'src/app/demo/service/config.service';
+//import { ConfigService } from 'src/app/demo/service/appajustes.service';
 
 @Component({
     selector: 'app-agregar-pago',
@@ -46,10 +46,10 @@ export class AgregarPagoComponent implements OnInit {
     filtroFRM: FormGroup;
     items: any[] = [];
     loading: boolean = false;
-    ayudapago: agregar_Pago[] = [];
+    /*ayudapago: agregar_Pago[] = [];
     proveedores: proveedores_lista[] = [];
     selectedItems: agregar_Pago[] = [];
-    searchedByDocNumber: boolean = false; // Nueva propiedad
+    searchedByDocNumber: boolean = false; // Nueva propiedad*/
     //modal
     @Input() numeropresupuesto: string;
     @Input() fechapresupuesto: string;
@@ -68,10 +68,10 @@ export class AgregarPagoComponent implements OnInit {
         private bS: BreadcrumbService,
         private confirmationService: ConfirmationService,
         private router: Router,
-        private presupuestoService: PresupuestoService,
+        //private presupuestoService: PresupuestoService,
         private messageService: MessageService,
         private datePipe: DatePipe,
-        private configService: ConfigService
+        //private configService: ConfigService
     ) {
         /*const navigation = this.router.getCurrentNavigation();
         if (navigation?.extras.state) {
@@ -88,8 +88,11 @@ export class AgregarPagoComponent implements OnInit {
             nrodoc: ['', [Validators.required]],
         });
     }
-
     ngOnInit(): void {
+        throw new Error('Method not implemented.');
+    }
+
+    /*ngOnInit(): void {
         this.filtroFRM.reset();
         // console.log('evento on init agregarpago');
         // console.log(this.numeropresupuesto);
@@ -116,15 +119,15 @@ export class AgregarPagoComponent implements OnInit {
     public resetForm(): void {
         this.filtroFRM.reset();
         this.filtroFRM.setValue({
-            empresa: this.globalService.getCodigoEmpresa(),
+            //empresa: this.globalService.getCodigoEmpresa(),
             ruc: '',
             nrodoc: '',
         });
         this.cargarproveedores();
-        this.selectedItems = [];
+        //this.selectedItems = [];
     }
 
-    cargarayudaparaagregarpago(): void {
+    /*cargarayudaparaagregarpago(): void {
         this.loading = true;
         const nroDoc = this.filtroFRM.get('nrodoc').value ?? '';
         const ruc = this.filtroFRM.get('ruc').value ?? '';
@@ -160,9 +163,9 @@ export class AgregarPagoComponent implements OnInit {
                     verMensajeInformativo(this.messageService, 'error', 'Error', `Error al cargar los registros ${error.message}`);
                 },
             });
-    }
+    }*/
 
-    cargarproveedores() {
+    /*cargarproveedores() {
         const cod_empresa = this.globalService.getCodigoEmpresa();
         this.presupuestoService
             .obtenerProveedores(cod_empresa)
@@ -276,7 +279,7 @@ export class AgregarPagoComponent implements OnInit {
                             Fecha: formattedDate,
                         }
                     }*/
-
+/*
                     //this.router.navigate(['Home/detalle-presupuesto'], navigationExtras)
                     this.selectedItems = [];
                     this.ayudapago = [];
@@ -301,8 +304,7 @@ export class AgregarPagoComponent implements OnInit {
         }
         this.selectedItems = [];
         this.router.navigate(['Home/detalle-presupuesto'], navigationExtras)*/
-        this.selectedItems = []; // Limpia la selección de elementos
-        this.ayudapago = [];
+        //this.selectedItems = []; // Limpia la selección de elementos
+        //this.ayudapago = [];
         //this.onClose.emit();
     }
-}

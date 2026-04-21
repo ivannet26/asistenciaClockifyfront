@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ConfigService } from './config.service';
+import { ConfigService } from '../config.service';
 import { ApiResponse } from '../model/api_response';
 import { PermisosxPerfil } from '../model/permisosxperfil';
 

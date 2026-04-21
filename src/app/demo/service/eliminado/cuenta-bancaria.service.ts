@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map, catchError, throwError } from 'rxjs';
 import { Cuenta_Bancaria } from '../model/Cuenta_Bancaria';
-import { ConfigService } from './config.service';
+import { ConfigService } from '../config.service';
 
 @Injectable({
   providedIn: 'root'

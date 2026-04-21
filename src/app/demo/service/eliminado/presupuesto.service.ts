@@ -2,7 +2,7 @@ import { Injectable , inject} from '@angular/core';
 import { agregar_Pago, AnularComprobante, cabeceraPresupuesto, ComprobanteUpdateParams, Detallepresupuesto, insert_detalle, insert_presupuesto, proveedores_lista, VoucherContableCabecera, VoucherContableDetalle } from '../model/presupuesto';
 import { HttpClient, HttpParams, HttpRequest, HttpResponse } from '@angular/common/http';
 import { delay, map, Observable, of } from 'rxjs';
-import { ConfigService } from './config.service';
+import { ConfigService } from '../config.service';
 import { RespuestaAPIBase } from '../components/utilities/funciones_utilitarias';
 import { MedioPago } from '../model/presupuesto';
 import { InterbankArchivoCab, InterbankArchivoDet } from '../model/InterbankArchivo';

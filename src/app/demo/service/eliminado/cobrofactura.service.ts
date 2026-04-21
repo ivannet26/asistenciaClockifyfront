@@ -12,7 +12,7 @@ import {
     takeWhile,
     delay
 } from 'rxjs';
-import { ConfigService } from './config.service';
+import { ConfigService } from '../config.service';
 import { RespuestaAPIBase } from '../components/utilities/funciones_utilitarias';
 import { 
     RegistroCobro, 

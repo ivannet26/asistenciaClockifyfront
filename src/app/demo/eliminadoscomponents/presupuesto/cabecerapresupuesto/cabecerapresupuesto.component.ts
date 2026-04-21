@@ -7,10 +7,10 @@ import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { BreadcrumbService } from 'src/app/demo/service/breadcrumb.service';
-import { cabeceraPresupuesto, insert_presupuesto, mediopago_lista } from '../../../model/presupuesto';
+//import { cabeceraPresupuesto, insert_presupuesto, mediopago_lista } from '../../../model/presupuesto';
 import { ButtonModule } from 'primeng/button';
 import { Router, RouterModule } from '@angular/router';
-import { PresupuestoService } from 'src/app/demo/service/presupuesto.service';
+//import { PresupuestoService } from 'src/app/demo/service/presupuesto.service';
 import { GlobalService } from 'src/app/demo/service/global.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
@@ -22,7 +22,7 @@ import { DialogModule } from 'primeng/dialog';
 import { FileUploadModule } from 'primeng/fileupload';
 import { verMensajeInformativo } from 'src/app/demo/components/utilities/funciones_utilitarias';
 import { HttpResponse } from '@angular/common/http';
-import { ConfigService } from 'src/app/demo/service/config.service';
+//import { ConfigService } from 'src/app/demo/service/appajustes.service';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { MenuItem } from 'primeng/api';
 
@@ -44,7 +44,7 @@ import { MenuItem } from 'primeng/api';
         InputNumberModule,
         DropdownModule,
         ReactiveFormsModule,
-        ConfirmarPagoComponent,
+        //ConfirmarPagoComponent,
         DialogModule,
         FileUploadModule,
         ContextMenuModule
@@ -61,25 +61,25 @@ export class CabecerapresupuestoComponent implements OnInit {
     prueba!: any[];
     anioFecha: string = '';
     mesFecha: string = '';
-    presupuesto: cabeceraPresupuesto[] = [];
+    //presupuesto: cabeceraPresupuesto[] = [];
     loading: boolean = false;
     mostrarNuevaFila: boolean = false;
     botonesDeshabilitados: boolean = false;
-    medioPagoLista: mediopago_lista[] = [];
+    //medioPagoLista: mediopago_lista[] = [];
     selectMedioPago: string | null = null;
     verConfirmarPago: boolean = false;
     rowsPerPage: number = 10; // Numero de filas por página
     selectedOption: any | null = null; // row selection
     menuItems:MenuItem[] = []; // menu
     
-    nuevoPresupuesto: insert_presupuesto = {
+    /*nuevoPresupuesto: insert_presupuesto = {
         ban01Empresa: '',
         ban01Numero: '',
         ban01Anio: '',
         ban01Mes: '',
         ban01Descripcion: '',
         ban01Fecha: '',
-        ban01Estado: this.configService.getEstado(),
+        //ban01Estado: this.configService.getEstado(),
         ban01Usuario: '',
         ban01Pc: '',
         ban01FechaRegistro: '',
@@ -94,12 +94,12 @@ export class CabecerapresupuestoComponent implements OnInit {
         ban01Mes: '',
         ban01Descripcion: '',
         ban01Fecha: '',
-        ban01Estado: this.configService.getEstado(),
+        //ban01Estado: this.configService.getEstado(),
         ban01Usuario: '',
         ban01Pc: '',
         ban01FechaRegistro: '',
         ban01mediopago: '',
-    };
+    };*/
     //para pasar el pagonro
     selectedPagoNumero: string = '';
 
@@ -108,16 +108,16 @@ export class CabecerapresupuestoComponent implements OnInit {
         private bS: BreadcrumbService,
         private confirmationService: ConfirmationService,
         private router: Router,
-        private presupuestoService: PresupuestoService,
+        //private presupuestoService: PresupuestoService,
         private messageService: MessageService,
         private datePipe: DatePipe,
-        private configService: ConfigService
+        //private configService: ConfigService
     ) {}
 
     cargarMedioPago(): void {
-        const codempresa: string = this.globalService.getCodigoEmpresa();
+        //const codempresa: string = this.globalService.getCodigoEmpresa();
         this.loading = true;
-        this.presupuestoService.obtenerMedioPago(codempresa).subscribe({
+        /*this.presupuestoService.obtenerMedioPago(codempresa).subscribe({
             next: (data) => {
                 
                 this.medioPagoLista = data;
@@ -141,7 +141,7 @@ export class CabecerapresupuestoComponent implements OnInit {
                     `Error al cargar presupuesto: ${error.message}`
                 );
             },
-        });
+        });*/
     }
 
     onMedioChange(event: any) {
@@ -157,7 +157,7 @@ export class CabecerapresupuestoComponent implements OnInit {
             this.items = bc;
         });
 
-        this.globalService.selectedDate$.subscribe((date) => {
+        /*this.globalService.selectedDate$.subscribe((date) => {
             if (date) {
                 const year = date.getFullYear().toString();
                 const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -170,8 +170,8 @@ export class CabecerapresupuestoComponent implements OnInit {
                 );
             }
         });
-
-        this.menuItems = [
+*/
+       /* this.menuItems = [
             { 
                 label: 'Ver Detalles', 
                 icon: 'pi pi-fw pi-search', 
@@ -188,8 +188,8 @@ export class CabecerapresupuestoComponent implements OnInit {
                 } }
         ];
         this.cargarMedioPago();
-    }
-    cargarPresupuesto(empresa: string, anio: string, mes: string): void {
+    }*/
+   /* cargarPresupuesto(empresa: string, anio: string, mes: string): void {
         this.loading = true;
         this.presupuestoService
             .obtenerPresupuesto(empresa, anio, mes)
@@ -706,6 +706,7 @@ export class CabecerapresupuestoComponent implements OnInit {
     generarArchivoInterbank():void{
         
 
-    }
+    }*/
 
+}
 }

@@ -6,7 +6,7 @@ import {
     Observable,
     throwError,
 } from 'rxjs';
-import { ConfigService } from './config.service';
+import { ConfigService } from '../config.service';
 import { DetraccionMasiva } from '../model/DetraccionMasiva';
 import { formatDateForFilename, RespuestaAPIBase } from '../components/utilities/funciones_utilitarias';
 import { DetraccionMasivaDetalle } from '../model/DetraccionMasivaDetalle';

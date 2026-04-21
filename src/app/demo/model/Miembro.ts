@@ -1,6 +1,6 @@
 
 export enum RolNombre {
-    OWNER = 'OWNER',
+    DUENO = 'DUENO',
     ADMINISTRADOR = 'ADMINISTRADOR',
     EMPLEADO= 'EMPLEADO',
     GERENTE = 'GERENTE'

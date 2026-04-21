@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ConfigService } from './config.service';
+import { ConfigService } from '../config.service';
 import { map, Observable, throwError } from 'rxjs';
 import { MedioPago } from '../model/mediopago';
 import { RespuestaAPIBase } from '../components/utilities/funciones_utilitarias';

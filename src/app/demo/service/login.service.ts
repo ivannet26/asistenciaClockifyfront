@@ -9,6 +9,8 @@ import { MiembrosService } from './miembros.service';
 import { Miembros } from '../model/Miembro';
 import { GlobalService } from './global.service';
 
+import { SessionService } from './session.service';
+
 interface LoginResponse {
     token: string;
 }
@@ -36,8 +38,10 @@ export class LoginService {
         //private httpClient: HttpClient,
         //private configService: ConfigService,
         private miembrosService: MiembrosService,
-        private globalService: GlobalService
+        private globalService: GlobalService,
+        private sessionService: SessionService,
     ) {
+        
         /*this.apiUrl = configService.getApiUrl();
         this.urlAPI = `${this.apiUrl}/Autenticacion`;
 
@@ -135,20 +139,21 @@ export class LoginService {
             }));
             localStorage.setItem('sesionStartTime', new Date().toISOString());
             this.isAuthenticatedSubject.next(true);
+            this.globalService.setNombreUsuario(result.nombre);
 
-            // ← Agrega esto:
-            this.globalService.setNombreUsuario(result.nombre); // ajusta el campo según tu modelo Miembros
-
-            return result;
+            this.sessionService.setUser(result);
         }
 
-        return null;
+        return result;
     }
+
 
     logout(): void {
         localStorage.removeItem('userSession');
         localStorage.removeItem('sesionStartTime');
         this.isAuthenticatedSubject.next(false);
+
+        this.sessionService.clearUser();
     }
 
     isAuthenticated(): Observable<boolean> {

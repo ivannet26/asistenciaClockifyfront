@@ -1,3 +1,5 @@
+import { RolNombre } from './Miembro'; 
+
 export interface UsuarioConfig {
     grouping: {
         primary: 'cliente' | 'proyecto' | 'tarea';
@@ -9,7 +11,7 @@ export interface UsuarioConfig {
 }
 
 export interface EspacioTrabajoConfig {
-    projectCreationPermission: 'admin' | 'admin_manager' | 'all';
+    projectCreationPermission: RolNombre.ADMINISTRADOR | RolNombre.GERENTE | 'all';
     forceTimer: boolean;
 }
 
@@ -29,7 +31,7 @@ export const DEFAULT_CONFIG: AppConfig = {
         favoritesEnabled: false,
     },
     espacioTrabajo: {
-        projectCreationPermission: 'admin',
+        projectCreationPermission: RolNombre.GERENTE,
         forceTimer: false,
     },
 };

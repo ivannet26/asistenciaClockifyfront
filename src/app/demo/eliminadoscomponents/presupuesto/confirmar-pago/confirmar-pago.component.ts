@@ -11,19 +11,19 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { HttpClientModule } from '@angular/common/http';
-import { PresupuestoService } from 'src/app/demo/service/presupuesto.service';
+//import { PresupuestoService } from 'src/app/demo/service/presupuesto.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { GlobalService } from 'src/app/demo/service/global.service';
-import { ConfigService } from 'src/app/demo/service/config.service';
+//import { ConfigService } from 'src/app/demo/service/appajustes.service';
 import { verMensajeInformativo, formatDate } from 'src/app/demo/components/utilities/funciones_utilitarias';
 import { DropdownModule } from "primeng/dropdown";
-import { insert_presupuesto, mediopago_lista } from 'src/app/demo/model/presupuesto';
+/*import { insert_presupuesto, mediopago_lista } from 'src/app/demo/model/presupuesto';
 import { DetraccioMasivaDetalleRequest } from 'src/app/demo/model/DetraccionMasiva';
 import { DetraccionService } from 'src/app/demo/service/detraccion.service';
 import { DetraccionIndividualDocPen, DetraccionIndividualRequest } from 'src/app/demo/model/DetraccionIndividual';
 import { Retencion } from 'src/app/demo/model/retencion';
-import { RetencionService } from 'src/app/demo/service/retencion.service';
+import { RetencionService } from 'src/app/demo/service/retencion.service';*/
 @Component({
     selector: 'app-confirmar-pago',
     standalone: true,
@@ -36,6 +36,9 @@ import { RetencionService } from 'src/app/demo/service/retencion.service';
     providers: [MessageService, FileUploadModule, ConfirmationService]
 })
 export class ConfirmarPagoComponent implements OnInit {
+    ngOnInit(): void {
+        throw new Error('Method not implemented.');
+    }
 
     //por si acaso el nro de pago de la fila 
     @Input() pagoNumero: string = '';
@@ -44,9 +47,9 @@ export class ConfirmarPagoComponent implements OnInit {
     @Input() modoPresupuesto:boolean = false;
     @ViewChild('fu') fileUpload!: FileUpload;
     @Output() onClose = new EventEmitter<void>();
-    @Input() presupuestoCab:insert_presupuesto;
+    //@Input() presupuestoCab:insert_presupuesto;
     @Input() numeroLote:string;
-    @Input() seleccionadoDocPen:DetraccionIndividualDocPen;
+    //@Input() seleccionadoDocPen:DetraccionIndividualDocPen;
     
     pagoForm: FormGroup;
     destinationPath: string = '';
@@ -71,7 +74,7 @@ export class ConfirmarPagoComponent implements OnInit {
     urlApi: string = '';
     modoDetraccionIndividual :boolean = false;
 
-    nuevoRetencion:Retencion={
+    /*nuevoRetencion:Retencion={
         ban01empresa:'',
     ban01anio:'',
     ban01mes:'',    
@@ -203,7 +206,7 @@ export class ConfirmarPagoComponent implements OnInit {
           this.nroOperacion = changes['pagoNumero'].currentValue;
         } por si se desea pasar el nro de pago
       }*/
-     guardarRetencion():void{
+     /*guardarRetencion():void{
         this.nuevoRetencion.ban01empresa = this.gS.getCodigoEmpresa();
         
           this.gS.selectedDate$.subscribe(date => {
@@ -545,5 +548,5 @@ export class ConfirmarPagoComponent implements OnInit {
             },
         });
     }
-
+*/
 }

@@ -13,8 +13,8 @@ import { CardModule } from 'primeng/card';
 import { EmpresasxModulo, Login } from '../../model/Login';
 import { DropdownModule } from 'primeng/dropdown';
 import { GlobalService } from '../../service/global.service';
-import { verMensajeInformativo } from '../utilities/funciones_utilitarias';
-import { ConfigService } from '../../service/config.service';
+//import { verMensajeInformativo } from '../utilities/funciones_utilitarias';
+//import { ConfigService } from '../../service/appajustes.service';
 
 @Component({
     selector: 'app-login',
@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
 
     constructor(private globalservice: GlobalService, private fb: FormBuilder,
         private LoginServicio: LoginService, private router: Router,
-        private messageService: MessageService, private link: Router, private configService: ConfigService) {
+        private messageService: MessageService, private link: Router, /*private configService: ConfigService*/) {
         this.credencialesFRM = fb.group({
             nombreusuario: ['', [Validators.required, Validators.maxLength(50)]],
             claveusuario: ['', [Validators.required, Validators.maxLength(50)]],
@@ -60,10 +60,10 @@ export class LoginComponent implements OnInit {
             this.credencialesFRM.patchValue({ nombreusuario, claveusuario, codigoempresa });
             this.recordarme = true;
         }
-        this.loadEmpresa()
+        //this.loadEmpresa()
     }
 
-    //Método para manejar el envió del form
+    /*Método para manejar el envió del form
     iniciarSesion() {
         console.log(this.credencialesFRM.value);
         if (this.credencialesFRM.valid) {
@@ -116,7 +116,7 @@ export class LoginComponent implements OnInit {
             }
         )
     }
-
+*/
     onEmpresaChallenge(event: any) {
         console.log("onEmpresaChallenge");
         this.credencialesFRM.patchValue({

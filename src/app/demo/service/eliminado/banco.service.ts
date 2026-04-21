@@ -7,7 +7,7 @@ import {
     throwError,
 } from 'rxjs';
 import { Banco } from '../model/Banco';
-import { ConfigService } from './config.service';
+import { ConfigService } from '../config.service';
 import { RespuestaAPIBase } from '../components/utilities/funciones_utilitarias';
 @Injectable({
     providedIn: 'root',

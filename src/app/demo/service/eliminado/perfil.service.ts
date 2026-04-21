@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { ApiResponse } from '../model/api_response';
-import { ConfigService } from './config.service';
+import { ConfigService } from '../config.service';
 import { Perfil } from '../model/perfil';
 
 @Injectable({
