@@ -16,6 +16,8 @@ import { MicuentaComponent } from './demo/components/micuenta/micuenta.component
 import { ConfiguracionEspaciosComponent } from './demo/components/configuracion-espacios/configuracion-espacios.component';
 import { CerrarAsistenciaComponent } from './demo/components/cerrar-asistencia/cerrar-asistencia.component';
 
+import { permissionGuard } from './demo/service/permission.guard';
+
 @NgModule({
     imports: [
         RouterModule.forRoot([
@@ -44,8 +46,8 @@ import { CerrarAsistenciaComponent } from './demo/components/cerrar-asistencia/c
                     { path: 'clientes', component: ClientesComponent },
                     { path: 'etiquetas', component: EtiquetasComponent },
                     { path: 'micuenta', component: MicuentaComponent},
-                    { path: 'configuracion-espacios', component: ConfiguracionEspaciosComponent },
-                    {path: 'cerrar-asistencia',component:CerrarAsistenciaComponent},
+                    { path: 'configuracion-espacios', component: ConfiguracionEspaciosComponent, canActivate: [permissionGuard('soloAdminODueno')]},
+                    { path: 'cerrar-asistencia',component:CerrarAsistenciaComponent, canActivate: [permissionGuard('soloAdminODueno')]},
                     
                 ]
             },

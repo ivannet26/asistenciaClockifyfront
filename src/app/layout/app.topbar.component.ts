@@ -10,7 +10,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
-import { PermissionService } from '../demo/service/permision.service';
+import { PermissionService } from '../demo/service/permission.service';
 
 @Component({
     standalone: true,

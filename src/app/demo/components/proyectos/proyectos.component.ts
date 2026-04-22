@@ -20,7 +20,7 @@ import { CardModule } from "primeng/card";
 import { MessageService } from 'primeng/api';
 import { ToastModule } from "primeng/toast";
 
-import { PermissionService } from '../../service/permision.service';
+import { PermissionService } from '../../service/permission.service';
 import { Observable } from 'rxjs';
 
 @Component({

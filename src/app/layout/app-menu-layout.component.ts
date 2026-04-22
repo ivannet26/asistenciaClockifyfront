@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { PermissionService } from '../demo/service/permision.service';
+import { PermissionService } from '../demo/service/permission.service';
 
 @Component({
     selector: 'app-menu-layout',
