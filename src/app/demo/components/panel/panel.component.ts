@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
+// PrimeNG
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
@@ -9,12 +11,15 @@ import { ChartModule } from 'primeng/chart';
 import { CalendarModule } from 'primeng/calendar';
 import { OverlayPanelModule, OverlayPanel } from 'primeng/overlaypanel';
 
+// Pipe y Servicio
+import { FormatDurationPipe } from '../utilities/format-duration.pipe';
+import { ConfigService } from '../../../demo/service/config.service';
 @Component({
   selector: 'app-panel',
   standalone: true,
   imports: [
     CommonModule, FormsModule, ButtonModule, DropdownModule, 
-    InputTextModule, ChartModule, CalendarModule, OverlayPanelModule
+    InputTextModule, ChartModule, CalendarModule, OverlayPanelModule, FormatDurationPipe
   ],
   templateUrl: './panel.component.html',
   styles: [`
@@ -26,9 +31,7 @@ import { OverlayPanelModule, OverlayPanel } from 'primeng/overlaypanel';
     .menu-calendario ul { list-style: none; padding: 0; margin: 0; }
     .menu-calendario li { padding: 10px 15px; cursor: pointer; font-size: 14px; color: #495057; }
     .menu-calendario li:hover { background: #f8f9fa; color: #00BCD4; }
-    .menu-calendario li.active { background: #e3f2fd; color: #007ad9; border-left: 3px solid #007ad9;
-    
-  }
+    .menu-calendario li.active { background: #e3f2fd; color: #007ad9; border-left: 3px solid #007ad9; }
   `]
 })
 export class PanelComponent implements OnInit {
@@ -38,7 +41,7 @@ export class PanelComponent implements OnInit {
   proyectosConTiempo: any[] = [];
   proyectosParaDistribucion: any[] = [];
   
-  tiempoTotalFormateado: string = '00:00:00';
+  tiempoTotal: number = 0; // Cambiado a número para el Pipe
   proyectoPrincipal: string = 'PROYECTO';
   
   rangoFechas: Date[] = [];
@@ -49,7 +52,8 @@ export class PanelComponent implements OnInit {
   dataBarras: any;       
   opcionesBarras: any;
   hayRegistrosGlobales: boolean = false;
-  constructor(private router: Router) {}
+
+  constructor(private router: Router, private configService: ConfigService) {}
 
   ngOnInit() {
     this.verificarRegistrosGlobales();
@@ -64,7 +68,13 @@ export class PanelComponent implements OnInit {
       plugins: { legend: { display: false } },
       scales: { 
         x: { grid: { display: false }, ticks: { color: '#9aa0a6' } }, 
-        y: { beginAtZero: true, ticks: { callback: (v: any) => this.formatearSegundos(v) } } 
+        y: { 
+            beginAtZero: true, 
+            ticks: { 
+                // Para que el eje Y del gráfico también use el formato hh:mm:ss fijo
+                callback: (v: any) => this.formatearSegundosFijo(v) 
+            } 
+        } 
       }
     };
   }
@@ -116,38 +126,35 @@ export class PanelComponent implements OnInit {
   cambiarSemana(dir: number) {
     const nuevaFecha = new Date(this.rangoFechas[0]);
     nuevaFecha.setDate(nuevaFecha.getDate() + (dir * 7));
-    
     const fin = new Date(nuevaFecha);
     fin.setDate(nuevaFecha.getDate() + 6);
     fin.setHours(23, 59, 59, 999);
-    
     this.rangoFechas = [nuevaFecha, fin];
     this.actualizarYFiltrar();
   }
-verificarRegistrosGlobales() {
-  const session = JSON.parse(localStorage.getItem('userSession') || '{}');
-  const miembroId = session.userData?.id;
 
-  const data = localStorage.getItem('registros');
-  const registros = data ? JSON.parse(data) : [];
-  this.hayRegistrosGlobales = registros.some((r: any) => r.miembroId === miembroId);
-}
+  verificarRegistrosGlobales() {
+    const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+    const miembroId = session.userData?.id;
+    const data = localStorage.getItem('registros');
+    const registros = data ? JSON.parse(data) : [];
+    this.hayRegistrosGlobales = registros.some((r: any) => r.miembroId === miembroId);
+  }
 
   irAlRastreador() {
     this.router.navigate(['/menu-layout/rastreador']);
   }
 
-cargarTodoDesdeStorage() {
-  const session = JSON.parse(localStorage.getItem('userSession') || '{}');
-  const miembroId = session.userData?.id;
-
-  const data = localStorage.getItem('registros');
-  if (data) {
-    const todos = JSON.parse(data);
-    this.registrosCompletos = todos.filter((r: any) => r.miembroId === miembroId);
-    this.procesarTodo();
+  cargarTodoDesdeStorage() {
+    const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+    const miembroId = session.userData?.id;
+    const data = localStorage.getItem('registros');
+    if (data) {
+      const todos = JSON.parse(data);
+      this.registrosCompletos = todos.filter((r: any) => r.miembroId === miembroId);
+      this.procesarTodo();
+    }
   }
-}
 
   procesarTodo() {
     const tiemposPorProyecto: { [key: string]: number } = {};
@@ -167,12 +174,9 @@ cargarTodoDesdeStorage() {
     this.registrosCompletos.forEach(r => {
       if (r.inicio) {
         const fechaReg = new Date(r.inicio);
-        
         if (fechaReg >= inicioFiltro && fechaReg <= finFiltro) {
-          // PROTECCIÓN CONTRA NULL (Error que te salía antes)
           const proyObj = r.proyecto;
           const proyNombre = (proyObj && typeof proyObj === 'object') ? proyObj.nombre : (proyObj || 'Sin Proyecto');
-          
           const desc = r.descripcion || '(Sin descripción)';
           
           let s = 0;
@@ -196,18 +200,13 @@ cargarTodoDesdeStorage() {
       }
     });
 
-    this.tiempoTotalFormateado = this.formatearSegundos(totalSGlobal);
+    this.tiempoTotal = totalSGlobal; // Guardamos el número puro
     const sorted = Object.keys(tiemposPorProyecto).sort((a,b) => tiemposPorProyecto[b] - tiemposPorProyecto[a]);
     this.proyectoPrincipal = sorted[0] || 'PROYECTO';
 
     this.dataBarras = {
       labels: this.generarLabels(lunesGrafico),
-      datasets: [{ 
-        data: tiempoPorDiaSemana, 
-        backgroundColor: '#00BCD4', 
-        borderRadius: 4, 
-        barThickness: 50 
-      }]
+      datasets: [{ data: tiempoPorDiaSemana, backgroundColor: '#00BCD4', borderRadius: 4, barThickness: 50 }]
     };
 
     this.dataGrafica = {
@@ -217,12 +216,14 @@ cargarTodoDesdeStorage() {
 
     this.proyectosParaDistribucion = Object.keys(tiemposPorProyecto).map(n => ({
       nombre: n, 
-      tiempoFormateado: this.formatearSegundos(tiemposPorProyecto[n]),
+      tiempo: tiemposPorProyecto[n], // Enviamos número
       porcentaje: totalSGlobal > 0 ? (tiemposPorProyecto[n] / totalSGlobal) * 100 : 0
     }));
 
     this.proyectosConTiempo = Object.keys(tiemposPorActividad).map(d => ({
-      nombre: d, proyecto: tiemposPorActividad[d].proyecto, tiempoFormateado: this.formatearSegundos(tiemposPorActividad[d].segundos)
+      nombre: d, 
+      proyecto: tiemposPorActividad[d].proyecto, 
+      tiempo: tiemposPorActividad[d].segundos // Enviamos número
     }));
   }
 
@@ -237,7 +238,8 @@ cargarTodoDesdeStorage() {
     return labels;
   }
 
-  private formatearSegundos(t: number): string {
+  // Método auxiliar solo para el gráfico (donde no se pueden usar pipes)
+  private formatearSegundosFijo(t: number): string {
     const h = Math.floor(t / 3600).toString().padStart(2, '0');
     const m = Math.floor((t % 3600) / 60).toString().padStart(2, '0');
     const s = (t % 60).toString().padStart(2, '0');

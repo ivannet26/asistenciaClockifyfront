@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+// Importación del servicio
+import { ConfigService } from '../../../demo/service/config.service';
 // PrimeNG Modules
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -37,8 +39,8 @@ export class ConfiguracionEspaciosComponent implements OnInit {
   ];
 
   formatosHora: any[] = [
-    { label: 'Completo (hh:mm:ss)', value: 'completo' },
-    { label: 'Compacto (h:mm)', value: 'compacto' }
+    { label: 'Completo (hh:mm:ss)', value: 'Completo (hh:mm:ss)' },
+    { label: 'Compacto (h:mm)', value: 'Compacto (h:mm)' }
   ];
 
   // Datos del espacio de trabajo
@@ -53,7 +55,7 @@ export class ConfiguracionEspaciosComponent implements OnInit {
   temporizadorForzado: boolean = false;
 
   // Variables para los Dropdowns
-  formatoSeleccionado: string = 'completo';
+  formatoSeleccionado: string = 'Completo (hh:mm:ss)';
   agruparPor1: string = 'cliente';
   agruparPor2: string = 'proyecto';
   agruparPor3: string = 'tarea';
@@ -63,10 +65,18 @@ export class ConfiguracionEspaciosComponent implements OnInit {
   crearTareas: string = 'admin';
   crearEtiquetas: string = 'admin';
 
-  constructor() { }
+  constructor(private configService: ConfigService) { }
 
   ngOnInit(): void {
-    // Aquí podrías inicializar datos desde un servicio si fuera necesario
+    // Sincronizar el dropdown con el estado actual del servicio al cargar
+    const actual = this.configService.durationFormat();
+    this.formatoSeleccionado = actual === 'full' ? 'Completo (hh:mm:ss)' : 'Compacto (h:mm)';
+  }
+
+  // Método para actualizar el formato en el servicio global
+  cambiarFormatoHora(event: any) {
+    this.configService.updateDurationFormat(event.value);
+    console.log('Formato global actualizado a:', this.configService.durationFormat());
   }
 
   guardarCambios() {

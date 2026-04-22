@@ -93,7 +93,7 @@
           *ngIf="tabactivot?.id !== '3'">
           <div class="flex align-items-baseline gap-2">
             <span class="text-500 text-xs font-bold uppercase">Total:</span>
-            <span class="text-900 font-bold text-xl">{{ tiempoTotalFormateado }}</span>
+            <span class="text-900 font-bold text-xl">{{ tiempoTotal | formatDuration }}</span>
           </div>
           <div class="flex align-items-center gap-3">
             <div class="flex align-items-center gap-3 border-left-1 surface-border pl-3">
@@ -125,7 +125,7 @@
                       <span [style.color]="p.color" class="mr-2">●</span>
                       <span class="font-bold text-xs uppercase">{{p.titulo}}</span>
                     </td>
-                    <td class="text-right font-bold text-700">{{p.duracion}}</td>
+                    <td class="text-right font-bold text-700">{{ p.duracionSegundos | formatDuration }}</td>
                     <td class="text-right text-400">0,00 USD</td>
                   </tr>
                 </ng-template>
@@ -135,7 +135,7 @@
               <div style="width: 180px; height: 180px;">
                 <p-chart type="doughnut" [data]="dataDona" [options]="optionsDona"></p-chart>
               </div>
-              <div class="text-center mt-3 font-bold text-xl text-800">{{ tiempoTotalFormateado }}</div>
+              <div class="text-center mt-3 font-bold text-xl text-800">{{ tiempoTotal | formatDuration }}</div>
             </div>
           </div>
         </div>
@@ -172,7 +172,7 @@
                   {{ r.inicio | date:'HH:mm' }} - {{ r.fin | date:'HH:mm' }}<br>
                   <small class="text-500">{{ r.inicio | date:'dd/MM/yyyy' }}</small>
                 </td>
-                <td class="text-right font-bold text-700">{{ r.duracion }}</td>
+                <td class="text-right font-bold text-700">{{ r.duracionSegundos | formatDuration }}</td>
               </tr>
             </ng-template>
           </p-table>
@@ -182,7 +182,7 @@
           <div class="surface-100 p-2 border-1 surface-border flex align-items-center px-3 mb-1 bg-gray-50 border-bottom-3"
             style="border-bottom-color: #2196F3">
             <span class="text-500 text-xs font-bold mr-3 uppercase">Total Semana:</span>
-            <span class="text-900 font-bold text-xl">{{ tiempoTotalFormateado }}</span>
+            <span class="text-900 font-bold text-xl">{{ tiempoTotal | formatDuration }}</span>
           </div>
           <p-table [value]="datosSemanales" styleClass="p-datatable-gridlines p-datatable-sm" [style]="{'min-width': '900px'}">
             <ng-template pTemplate="header">
@@ -203,15 +203,15 @@
                     </small>
                   </div>
                 </td>
-                <td *ngFor="let dia of ds.dias" class="text-center text-500">{{ dia }}</td>
-                <td class="text-right font-bold bg-gray-50 text-700">{{ ds.total }}</td>
+                <td *ngFor="let diaSeg of ds.diasSegundos" class="text-center text-500">{{ diaSeg | formatDuration }}</td>
+                <td class="text-right font-bold bg-gray-50 text-700">{{ ds.totalSegundos | formatDuration }}</td>
               </tr>
             </ng-template>
             <ng-template pTemplate="footer">
               <tr class="bg-gray-100 font-bold text-sm">
                 <td>TOTALES:</td>
-                <td *ngFor="let t of totalesPorDiaSemana" class="text-center">{{ t }}</td>
-                <td class="text-right" style="color: #2196F3">{{ tiempoTotalFormateado }}</td>
+                <td *ngFor="let tSeg of totalesPorDiaSemanaSegundos" class="text-center">{{ tSeg | formatDuration }}</td>
+                <td class="text-right" style="color: #2196F3">{{ tiempoTotal | formatDuration }}</td>
               </tr>
             </ng-template>
           </p-table>
@@ -267,8 +267,8 @@
                   <th style="width: 8%" class="text-center">Inicio</th>
                   <th style="width: 8%" class="text-center">Fin</th>
                   <th style="width: 35%" class="text-center">Trabajo</th>
-                  <th style="width: 10%" class="text-center">H. Extra</th>
-                  <th style="width: 15%" class="text-center">Observación</th>
+                  <th style="width: 10%" class="text-center">Duración</th>
+                  <th style="width: 15%" class="text-center">H. Extra / Obs</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-r>
@@ -283,7 +283,7 @@
                       <small class="text-500">● {{ r.proyecto?.nombre || 'Sin Proyecto' }}</small>
                     </div>
                   </td>
-                  <td class="text-right font-bold">{{ restarHoras(r.duracion).tiempo }}</td>
+                  <td class="text-right font-bold">{{ r.duracionSegundos | formatDuration }}</td>
                   <td>
                     <small [style.color]="restarHoras(r.duracion).estado.includes('Extra') ? '#43a047' : '#e53935'">
                       {{ restarHoras(r.duracion).estado }}

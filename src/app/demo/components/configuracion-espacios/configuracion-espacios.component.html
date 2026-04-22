@@ -19,7 +19,12 @@
                 <section class="mb-5">
                     <h3 class="text-lg font-bold mb-1">Formato de duración</h3>
                     <p class="text-500 mb-3" style="font-size: 0.9rem;">Mostrar la hora en formato de reloj (con o sin segundos).</p>
-                    <p-dropdown [options]="formatosHora" [(ngModel)]="formatoSeleccionado" class="md:w-20rem block"></p-dropdown>
+                    <p-dropdown 
+                        [options]="formatosHora" 
+                        [(ngModel)]="formatoSeleccionado" 
+                        (onChange)="cambiarFormatoHora($event)"
+                        class="md:w-20rem block">
+                    </p-dropdown>
                 </section>
 
                 <hr class="border-300 my-4">

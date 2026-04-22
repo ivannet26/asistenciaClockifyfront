@@ -37,7 +37,7 @@
             <div class="col-12 md:col-4">
                 <div class="card-stats shadow-1 border-1 border-300 bg-white">
                     <span class="stat-label">Tiempo Total</span>
-                    <div class="stat-value">{{ tiempoTotalFormateado }}</div>
+                    <div class="stat-value">{{ tiempoTotal | formatDuration }}</div>
                 </div>
             </div>
             <div class="col-12 md:col-4">
@@ -59,7 +59,7 @@
         <div class="card shadow-1 p-4 bg-white border-1 border-300" style="height: 400px;">
             <div class="flex justify-content-between align-items-center mb-4">
                 <h5 class="m-0 text-500 uppercase text-xs font-bold">Tiempo por día</h5>
-                <span class="text-900 font-bold">{{ tiempoTotalFormateado }}</span>
+                <span class="text-900 font-bold">{{ tiempoTotal | formatDuration }}</span>
             </div>
             <div style="position: relative; height: 320px;">
                 <p-chart type="bar" [data]="dataBarras" [options]="opcionesBarras"></p-chart>
@@ -79,7 +79,7 @@
                         <div class="text-sm font-bold">{{ a.nombre }}</div>
                         <div class="text-xs text-500">{{ a.proyecto }}</div>
                     </div>
-                    <span class="text-sm font-bold">{{ a.tiempoFormateado }}</span>
+                    <span class="text-sm font-bold">{{ a.tiempo | formatDuration }}</span>
                 </div>
             </div>
         </div>
@@ -94,13 +94,13 @@
                         <p-chart type="doughnut" [data]="dataGrafica" [options]="opcionesGrafica"></p-chart>
                     </div>
                     <div class="absolute text-center" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                        <span class="text-900 font-bold text-2xl block">{{ tiempoTotalFormateado }}</span>
+                        <span class="text-900 font-bold text-2xl block">{{ tiempoTotal | formatDuration }}</span>
                     </div>
                 </div>
                 <div class="col-12 md:col-8 p-4">
                     <div *ngFor="let p of proyectosParaDistribucion" class="grid align-items-center mb-4">
                         <div class="col-3 text-right text-sm text-600">{{ p.nombre }}</div>
-                        <div class="col-2 text-center text-sm font-bold">{{ p.tiempoFormateado }}</div>
+                        <div class="col-2 text-center text-sm font-bold">{{ p.tiempo | formatDuration }}</div>
                         <div class="col-5">
                             <div class="surface-200 border-round overflow-hidden" style="height: 14px;">
                                 <div class="bg-cyan-clock" [style.width]="p.porcentaje + '%'" style="height: 100%;"></div>
@@ -132,8 +132,6 @@
                     (click)="irAlRastreador()"
                     style="width: auto;">
             </button>
-
-            
         </div>
     </div>
 </ng-template>

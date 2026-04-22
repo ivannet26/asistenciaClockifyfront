@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
+// PrimeNG
 import { TabMenuModule } from "primeng/tabmenu";
 import { DropdownModule } from "primeng/dropdown";
 import { CalendarModule } from "primeng/calendar";
@@ -16,6 +17,9 @@ import { OverlayPanelModule, OverlayPanel } from 'primeng/overlaypanel';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenuItem } from 'primeng/api';
 
+// Pipes y Servicios
+import { FormatDurationPipe } from '../utilities/format-duration.pipe';
+import { ConfigService } from '../../../demo/service/config.service';
 import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
 
 @Component({
@@ -25,7 +29,7 @@ import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
     CommonModule, FormsModule, TabMenuModule, DropdownModule,
     CalendarModule, TableModule, ButtonModule, CardModule,
     ChartModule, InputSwitchModule, CheckboxModule,
-    OverlayPanelModule, InputTextModule
+    OverlayPanelModule, InputTextModule, FormatDurationPipe
   ],
   templateUrl: './informes.component.html',
   styleUrl: './informes.component.css'
@@ -34,35 +38,32 @@ export class InformesComponent implements OnInit {
   @ViewChild('op') op!: OverlayPanel;
   @ViewChild('dt') dt!: Table;
 
-  // --- UI ---
   tabactivot!: MenuItem;
   tabactivoe!: MenuItem;
   filtroEtiqueta: string = '';
   registroSeleccionado: any = null;
   tipoInformeSeleccionado: string = '1';
 
-  // --- Calendario estilo Panel ---
   rangoFechas: Date[] = [];
   textoRango: string = '';
 
-  // --- Datos ---
   dataBarras: any;
   optionsBarras: any;
   dataDona: any;
   optionsDona: any;
 
-  tiempoTotalFormateado: string = '00:00:00';
+  // --- VARIABLES PARA EL PIPE ---
+  tiempoTotal: number = 0; 
   proyectosResumen: any[] = [];
   registrosDetallados: any[] = [];
   registrosFiltrados: any[] = []; 
   etiquetasDisponibles: any[] = [];
   gruposDisponibles: any[] = [];
   datosSemanales: any[] = [];
-  totalesPorDiaSemana: string[] = [];
+  totalesPorDiaSemanaSegundos: number[] = []; // Cambiado a número
   etiquetasDias: string[] = [];
 
-  // --- Variables de Filtros ---
-  filtroEquipo: any = null; // Guardará el ID del Grupo seleccionado
+  filtroEquipo: any = null;
   filtroCliente: any = null;
   filtroProyecto: any = null;
   filtroTarea: any = null;
@@ -91,7 +92,11 @@ export class InformesComponent implements OnInit {
 
   opcionSeleccionada: number = 1;
 
-  constructor(private route: ActivatedRoute, private link: Router) {
+  constructor(
+    private route: ActivatedRoute, 
+    private link: Router,
+    private configService: ConfigService // Inyectamos el servicio
+  ) {
     this.tabactivot = this.tabsT[0];
     this.tabactivoe = this.tabsE[0];
   }
@@ -121,81 +126,52 @@ export class InformesComponent implements OnInit {
     });
   }
 
-  // --- GETTERS DINÁMICOS PARA FILTROS ---
-  
-  get opcionesEquipo() {
-    return this.gruposDisponibles;
-  }
-
+  // --- GETTERS DINÁMICOS ---
+  get opcionesEquipo() { return this.gruposDisponibles; }
   get opcionesClientes() {
     const datos = this.registrosDetallados.map(r => r.clienteNombre).filter(n => n);
     return [...new Set(datos)].map(c => ({ label: c, value: c }));
   }
-
   get opcionesProyectos() {
     const datos = this.registrosDetallados.map(r => r.proyecto?.nombre || r.proyecto).filter(p => p);
     return [...new Set(datos)].map(p => ({ label: p, value: p }));
   }
-
   get opcionesTareas() {
     const datos = this.registrosDetallados.map(r => r.tarea).filter(t => t);
     return [...new Set(datos)].map(t => ({ label: t, value: t }));
   }
-
   get opcionesEstados() {
-    return [
-      { label: 'Activo', value: 'Activo' },
-      { label: 'Archivado', value: 'Archivado' }
-    ];
+    return [{ label: 'Activo', value: 'Activo' }, { label: 'Archivado', value: 'Archivado' }];
   }
-
-  // --- LÓGICA DE FILTRADO ---
 
   aplicarFiltrosLocales() {
     this.registrosFiltrados = this.registrosDetallados.filter(r => {
-      // Filtrado por Equipo (Grupo) usando el ID guardado en el cruce de datos
       const coincideEquipo = !this.filtroEquipo || r.grupoId === this.filtroEquipo;
-      
       const coincideCliente = !this.filtroCliente || r.clienteNombre === this.filtroCliente;
       const coincideProyecto = !this.filtroProyecto || (r.proyecto?.nombre || r.proyecto) === this.filtroProyecto;
       const coincideTarea = !this.filtroTarea || r.tarea === this.filtroTarea;
       const coincideEtiqueta = !this.filtroEtiquetaSeleccionada || (r.etiquetas && r.etiquetas.includes(this.filtroEtiquetaSeleccionada));
-      
-      const estadoRegistro = r.estado || 'Activo';
-      const coincideEstado = !this.filtroEstado || estadoRegistro === this.filtroEstado;
-      
+      const coincideEstado = !this.filtroEstado || (r.estado || 'Activo') === this.filtroEstado;
       const coincideDesc = !this.filtroDescripcion || r.descripcion?.toLowerCase().includes(this.filtroDescripcion.toLowerCase());
-
       return coincideEquipo && coincideCliente && coincideProyecto && coincideTarea && coincideEtiqueta && coincideEstado && coincideDesc;
     });
 
-    // Recalcular gráficos y totales basándose en la data filtrada
     if (this.rangoFechas && this.rangoFechas[0]) {
         this.procesarEstadisticas(this.rangoFechas[0]);
     }
   }
 
-  // --- CARGA DE DATOS DESDE STORAGE ---
-
   cargarGruposDeStorage() {
     const data = localStorage.getItem('grupos');
     if (data) {
-      const grupos = JSON.parse(data);
-      this.gruposDisponibles = grupos.map((g: any) => ({
-        label: g.nombre, 
-        value: g.id 
-      }));
+      this.gruposDisponibles = JSON.parse(data).map((g: any) => ({ label: g.nombre, value: g.id }));
     }
   }
 
   cargarEtiquetasDeStorage() {
     const tagsData = localStorage.getItem('etiquetas');
     if (tagsData) {
-      const etiquetasGuardadas = JSON.parse(tagsData);
-      this.etiquetasDisponibles = etiquetasGuardadas.map((e: any) => ({
-        label: e.nombre || e, 
-        value: e.nombre || e
-      }));
+      this.etiquetasDisponibles = JSON.parse(tagsData).map((e: any) => ({ label: e.nombre || e, value: e.nombre || e }));
     }
   }
 
@@ -204,72 +180,54 @@ export class InformesComponent implements OnInit {
     if (!data) return;
     
     const registros = JSON.parse(data);
-    const clientesData = localStorage.getItem('clientes');
-    const clientes = clientesData ? JSON.parse(clientesData) : [];
-    
-    // Cargamos los grupos para hacer el cruce de miembros
-    const gruposData = localStorage.getItem('grupos');
-    const grupos = gruposData ? JSON.parse(gruposData) : [];
+    const clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
+    const grupos = JSON.parse(localStorage.getItem('grupos') || '[]');
 
-    this.registrosDetallados = registros
-      .map((r: any) => {
-        const clienteId = r.proyecto?.clienteId;
-        const cliente = clientes.find((c: any) => c.id === clienteId);
-
-        // BUSCAMOS EL GRUPO: ¿El miembroId de este registro está en la lista de IDs de algún grupo?
-        const grupoRelacionado = grupos.find((g: any) => 
-            g.miembrosIds && g.miembrosIds.includes(r.miembroId)
-        );
+    this.registrosDetallados = registros.map((r: any) => {
+        const cliente = clientes.find((c: any) => c.id === r.proyecto?.clienteId);
+        const grupoRelacionado = grupos.find((g: any) => g.miembrosIds?.includes(r.miembroId));
+        
+        // Convertimos duracion a segundos numéricos para el pipe
+        let duracionSegundos = 0;
+        if (r.duracion?.includes(':')) {
+            const p = r.duracion.split(':');
+            duracionSegundos = (parseInt(p[0]) * 3600) + (parseInt(p[1]) * 60) + parseInt(p[2]);
+        }
 
         return {
           ...r,
           inicio: new Date(r.inicio),
           fin: new Date(r.fin),
+          duracionSegundos: duracionSegundos, // Nuevo campo numérico
           clienteNombre: cliente?.nombre || 'Sin Cliente',
           miembroNombre: r.miembroNombre || 'Sin nombre',
-          // Campos calculados para el filtro de equipo
-          grupoId: grupoRelacionado ? grupoRelacionado.id : null,
-          grupoNombre: grupoRelacionado ? grupoRelacionado.nombre : 'Sin Grupo'
+          grupoId: grupoRelacionado?.id || null,
+          grupoNombre: grupoRelacionado?.nombre || 'Sin Grupo'
         };
       })
-      .filter((r: any) =>
-        r.inicio >= inicioF &&
-        r.inicio <= new Date(finF.getTime() + 86400000)
-      )
+      .filter((r: any) => r.inicio >= inicioF && r.inicio <= new Date(finF.getTime() + 86400000))
       .sort((a: any, b: any) => b.inicio.getTime() - a.inicio.getTime());
 
     this.aplicarFiltrosLocales();
   }
 
-  // --- LÓGICA DE CALENDARIO ---
-
   seleccionarOpcion(opcion: string) {
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-    let inicio = new Date(hoy);
-    let fin = new Date(hoy);
+    const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    let inicio = new Date(hoy); let fin = new Date(hoy);
 
     switch (opcion) {
       case 'hoy': fin.setHours(23, 59, 59, 999); break;
-      case 'ayer':
-        inicio.setDate(hoy.getDate() - 1);
-        fin.setDate(hoy.getDate() - 1);
-        fin.setHours(23, 59, 59, 999);
-        break;
+      case 'ayer': inicio.setDate(hoy.getDate() - 1); fin.setDate(hoy.getDate() - 1); fin.setHours(23, 59, 59, 999); break;
       case 'estaSemana':
-        const d = hoy.getDay();
-        const diffAlLunes = (d === 0 ? 6 : d - 1);
-        inicio.setDate(hoy.getDate() - diffAlLunes);
-        fin = new Date(inicio);
-        fin.setDate(inicio.getDate() + 6);
-        fin.setHours(23, 59, 59, 999);
+        const diff = (hoy.getDay() === 0 ? 6 : hoy.getDay() - 1);
+        inicio.setDate(hoy.getDate() - diff);
+        fin = new Date(inicio); fin.setDate(inicio.getDate() + 6); fin.setHours(23, 59, 59, 999);
         break;
       case 'mes':
         inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
         fin = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0, 23, 59, 59, 999);
         break;
     }
-
     this.rangoFechas = [inicio, fin];
     this.actualizarYFiltrar();
     if (this.op) this.op.hide();
@@ -284,12 +242,6 @@ export class InformesComponent implements OnInit {
       this.cargarTodoDesdeStorage(inicio, fin);
     }
   }
-
-  irAlRastreador() {
-    this.link.navigate(['/menu-layout/rastreador']);
-  }
-
-  // --- GRÁFICOS Y ESTADÍSTICAS ---
 
   procesarEstadisticas(lunesReferencia: Date) {
     const tiemposPorProyecto: { [key: string]: number } = {};
@@ -306,12 +258,9 @@ export class InformesComponent implements OnInit {
     }
 
     this.registrosFiltrados.forEach(r => {
-      let s = 0;
-      if (r.duracion?.includes(':')) {
-        const p = r.duracion.split(':');
-        s = (parseInt(p[0]) * 3600) + (parseInt(p[1]) * 60) + parseInt(p[2]);
-      }
+      const s = r.duracionSegundos || 0;
       const proyNombre = (r.proyecto && typeof r.proyecto === 'object') ? r.proyecto.nombre : (r.proyecto || 'Sin Proyecto');
+      
       tiemposPorProyecto[proyNombre] = (tiemposPorProyecto[proyNombre] || 0) + s;
       totalSGlobal += s;
 
@@ -324,28 +273,28 @@ export class InformesComponent implements OnInit {
       }
     });
 
-    this.tiempoTotalFormateado = this.formatearSegundos(totalSGlobal);
+    this.tiempoTotal = totalSGlobal; 
     this.proyectosResumen = Object.keys(tiemposPorProyecto).map(n => ({
-      titulo: n, duracion: this.formatearSegundos(tiemposPorProyecto[n]), color: '#2196F3'
+      titulo: n, 
+      duracionSegundos: tiemposPorProyecto[n], // Número para el pipe
+      color: '#2196F3'
     }));
 
     this.datosSemanales = Object.keys(agrupacionSemanal).map(n => {
-      const registroRef = this.registrosFiltrados.find((r: any) => {
-        const nombre = (r.proyecto && typeof r.proyecto === 'object') ? r.proyecto.nombre : (r.proyecto || 'Sin Proyecto');
-        return nombre === n;
-      });
+      const registroRef = this.registrosFiltrados.find((r: any) => 
+        ((r.proyecto?.nombre || r.proyecto) === n)
+      );
       return {
-        proyecto: n,
+        proyectoNombre: n,
         descripcion: registroRef?.descripcion || 'Sin descripción',
         proyectoColor: registroRef?.proyecto?.color || null,
-        proyectoNombre: registroRef?.proyecto?.nombre || registroRef?.proyecto || 'Sin Proyecto',
         clienteNombre: registroRef?.clienteNombre || 'Sin Cliente',
-        dias: agrupacionSemanal[n].map(seg => seg > 0 ? this.formatearSegundos(seg) : '—'),
-        total: this.formatearSegundos(agrupacionSemanal[n].reduce((a, b) => a + b, 0))
+        diasSegundos: agrupacionSemanal[n], // Arreglo de números
+        totalSegundos: agrupacionSemanal[n].reduce((a, b) => a + b, 0)
       };
     });
 
-    this.totalesPorDiaSemana = tiempoPorDiaBarras.map(seg => this.formatearSegundos(seg));
+    this.totalesPorDiaSemanaSegundos = tiempoPorDiaBarras;
     this.dataBarras = {
       labels: this.etiquetasDias,
       datasets: [{ data: tiempoPorDiaBarras, backgroundColor: '#2196F3', borderRadius: 4 }]
@@ -362,17 +311,17 @@ export class InformesComponent implements OnInit {
       plugins: { legend: { display: false } },
       scales: {
         x: { grid: { display: false }, ticks: { color: '#9aa0a6' } },
-        y: { beginAtZero: true, ticks: { callback: (v: any) => this.formatearSegundos(v) } }
+        y: { beginAtZero: true, ticks: { callback: (v: any) => this.formatearEjeGrafico(v) } }
       }
     };
     this.optionsDona = { cutout: '80%', plugins: { legend: { display: false } } };
   }
 
-  private formatearSegundos(t: number): string {
+  // Método auxiliar solo para el eje Y del gráfico (no acepta pipes)
+  private formatearEjeGrafico(t: number): string {
     const h = Math.floor(t / 3600).toString().padStart(2, '0');
     const m = Math.floor((t % 3600) / 60).toString().padStart(2, '0');
-    const s = (t % 60).toString().padStart(2, '0');
-    return `${h}:${m}:${s}`;
+    return `${h}:${m}`;
   }
 
   CambioTabT(event: any) { this.tabactivot = event; }
@@ -384,10 +333,16 @@ export class InformesComponent implements OnInit {
     const trabajados = (h * 3600) + (m * 60) + s;
     const requeridos = horas * 3600;
     const diferencia = requeridos - trabajados;
-    const umbral = 60;
+    
+    // Aquí podrías usar el Pipe inyectado manualmente si quisieras, 
+    // pero para exportar Excel un formato fijo está bien.
+    const hDiff = Math.floor(Math.abs(diferencia) / 3600).toString().padStart(2, '0');
+    const mDiff = Math.floor((Math.abs(diferencia) % 3600) / 60).toString().padStart(2, '0');
+    const sDiff = (Math.abs(diferencia) % 60).toString().padStart(2, '0');
+    const formato = `${hDiff}:${mDiff}:${sDiff}`;
 
-    if (diferencia > umbral) return { tiempo: '- ' + this.formatearSegundos(diferencia), estado: 'Debe ' };
-    if (diferencia < -umbral) return { tiempo: '+ ' + this.formatearSegundos(Math.abs(diferencia)), estado: 'Extra' };
+    if (diferencia > 60) return { tiempo: '- ' + formato, estado: 'Debe ' };
+    if (diferencia < -60) return { tiempo: '+ ' + formato, estado: 'Extra' };
     return { tiempo: '00:00:00', estado: 'Completado' };
   }
 
