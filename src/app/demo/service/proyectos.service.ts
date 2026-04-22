@@ -20,6 +20,7 @@ export class ProyectosService {
         publico: boolean,
         progreso: number,
         activo: boolean,
+        favorito: boolean,
         fcreacion: Date
     ): Proyecto[] {
 
@@ -33,6 +34,7 @@ export class ProyectosService {
             publico,
             progreso,
             activo: true,
+            favorito: false,
             fcreacion: new Date(),
         };
 
@@ -42,14 +44,26 @@ export class ProyectosService {
     }
 
     actualizarProyecto(id: number, cambios: Partial<Proyecto>): Proyecto[] {
-        const proyecto = this.getProyectos();
-        const index = proyecto.findIndex(c => c.id === id);
+        const proyectos = this.getProyectos();
+        const index = proyectos.findIndex(c => c.id === id);
 
-        if (index === -1) return proyecto;
+        if (index === -1) return proyectos;
 
-        proyecto[index] = { ...proyecto[index], ...cambios };
-        this.guardar(proyecto);
-        return proyecto;
+        const { favorito, ...cambiosSinFavorito } = cambios;
+        proyectos[index] = { ...proyectos[index], ...cambiosSinFavorito };
+        this.guardar(proyectos);
+        return proyectos;
+    }
+
+    toggleFavorito(id: number): Proyecto[] {
+        const proyectos = this.getProyectos();
+        const index = proyectos.findIndex(p => p.id === id);
+
+        if (index === -1) return proyectos;
+
+        proyectos[index].favorito = !proyectos[index].favorito;
+        this.guardar(proyectos);
+        return proyectos;
     }
 
     eliminarProyecto(id: number): Proyecto[] {

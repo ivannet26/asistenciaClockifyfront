@@ -101,7 +101,7 @@ export class ProyectosComponent implements OnInit {
     this.cargarProyectos();
     this.canCreate$ = this.permissionService.canDo('createProject');
     this.permissionService.canDo('createProject').subscribe(v => {
-        console.log('canCreate cambió a:', v);
+      console.log('canCreate cambió a:', v);
     });
   }
 
@@ -116,7 +116,6 @@ export class ProyectosComponent implements OnInit {
 
   aplicarFiltros(): void {
     this.proyectosFiltrados = this.proyectos.filter(p => {
-      // Usamos 'as any' para leer 'activo' aunque no esté en la interfaz
       const estadoProyecto = (p as any).activo !== undefined ? (p as any).activo : true;
 
       const cumpleEstado = this.filtroEstado === 'Todos' ||
@@ -131,7 +130,8 @@ export class ProyectosComponent implements OnInit {
         p.nombre.toLowerCase().includes(this.filtroNombre.toLowerCase());
 
       return cumpleEstado && cumpleCliente && cumpleAcceso && cumpleNombre;
-    });
+    })
+      .sort((a, b) => Number(b.favorito) - Number(a.favorito)); // 👈
   }
 
   abrirModalNuevoProyecto(): void {
@@ -161,6 +161,7 @@ export class ProyectosComponent implements OnInit {
       this.nuevoProyecto.color,
       this.nuevoProyecto.publico,
       0,
+      false,
       true,
       new Date(),
     );
@@ -206,6 +207,11 @@ export class ProyectosComponent implements OnInit {
         detail: 'Los datos del proyecto fueron actualizados exitosamente'
       });
     }
+  }
+
+  toggleFavorito(id: number): void {
+    this.proyectos = this.proyectosService.toggleFavorito(id);
+    this.aplicarFiltros();
   }
 
   eliminarProyecto(id: number): void {

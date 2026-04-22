@@ -273,7 +273,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     if (!this.nuevoProyecto.nombre?.trim()) return;
     this.proyectos = this.proyectosService.agregarProyecto(
       this.nuevoProyecto.nombre, this.nuevoProyecto.cliente?.id ?? 0, 
-      this.nuevoProyecto.color, this.nuevoProyecto.publico, 0, true, new Date()
+      this.nuevoProyecto.color, this.nuevoProyecto.publico, 0, true, false, new Date()
     );
     this.proyectoSeleccionado = this.proyectos[this.proyectos.length - 1];
     this.mostrarModalProyecto = false;
