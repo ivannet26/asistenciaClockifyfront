@@ -9,6 +9,8 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
+import { PermissionService } from '../demo/service/permision.service';
 
 @Component({
     standalone: true,
@@ -31,13 +33,17 @@ export class AppTopBarComponent implements OnInit {
     @ViewChild('topbarmenubutton') topbarMenuButton!: ElementRef;
     @ViewChild('topbarmenu') menu!: ElementRef;
 
+    canVerConfig$: Observable<boolean>;
+
     constructor(
         public layoutService: LayoutService,
         private link: Router,
         private gS: GlobalService,
         private aS: LoginService,
-        private primeng: PrimeNGConfig
+        private primeng: PrimeNGConfig,
+        private permissionService: PermissionService
     ) {
+        this.canVerConfig$ = this.permissionService.canDo('soloAdminODueno');
         this.primeng.setTranslation(calendario_traduccion());
     }
 

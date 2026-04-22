@@ -31,6 +31,10 @@ const REGLAS: Record<string, {
         configCheck: cfg => cfg.espacioTrabajo.forceTimer,
         getRolMinimo: () => RolNombre.EMPLEADO,
     },
+    soloAdminODueno: {
+        configCheck: () => true,
+        getRolMinimo: () => RolNombre.ADMINISTRADOR,
+    },
 };
 
 @Injectable({ providedIn: 'root' })

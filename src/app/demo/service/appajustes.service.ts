@@ -5,7 +5,7 @@ import { AppConfig, DEFAULT_CONFIG } from '../model/Config';
 @Injectable({ providedIn: 'root' })
 export class AppAjustes {
 
-   
+    
     private configSubject = new BehaviorSubject<AppConfig>(
         this.loadConfig()
     );
