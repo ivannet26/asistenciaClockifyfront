@@ -6,7 +6,6 @@ export interface Proyecto {
   publico: boolean;
   progreso: number;
   activo: boolean;
-  favorito: boolean;
   fcreacion: Date ;
 }
 
@@ -18,6 +17,5 @@ export const PROYECTO_SIN_PROYECTO: Proyecto = {
   publico: true,
   progreso: 0,
   activo: true,
-  favorito: false,
   fcreacion: new Date()
 };

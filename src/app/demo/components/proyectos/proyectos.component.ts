@@ -22,6 +22,7 @@ import { ToastModule } from "primeng/toast";
 
 import { PermissionService } from '../../service/permission.service';
 import { Observable } from 'rxjs';
+import { FavoritosService } from '../../service/favoritoproyecto.service';
 
 @Component({
   selector: 'app-proyectos',
@@ -88,6 +89,8 @@ export class ProyectosComponent implements OnInit {
 
   canCreate$!: Observable<boolean>;
 
+  private favoritosService = new FavoritosService();
+  private usuarioActualId: number = JSON.parse(localStorage.getItem('userSession') || '{}').userData?.id;
   constructor(
     private proyectosService: ProyectosService,
     private clientesService: ClientesService,
@@ -103,6 +106,7 @@ export class ProyectosComponent implements OnInit {
     this.permissionService.canDo('createProject').subscribe(v => {
       console.log('canCreate cambió a:', v);
     });
+    
   }
 
   get mostrarLista(): boolean {
@@ -115,6 +119,8 @@ export class ProyectosComponent implements OnInit {
   }
 
   aplicarFiltros(): void {
+    const favoritosIds = this.favoritosService.getFavoritosDeUsuario(this.usuarioActualId);
+
     this.proyectosFiltrados = this.proyectos.filter(p => {
       const estadoProyecto = (p as any).activo !== undefined ? (p as any).activo : true;
 
@@ -131,7 +137,11 @@ export class ProyectosComponent implements OnInit {
 
       return cumpleEstado && cumpleCliente && cumpleAcceso && cumpleNombre;
     })
-      .sort((a, b) => Number(b.favorito) - Number(a.favorito)); // 👈
+      .sort((a, b) => {
+        const aFav = favoritosIds.includes(a.id) ? 1 : 0;
+        const bFav = favoritosIds.includes(b.id) ? 1 : 0;
+        return bFav - aFav;
+      });
   }
 
   abrirModalNuevoProyecto(): void {
@@ -161,7 +171,6 @@ export class ProyectosComponent implements OnInit {
       this.nuevoProyecto.color,
       this.nuevoProyecto.publico,
       0,
-      false,
       true,
       new Date(),
     );
@@ -209,9 +218,13 @@ export class ProyectosComponent implements OnInit {
     }
   }
 
-  toggleFavorito(id: number): void {
-    this.proyectos = this.proyectosService.toggleFavorito(id);
-    this.aplicarFiltros();
+  esFavorito(proyectoId: number): boolean {
+    return this.favoritosService.esFavorito(this.usuarioActualId, proyectoId);
+  }
+
+  toggleFavorito(proyectoId: number): void {
+    this.favoritosService.toggleFavorito(this.usuarioActualId, proyectoId);
+    this.aplicarFiltros(); // re-ordena
   }
 
   eliminarProyecto(id: number): void {
@@ -278,7 +291,6 @@ export class ProyectosComponent implements OnInit {
 
     return this.formatearTiempo(totalMs);
   }
-
 
   formatearTiempo(ms: number): string {
     const totalS = Math.floor(ms / 1000);

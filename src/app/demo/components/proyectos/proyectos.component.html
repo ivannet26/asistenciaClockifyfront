@@ -187,8 +187,10 @@
                                         </td>
 
                                         <td class="border-none">
-                                            <p-button [icon]="proyecto.favorito ? 'pi pi-star-fill' : 'pi pi-star'"
-                                                [text]="true" [severity]="warn"
+                                            <p-button
+                                                [icon]="esFavorito(proyecto.id) ? 'pi pi-star-fill' : 'pi pi-star'"
+                                                [text]="true"
+                                                [severity]="esFavorito(proyecto.id) ? 'warn' : 'secondary'"
                                                 (onClick)="toggleFavorito(proyecto.id)">
                                             </p-button>
                                         </td>
