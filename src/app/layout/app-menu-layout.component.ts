@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { PermissionService } from '../demo/service/permision.service';
 
 @Component({
     selector: 'app-menu-layout',
@@ -9,9 +10,10 @@ export class AppMenuLayoutComponent implements OnInit {
 
     model: any[] = [];
 
-    constructor(private router: Router) { }
+    constructor(private router: Router, private permissionService: PermissionService,) { }
 
     ngOnInit() {
+        const puedeVerAdmin = this.permissionService.canDoSync('soloAdminODueno');
         this.model = [
             {
                 label: 'GESTIONAR TIEMPO',
@@ -24,6 +26,11 @@ export class AppMenuLayoutComponent implements OnInit {
                 label: 'ANALIZAR',
                 items: [
                     { label: 'PANEL', icon: 'pi pi-fw pi-th-large', routerLink: ['/menu-layout/panel'] },
+                    ...(puedeVerAdmin ? [{
+                        label: 'PANEL DE ADMINISTRACIÓN',
+                        icon: 'pi pi-fw pi-th-large',
+                        routerLink: ['/menu-layout/cerrar-asistencia']
+                    }] : []),
                     {
                         label: 'INFORMES',
                         icon: 'pi pi-fw pi-chart-bar',
