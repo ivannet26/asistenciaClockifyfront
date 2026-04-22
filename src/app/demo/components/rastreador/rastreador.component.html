@@ -10,7 +10,7 @@
 
                 <div class="proyecto-seccion">
                     <button pButton type="button" class="p-button-text boton-proyecto"
-                        (click)="panelProyectos.toggle($event)">
+                        (click)="registroSeleccionadoParaEditar = null; panelProyectos.toggle($event)">
                         <span class="texto-proyecto">
                             <ng-container *ngIf="proyectoSeleccionado?.id === 0 ; else proyectoNormal">
                                 <i class="pi pi-plus-circle"></i>
@@ -35,7 +35,7 @@
                 <div class="flex align-items-center gap-2">
                     <button pButton icon="pi pi-tag" class="p-button-text"
                         [ngClass]="{'icono-activo': etiquetasSeleccionadas.length > 0}"
-                        (click)="panelEtiquetas.toggle($event)">
+                        (click)="registroSeleccionadoParaEditar = null; panelEtiquetas.toggle($event)">
                     </button>
 
                     <div class="tags-pill-container flex flex-wrap gap-1" *ngIf="etiquetasSeleccionadas.length > 0">
@@ -76,24 +76,28 @@
                 <div class="registro-contenido flex flex-column lg:flex-row gap-3 lg:align-items-center">
 
                     <div class="registro-izquierda flex-grow-1">
-                        <input type="text" pInputText [(ngModel)]="r.descripcion" class="input-descripcion"
+                        <input type="text" pInputText [(ngModel)]="r.descripcion" (blur)="actualizarRegistroEnStorage(r)" class="input-descripcion"
                             placeholder="Sin descripción" />
                     </div>
 
                     <div class="registro-centro flex flex-wrap align-items-center gap-3 lg:justify-content-end">
 
-                        <div class="flex align-items-center gap-2" style="min-width: 150px;">
+                        <div class="flex align-items-center gap-2 cursor-pointer hover:text-primary" 
+                             style="min-width: 150px;"
+                             (click)="abrirPanelProyectosEnRegistro($event, r, panelProyectos)">
                             <div class="color-dot" [style.background]="r.proyecto?.color || '#94a3b8'"></div>
-                            <span class="proyecto-nombre">
+                            <span class="proyecto-nombre" [ngClass]="{'text-blue-500 font-bold': !r.proyecto}">
+                                <i *ngIf="!r.proyecto" class="pi pi-plus-circle mr-1"></i>
                                 {{ r.proyecto?.nombre || 'Sin proyecto' }}
                             </span>
                         </div>
 
-                        <div class="registro-tags-display flex flex-wrap gap-1">
+                        <div class="registro-tags-display flex flex-wrap gap-1 cursor-pointer"
+                             (click)="abrirPanelEtiquetasEnRegistro($event, r, panelEtiquetas)">
                             <span *ngFor="let tag of r.etiquetas" class="tag-badge-small">
                                 {{ tag.nombre ? tag.nombre : tag }}
                             </span>
-                            <i *ngIf="!r.etiquetas || r.etiquetas.length === 0" class="pi pi-tag icono-suave"></i>
+                            <i class="pi pi-tag" [ngClass]="r.etiquetas?.length > 0 ? 'text-primary' : 'icono-suave'"></i>
                         </div>
 
                         <div class="flex align-items-center gap-2">
@@ -118,10 +122,8 @@
     </div>
 
     <div *ngIf="registros.length == 0">
-        <div class="flex flex-column align-items-center justify-content-center"
-            style="min-height: 50vh; padding: 2rem;">
-            <div class="card shadow-2 p-6 bg-white border-1 border-300 text-center"
-                style="max-width: 500px; border-radius: 12px;">
+        <div class="flex flex-column align-items-center justify-content-center" style="min-height: 50vh; padding: 2rem;">
+            <div class="card shadow-2 p-6 bg-white border-1 border-300 text-center" style="max-width: 500px; border-radius: 12px;">
                 <div class="flex justify-content-center mb-4">
                     <div style="background: #e3f2fd; width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                         <i class="pi pi-clock text-5xl" style="color: #00BCD4;"></i>
@@ -143,20 +145,17 @@
             <input type="text" pInputText placeholder="Buscar Proyecto o Cliente" [(ngModel)]="busquedaProyecto"
                 class="w-full p-inputtext-sm" />
         </span>
-
         <div style="max-height: 250px; overflow-y: auto;">
             <div *ngFor="let proyecto of proyectos"
                 class="flex align-items-center justify-content-between p-2 border-round cursor-pointer hover:bg-100"
                 (click)="seleccionarProyecto(proyecto, panelProyectos)">
                 <div class="flex align-items-center gap-2">
-                    <div [style.background]="proyecto.color" style="width: 12px; height: 12px; border-radius: 50%;">
-                    </div>
+                    <div [style.background]="proyecto.color" style="width: 12px; height: 12px; border-radius: 50%;"></div>
                     <span>{{ proyecto.nombre }}</span>
                 </div>
                 <i class="pi pi-chevron-right"></i>
             </div>
         </div>
-
         <button pButton label="Crear nuevo Proyecto" icon="pi pi-plus-circle" class="p-button-text p-button-info w-full"
             (click)="panelProyectos.hide(); abrirModalNuevoProyecto()">
         </button>
@@ -172,7 +171,8 @@
         </span>
         <div style="max-height: 200px; overflow-y: auto;" class="lista-etiquetas-scroll">
             <div *ngFor="let tag of etiquetasFiltradas" class="flex align-items-center p-2 hover:bg-100 border-round">
-                <p-checkbox [binary]="true" [ngModel]="etiquetasSeleccionadas.includes(tag.nombre)"
+                <p-checkbox [binary]="true" 
+                    [ngModel]="registroSeleccionadoParaEditar ? registroSeleccionadoParaEditar.etiquetas?.includes(tag.nombre) : etiquetasSeleccionadas.includes(tag.nombre)"
                     (onChange)="toggleEtiqueta(tag.nombre)">
                 </p-checkbox>
                 <label class="ml-2 cursor-pointer w-full" (click)="toggleEtiqueta(tag.nombre)">
@@ -187,21 +187,17 @@
     [style]="{width: 'min(450px, 95vw)'}" [closable]="true">
     <div class="flex flex-column gap-3 mt-2">
         <input pInputText placeholder="Nombre del proyecto" [(ngModel)]="nuevoProyecto.nombre" class="w-full" />
-
         <p-dropdown [options]="clientes" optionLabel="nombre" [(ngModel)]="nuevoProyecto.cliente"
             placeholder="Seleccionar cliente" appendTo="body" class="w-full">
         </p-dropdown>
-
         <div class="flex flex-wrap align-items-center gap-3">
             <span>Color:</span>
-            <input type="color" [(ngModel)]="nuevoProyecto.color"
-                style="border:none; width:40px; height:40px; cursor:pointer" />
+            <input type="color" [(ngModel)]="nuevoProyecto.color" style="border:none; width:40px; height:40px; cursor:pointer" />
             <p-checkbox [(ngModel)]="nuevoProyecto.publico" binary="true" label="Proyecto Público"></p-checkbox>
         </div>
     </div>
     <ng-template pTemplate="footer">
-        <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text"
-            (click)="mostrarModalProyecto = false"></button>
+        <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="mostrarModalProyecto = false"></button>
         <button pButton label="Crear" icon="pi pi-check" (click)="guardarProyecto()"></button>
     </ng-template>
 </p-dialog>
