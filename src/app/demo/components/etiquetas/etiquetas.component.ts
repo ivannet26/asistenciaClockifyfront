@@ -14,6 +14,8 @@ import { EtiquetasService } from '../../service/etiquetas.service';
 import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from "primeng/toast";
+import { Observable } from 'rxjs';
+import { PermissionService } from '../../service/permission.service';
 
 @Component({
   selector: 'app-etiquetas',
@@ -47,26 +49,33 @@ export class EtiquetasComponent implements OnInit {
   filtroSeleccionado: string = 'activo';
   etiquetaEnEdicion: Etiquetas | null = null;
 
-  constructor(private etiquetasService: EtiquetasService, private messageService: MessageService) { }
+  canCreateE$!: Observable<boolean>;
+
+  constructor(private etiquetasService: EtiquetasService,
+    private messageService: MessageService,
+    private permissionService: PermissionService) { }
 
   get mostrarLista(): boolean {
     return this.etiquetas.length > 0;
   }
 
   ngOnInit() {
-
+    this.canCreateE$ = this.permissionService.canDo('createEtiqueta');
     this.etiquetas = this.etiquetasService.getEtiquetas();
     this.etiquetasFiltrados = [...this.etiquetas];
 
   }
 
   agregarEtiqueta() {
-    if (!this.nuevaEtiquetaNombre.trim()) 
+
+    if (!this.permissionService.canDoSync('createEtiqueta')) return;
+
+    if (!this.nuevaEtiquetaNombre.trim())
       return this.messageService.add({
-      severity: 'info',
-      summary: 'Campos Vacios',
-      detail: `Campo de nombre vacio`
-    });
+        severity: 'info',
+        summary: 'Campos Vacios',
+        detail: `Campo de nombre vacio`
+      });
 
     this.etiquetas = this.etiquetasService.agregarEtiqueta(this.nuevaEtiquetaNombre);
     this.etiquetasFiltrados = [...this.etiquetas];

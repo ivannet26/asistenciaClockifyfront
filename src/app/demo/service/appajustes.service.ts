@@ -17,15 +17,13 @@ export class AppAjustes {
         const enStorage = localStorage.getItem('appConfig');
 
         if (enStorage) {
-            // Ya tiene cambios guardados → usar localStorage
             const parsed = JSON.parse(enStorage);
             this.configSubject.next(this.merge(parsed));
         } else {
-            // Primera vez → leer el JSON físico de assets
             this.http.get<AppConfig>('/src/assets/Ajustes.json').pipe(
                 tap(config => {
                     this.configSubject.next(this.merge(config));
-                    // Guardar en localStorage para próximas sesiones
+
                     localStorage.setItem('appConfig', JSON.stringify(config));
                 })
             ).subscribe();
@@ -64,7 +62,6 @@ export class AppAjustes {
         });
     }
 
-    /** Vuelve al JSON original de assets, borra localStorage */
     resetToAssets() {
         localStorage.removeItem('appConfig');
         this.inicializar();

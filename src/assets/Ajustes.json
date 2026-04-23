@@ -10,6 +10,7 @@
     },
     "espacioTrabajo": {
         "projectCreationPermission": "ADMINISTRADOR",
+        "etiquetaCreationPermission": "ADMINISTRADOR",
         "forceTimer": false
     }
 }

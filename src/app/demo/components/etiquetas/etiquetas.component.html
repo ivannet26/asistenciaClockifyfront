@@ -1,5 +1,4 @@
-<p-toast position="top-right" [baseZIndex]="9999"
-  [preventOpenDuplicates]="true" />
+<p-toast position="top-right" [baseZIndex]="9999" [preventOpenDuplicates]="true" />
 <div class="etiquetas-pagina">
   <div class="etiquetas-panel">
     <h2 class="titulo-seccion">Etiquetas</h2>
@@ -38,13 +37,16 @@
               </span>
             </div>
 
-            <div class="grupo-input">
-              <input type="text" pInputText [(ngModel)]="nuevaEtiquetaNombre" placeholder="Añadir nueva etiqueta"
-                class="input-personalizado" (keyup.enter)="agregarEtiqueta()" />
-              <button pButton type="button" label="Añadir" class="boton-personalizado" (click)="agregarEtiqueta()">
-              </button>
-            </div>
+            <ng-container *ngIf="canCreateE$ | async">
+              <div class="grupo-input">
+                <input type="text" pInputText [(ngModel)]="nuevaEtiquetaNombre" placeholder="Añadir nueva etiqueta"
+                  class="input-personalizado" (keyup.enter)="agregarEtiqueta()" />
+                <button pButton type="button" label="Añadir" class="boton-personalizado" (click)="agregarEtiqueta()">
+                </button>
+              </div>
+            </ng-container>
           </div>
+
           <div class="surface-100 p-2 flex justify-content-between align-items-center border-bottom-1 surface-border">
             <span class="text-xs font-bold text-500 ml-2 uppercase">Etiquetas</span>
             <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
@@ -57,11 +59,14 @@
 
             <ng-template pTemplate="header">
               <tr>
-                <th style="width: 5%"  class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                <th style="width: 5%"
+                  class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
                   <p-checkbox [binary]="true"></p-checkbox>
                 </th>
-                <th style="width: 75%"  class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border" >NOMBRE</th>
-                <th style="width: 20%"  class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                <th style="width: 75%"
+                  class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">NOMBRE</th>
+                <th style="width: 20%"
+                  class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
                 </th>
               </tr>
             </ng-template>

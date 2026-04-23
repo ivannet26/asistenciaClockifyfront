@@ -15,6 +15,8 @@ import { Monedas } from '../../model/Monedas';
 import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from "primeng/toast";
+import { PermissionService } from '../../service/permission.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-clientes',
@@ -50,7 +52,13 @@ export class ClientesComponent implements OnInit {
   filtroSeleccionado: string = 'activo';
   clienteEnEdicion: Clientes | null = null;
 
-  constructor(private clientesService: ClientesService, private messageService: MessageService) { }
+  canCreate$!: Observable<boolean>;
+
+  constructor(private clientesService: ClientesService,
+              private messageService: MessageService,
+              private permissionService: PermissionService,) { 
+
+  }
 
   get mostrarLista(): boolean {
     return this.clientes.length > 0;
@@ -60,7 +68,7 @@ export class ClientesComponent implements OnInit {
 
     this.clientes = this.clientesService.getClientes();
     this.clientesFiltrados = [...this.clientes];
-
+    this.canCreate$ = this.permissionService.canDo('createProject');
   }
 
   agregarCliente() {
@@ -84,7 +92,7 @@ export class ClientesComponent implements OnInit {
   actualizarCliente(id: number, cambios: Partial<Clientes>) {
     this.clientes = this.clientesService.actualizarCliente(id, cambios);
     this.clientesFiltrados = [...this.clientes];
-        this.messageService.add({
+    this.messageService.add({
       severity: 'warn',
       summary: 'Cliente Actualizado',
       detail: `El cliente fue actualizado correctamente`

@@ -27,6 +27,17 @@ const REGLAS: Record<string, {
             return RolNombre.ADMINISTRADOR;
         },
     },
+    createEtiqueta: {
+        configCheck: cfg => {
+            const p = cfg.espacioTrabajo.etiquetaCreationPermission;
+            return p === 'all' || p === RolNombre.ADMINISTRADOR || p === RolNombre.GERENTE;
+        },
+        getRolMinimo: cfg => {
+            const p = cfg.espacioTrabajo.etiquetaCreationPermission;
+            if (p === 'all') return RolNombre.EMPLEADO;
+            return RolNombre.ADMINISTRADOR;
+        },
+    },
     forceTimer: {
         configCheck: cfg => cfg.espacioTrabajo.forceTimer,
         getRolMinimo: () => RolNombre.EMPLEADO,
@@ -58,7 +69,7 @@ export class PermissionService {
                 if (!regla || !rol) return false;
 
                 const configActiva = regla.configCheck(cfg);
-                const rolMinimo = regla.getRolMinimo(cfg); // ← dinámico
+                const rolMinimo = regla.getRolMinimo(cfg);
                 const rolSuficiente = ROL_NIVEL[rol] >= ROL_NIVEL[rolMinimo];
 
                 return configActiva && rolSuficiente;
@@ -72,7 +83,7 @@ export class PermissionService {
         const regla = REGLAS[accion];
         if (!regla || !rol) return false;
 
-        const rolMinimo = regla.getRolMinimo(cfg); // ← dinámico
+        const rolMinimo = regla.getRolMinimo(cfg);
         return regla.configCheck(cfg) && ROL_NIVEL[rol] >= ROL_NIVEL[rolMinimo];
     }
 }

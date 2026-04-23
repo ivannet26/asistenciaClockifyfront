@@ -63,25 +63,67 @@
                     <div class="flex flex-wrap gap-4">
                         <div class="flex align-items-center gap-2">
                             <p-radioButton name="proyectos" value="ADMINISTRADOR" [(ngModel)]="crearProyectos"
-                                (onClick)="onPermisosChange()">
+                                (onClick)="onPermisosChangeP()">
                             </p-radioButton>
                             <label>Administradores</label>
                         </div>
                         <div class="flex align-items-center gap-2">
                             <p-radioButton name="proyectos" value="GERENTE" [(ngModel)]="crearProyectos"
-                                (onClick)="onPermisosChange()">
+                                (onClick)="onPermisosChangeP()">
                             </p-radioButton>
                             <label>Administradores y gerentes</label>
                         </div>
                         <div class="flex align-items-center gap-2">
                             <p-radioButton name="proyectos" value="all" [(ngModel)]="crearProyectos"
-                                (onClick)="onPermisosChange()">
+                                (onClick)="onPermisosChangeP()">
                             </p-radioButton>
                             <label>Cualquiera</label>
                         </div>
                     </div>
                 </section>
-
+                <section class="mb-5">
+                    <h3 class="text-lg font-bold mb-1">Quién puede crear Tareas</h3>
+                    <p class="text-500 mb-3" style="font-size: 0.85rem;">
+                        Permite que las personas creen y administren nuevas tareas.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex align-items-center gap-2">
+                            <p-radioButton name="proyectos" value="ADMINISTRADOR">
+                            </p-radioButton>
+                            <label>Administradores</label>
+                        </div>
+                        <div class="flex align-items-center gap-2">
+                            <p-radioButton name="proyectos" value="GERENTE">
+                            </p-radioButton>
+                            <label>Administradores y gerentes</label>
+                        </div>
+                        <div class="flex align-items-center gap-2">
+                            <p-radioButton name="proyectos" value="all">
+                            </p-radioButton>
+                            <label>Cualquiera</label>
+                        </div>
+                    </div>
+                </section>
+                <section class="mb-5">
+                    <h3 class="text-lg font-bold mb-1">Quién puede crear etiquetas</h3>
+                    <p class="text-500 mb-3" style="font-size: 0.85rem;">
+                        Permite que las personas creen nuevas etiquetas.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex align-items-center gap-2">
+                            <p-radioButton name="etiquetas" value="ADMINISTRADOR" [(ngModel)]="crearEtiquetas"
+                                (onClick)="onPermisosChangeE()">
+                            </p-radioButton>
+                            <label>Administradores</label>
+                        </div>
+                        <div class="flex align-items-center gap-2">
+                            <p-radioButton name="etiquetas" value="all" [(ngModel)]="crearEtiquetas"
+                                (onClick)="onPermisosChangeE()">
+                            </p-radioButton>
+                            <label>Cualquiera</label>
+                        </div>
+                    </div>
+                </section>
                 <hr class="border-300 my-4">
                 <section class="mb-5">
                     <h3 class="text-lg font-bold mb-1" style="color: #888;">Temporizador forzado</h3>

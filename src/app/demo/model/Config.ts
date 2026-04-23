@@ -12,6 +12,7 @@ export interface UsuarioConfig {
 
 export interface EspacioTrabajoConfig {
     projectCreationPermission: RolNombre.ADMINISTRADOR | RolNombre.GERENTE | 'all';
+    etiquetaCreationPermission: RolNombre.ADMINISTRADOR | 'all';
     forceTimer: boolean;
 }
 
@@ -32,6 +33,7 @@ export const DEFAULT_CONFIG: AppConfig = {
     },
     espacioTrabajo: {
         projectCreationPermission: RolNombre.GERENTE,
+        etiquetaCreationPermission: RolNombre.ADMINISTRADOR,
         forceTimer: false,
     },
 };
