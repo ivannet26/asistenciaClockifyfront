@@ -48,7 +48,6 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   registros: Registro[] = [];
   registrosAgrupados: any[] = [];
 
-  // Variable para edición en línea
   registroSeleccionadoParaEditar: any = null;
 
   nuevoProyecto = {
@@ -156,8 +155,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   guardarRegistro(nuevo: any) {
     const data = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
     const existe = data.find((r: any) => 
-      new Date(r.inicio).getTime() === new Date(nuevo.inicio).getTime() && 
-      r.descripcion === nuevo.descripcion
+      new Date(r.inicio).getTime() === new Date(nuevo.inicio).getTime()
     );
     if (!existe) {
       data.unshift(nuevo);
@@ -165,17 +163,26 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     }
   }
 
+  // FUNCIÓN CORREGIDA PARA ACTUALIZAR LOCALSTORAGE
   actualizarRegistroEnStorage(regActualizado: any) {
     const todos = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
+    
+    // Buscamos el registro en el storage usando el tiempo de inicio como ID único
     const index = todos.findIndex((r: any) => 
-      new Date(r.inicio).getTime() === new Date(regActualizado.inicio).getTime() && 
-      r.descripcion === regActualizado.descripcion
+      new Date(r.inicio).getTime() === new Date(regActualizado.inicio).getTime()
     );
 
     if (index !== -1) {
+      // Reemplazamos el objeto antiguo con el editado (que ya trae la nueva descripción)
       todos[index] = regActualizado;
+      
+      // Guardamos la lista completa actualizada
       localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(todos));
+      
+      // Sincronizamos la UI
+      this.cargarRegistros();
       this.agruparRegistros(); 
+      console.log('Registro actualizado en LocalStorage');
     }
   }
 
@@ -228,8 +235,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   eliminarRegistro(registro: any) {
     const todos = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
     const filtrados = todos.filter((r: any) => 
-        new Date(r.inicio).getTime() !== new Date(registro.inicio).getTime() || 
-        r.descripcion !== registro.descripcion
+        new Date(r.inicio).getTime() !== new Date(registro.inicio).getTime()
     );
     localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(filtrados));
     this.cargarRegistros();

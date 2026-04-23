@@ -76,7 +76,11 @@
                 <div class="registro-contenido flex flex-column lg:flex-row gap-3 lg:align-items-center">
 
                     <div class="registro-izquierda flex-grow-1">
-                        <input type="text" pInputText [(ngModel)]="r.descripcion" (blur)="actualizarRegistroEnStorage(r)" class="input-descripcion"
+                        <input type="text" pInputText 
+                            [(ngModel)]="r.descripcion" 
+                            (blur)="actualizarRegistroEnStorage(r)" 
+                            (keyup.enter)="actualizarRegistroEnStorage(r)"
+                            class="input-descripcion"
                             placeholder="Sin descripción" />
                     </div>
 
