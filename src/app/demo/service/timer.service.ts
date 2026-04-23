@@ -13,11 +13,9 @@ export class TimerService {
   public inicioTiempo: Date | null = null;
   private intervalo: any = null;
 
-  constructor(private titleService: Title) {
-    
-  }
+  constructor(private titleService: Title) {}
 
-  // Método para que el componente le ordene revivir
+  // Revive el timer cuando se recarga la página
   remanecer(data: any) {
     this.inicioTiempo = new Date(data.inicio);
     this.tareaActual.set(data.descripcion || '');
@@ -26,6 +24,7 @@ export class TimerService {
     this.iniciarIntervalo();
   }
 
+  // Inicia un nuevo rastreo
   start(inicio: Date, descripcion: string, proyecto: any, facturable: boolean, etiquetas: string[]) {
     this.inicioTiempo = inicio;
     this.tareaActual.set(descripcion);
@@ -35,24 +34,31 @@ export class TimerService {
     this.iniciarIntervalo();
   }
 
+  // Motor del cronómetro
   iniciarIntervalo() {
     if (this.intervalo) clearInterval(this.intervalo);
+    
     this.intervalo = setInterval(() => {
       if (!this.inicioTiempo) return;
+      
       const ahora = new Date();
       const diffMs = ahora.getTime() - this.inicioTiempo.getTime();
       const tiempoStr = this.formatear(diffMs);
+      
       this.tiempoTranscurrido.set(tiempoStr);
       this.titleService.setTitle(`${tiempoStr} • Clockify`);
+      
+      // Actualizamos el "last signal" en storage para que el sistema sepa que sigue activo
       this.guardarProgreso();
     }, 1000);
   }
 
+  // Guarda el estado actual en LocalStorage (backup)
   private guardarProgreso(facturable?: boolean, etiquetas?: string[]) {
     const actual = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}');
     const backup = {
       inicio: this.inicioTiempo,
-      fin: new Date().getTime(),
+      fin: new Date().getTime(), // Señal de vida actual
       descripcion: this.tareaActual(),
       proyecto: this.proyectoSeleccionado(),
       facturable: facturable !== undefined ? facturable : actual.facturable,
@@ -61,12 +67,33 @@ export class TimerService {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(backup));
   }
 
+  // Detención normal (cuando el usuario hace clic en DETENER)
   stop() {
-    if (this.intervalo) clearInterval(this.intervalo);
+    if (this.intervalo) {
+      clearInterval(this.intervalo);
+      this.intervalo = null;
+    }
     this.corriendo.set(false);
     this.tiempoTranscurrido.set('00:00:00');
     this.tareaActual.set('');
     this.proyectoSeleccionado.set(null);
+    this.inicioTiempo = null;
+    this.titleService.setTitle('Clockify');
+    localStorage.removeItem(this.STORAGE_KEY);
+  }
+
+  /**
+   * APAGADO DE EMERGENCIA (Logout)
+   * Detiene el motor de inmediato y limpia estados sin disparar lógica de guardado adicional.
+   */
+  forceStop() {
+    if (this.intervalo) {
+      clearInterval(this.intervalo);
+      this.intervalo = null;
+    }
+    this.corriendo.set(false);
+    this.inicioTiempo = null;
+    this.tiempoTranscurrido.set('00:00:00');
     this.titleService.setTitle('Clockify');
     localStorage.removeItem(this.STORAGE_KEY);
   }

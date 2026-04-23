@@ -161,10 +161,10 @@
             </div>
         </div>
         <button pButton label="Crear nuevo Proyecto" 
-                            *ngIf="canCreateP$ | async" 
-                            icon="pi pi-plus-circle" 
-                            class="p-button-text p-button-info w-full"
-                            (click)="panelProyectos.hide(); abrirModalNuevoProyecto()">
+                *ngIf="canCreateP$ | async" 
+                icon="pi pi-plus-circle" 
+                class="p-button-text p-button-info w-full"
+                (click)="panelProyectos.hide(); abrirModalNuevoProyecto()">
         </button>
     </div>
 </p-overlayPanel>

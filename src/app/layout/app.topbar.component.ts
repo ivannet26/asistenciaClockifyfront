@@ -11,6 +11,7 @@ import { TieredMenuModule } from 'primeng/tieredmenu';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { PermissionService } from '../demo/service/permission.service';
+import { TimerService } from '../demo/service/timer.service';
 
 @Component({
     standalone: true,
@@ -41,7 +42,8 @@ export class AppTopBarComponent implements OnInit {
         private gS: GlobalService,
         private aS: LoginService,
         private primeng: PrimeNGConfig,
-        private permissionService: PermissionService
+        private permissionService: PermissionService,
+        private timerService: TimerService 
     ) {
         this.canVerConfig$ = this.permissionService.canDo('soloAdminODueno');
         this.primeng.setTranslation(calendario_traduccion());
@@ -50,13 +52,10 @@ export class AppTopBarComponent implements OnInit {
     ngOnInit(): void {
         this.nombre = this.gS.getNombreUsuario() ?? '';
 
-        // Configuración de proyectos (SplitButton)
         this.proyectos = [
             { label: 'Proyecto 1', icon: 'pi pi-fw pi-file', command: () => this.link.navigate(['/menu-layout']) },
             { label: 'Proyecto 2', icon: 'pi pi-fw pi-file', command: () => this.link.navigate(['/Home']) }
         ];
-
-        // CONFIGURACIÓN DE LA TUERCA 
 
         this.opcionesTuerca = [
             {
@@ -67,16 +66,64 @@ export class AppTopBarComponent implements OnInit {
         ];
     }
 
-    // Función CORREGIDA: Navega en la MISMA pestaña
     abrirConfiguracionEspacios() {
-
         this.link.navigate(['/menu-layout/configuracion-espacios']);
     }
 
+    // FUNCIÓN DE CIERRE CON REGISTRO AUTOMÁTICO
     cerrarSesion() {
+        // 1. Intentar capturar y guardar lo que está corriendo antes de borrar sesión
+        const timerActivo = localStorage.getItem('timer_activo');
+        const sessionStr = localStorage.getItem('userSession');
+
+        if (timerActivo && sessionStr) {
+            const data = JSON.parse(timerActivo);
+            const session = JSON.parse(sessionStr);
+            
+            const inicio = new Date(data.inicio);
+            const fin = new Date();
+            const diffMs = fin.getTime() - inicio.getTime();
+
+            const nuevoRegistro: any = {
+                descripcion: data.descripcion || 'Sin descripción',
+                proyecto: data.proyecto,
+                miembroId: session.userData?.id,
+                miembroNombre: session.userData?.nombre,
+                inicio: inicio,
+                fin: fin,
+                duracion: this.formatearDuracion(diffMs),
+                facturable: data.facturable || false,
+                etiquetas: data.etiquetas || []
+            };
+
+            // Guardar en el historial de registros
+            const historial = JSON.parse(localStorage.getItem('registros') || '[]');
+            // Evitar duplicados comparando el inicio
+            const existe = historial.find((r: any) => new Date(r.inicio).getTime() === inicio.getTime());
+            
+            if (!existe) {
+                historial.unshift(nuevoRegistro);
+                localStorage.setItem('registros', JSON.stringify(historial));
+            }
+        }
+
+        // 2. Detener motor y limpiar rastro del timer
+        this.timerService.forceStop();
+        localStorage.removeItem('timer_activo');
+
+        // 3. Limpiar sesión de usuario y navegar
         this.aS.logout();
         this.gS.clearSession();
         this.link.navigate(['/Inicio_Sesion']);
+    }
+
+    // Función auxiliar para el formato de duración (HH:mm:ss)
+    private formatearDuracion(ms: number): string {
+        const totalS = Math.floor(ms / 1000);
+        const h = Math.floor(totalS / 3600).toString().padStart(2, '0');
+        const m = Math.floor((totalS % 3600) / 60).toString().padStart(2, '0');
+        const s = (totalS % 60).toString().padStart(2, '0');
+        return `${h}:${m}:${s}`;
     }
 
     espaciostrabajo() {
@@ -86,6 +133,4 @@ export class AppTopBarComponent implements OnInit {
     micuenta() {
         this.link.navigate(['/menu-layout/micuenta']);
     }
-
-
 }
