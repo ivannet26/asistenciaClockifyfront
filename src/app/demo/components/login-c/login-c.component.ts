@@ -74,36 +74,39 @@ export class LoginCComponent implements OnInit {
   }
 
   iniciarSesion(): void {
-        if (!this.credencialesFRM.valid) return;
+    if (!this.credencialesFRM.valid) return;
 
-        const { correo, contrasena } = this.credencialesFRM.value;
-        const result = this.loginServicio.login(correo, contrasena);
+    const { correo, contrasena } = this.credencialesFRM.value;
+    const result = this.loginServicio.login(correo, contrasena);
 
-        if (result) {
-            // Guardar correo si el usuario marcó "recordarme"
-            if (this.recordarme) {
-                localStorage.setItem('recordarusuario', JSON.stringify({ correo, contrasena }));
-            } else {
-                localStorage.removeItem('recordarusuario');
-            }
-
-            // Mostrar toast de bienvenida
-            this.messageService.add({
-                severity: 'success',
-                summary: 'Bienvenido',
-                detail: result.nombre
-            });
-
-            this.router.navigate(['/espaciotrabajo']);
+    if (result) {
+        if (this.recordarme) {
+            localStorage.setItem('recordarusuario', JSON.stringify({ correo, contrasena }));
         } else {
-            // Mostrar toast de error
-            this.messageService.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Correo o contraseña incorrectos'
-            });
+            localStorage.removeItem('recordarusuario');
         }
+
+        this.messageService.add({
+            severity: 'success',
+            summary: 'Bienvenido',
+            detail: result.nombre
+        });
+
+        this.router.navigate(['/espaciotrabajo']);
+    } else {
+        // Verificamos si el usuario existe pero está inactivo
+        const miembro = this.loginServicio.buscarPorCorreo(correo);  
+        
+        this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: miembro && !miembro.activo 
+                ? 'Tu cuenta está desactivada, contacta al administrador'
+                : 'Correo o contraseña incorrectos'
+        });
     }
+}
+
 
   /*
   iniciarSesion() {

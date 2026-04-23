@@ -41,7 +41,7 @@ export class LoginService {
         private globalService: GlobalService,
         private sessionService: SessionService,
     ) {
-        
+
         /*this.apiUrl = configService.getApiUrl();
         this.urlAPI = `${this.apiUrl}/Autenticacion`;
 
@@ -133,6 +133,10 @@ export class LoginService {
         const result = this.miembrosService.login(correo, contrasena);
 
         if (result) {
+            if (!result.activo) {
+                return null;
+            }
+
             localStorage.setItem('userSession', JSON.stringify({
                 isAuthenticated: true,
                 userData: result
@@ -140,11 +144,15 @@ export class LoginService {
             localStorage.setItem('sesionStartTime', new Date().toISOString());
             this.isAuthenticatedSubject.next(true);
             this.globalService.setNombreUsuario(result.nombre);
-
             this.sessionService.setUser(result);
         }
 
         return result;
+    }
+
+    buscarPorCorreo(correo: string): Miembros | null {
+        const miembros: Miembros[] = JSON.parse(localStorage.getItem('miembros') || '[]');
+        return miembros.find(m => m.correo === correo) ?? null;
     }
 
 

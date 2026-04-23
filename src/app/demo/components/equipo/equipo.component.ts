@@ -126,53 +126,65 @@ export class EquipoComponent implements OnInit {
     );
   }
 
-  guardarMiembro() {
+guardarMiembro() {
     const nombre = this.nuevoMiembro.nombre?.trim();
     const correo = this.nuevoMiembro.correo?.trim();
     const contrasena = this.nuevoMiembro.contrasena?.trim();
     if (!nombre || !correo) return;
 
-    const nuevos = this.miembrosService.agregarMiembro(nombre, correo, contrasena);
-    if (this.nuevoMiembro.rol) {
-      const agregado = nuevos[nuevos.length - 1];
-      this.miembrosService.actualizarMiembro(agregado.id, { rol: this.nuevoMiembro.rol });
+    const correoExiste = this.miembros.some(m => 
+        m.correo.toLowerCase() === correo.toLowerCase()
+    );
+
+    if (correoExiste) {
+        this.messageService.add({ 
+            severity: 'warn', 
+            summary: 'Correo duplicado', 
+            detail: `El correo ${correo} ya está registrado` 
+        });
+        return;
     }
 
-    this.messageService.add({ severity: 'success', summary: 'Miembro Creado', detail: `${this.nuevoMiembro.nombre} fue agregado correctamente` });
+    const nuevos = this.miembrosService.agregarMiembro(nombre, correo, contrasena);
+    if (this.nuevoMiembro.rol) {
+        const agregado = nuevos[nuevos.length - 1];
+        this.miembrosService.actualizarMiembro(agregado.id, { rol: this.nuevoMiembro.rol });
+    }
+
+    this.messageService.add({ severity: 'success', summary: 'Miembro Creado', detail: `${nombre} fue agregado correctamente` });
     this.nuevoMiembro = { id: 0, nombre: '', correo: '', contrasena: undefined, rol: undefined, activo: true };
     this.mostrarModalMiembro = false;
     this.cargarDatos();
-  }
-
-guardarCambiosMiembro(miembro: Miembros) {
-  // 1. Guardar el miembro con sus nuevos datos
-  this.miembrosService.actualizarMiembro(miembro.id, miembro);
-
-  // 2. Sincronizar los grupos (igual que en guardarMiembrosAGrupo)
-  const todosLosGrupos = this.gruposService.getGrupos();
-
-  todosLosGrupos.forEach(grupo => {
-    const miembrosActuales = grupo.miembrosIds ?? [];
-    const debePertenecer = miembro.grupoIds?.includes(grupo.id) ?? false;
-
-    let nuevosMiembros: number[];
-    if (debePertenecer && !miembrosActuales.includes(miembro.id)) {
-      nuevosMiembros = [...miembrosActuales, miembro.id];
-    } else if (!debePertenecer && miembrosActuales.includes(miembro.id)) {
-      nuevosMiembros = miembrosActuales.filter(id => id !== miembro.id);
-    } else {
-      return; // Sin cambios en este grupo
-    }
-
-    this.gruposService.actualizarGrupo(grupo.id, {
-      nombre: grupo.nombre,
-      miembrosIds: nuevosMiembros
-    });
-  });
-
-  this.messageService.add({ severity: 'info', summary: 'Actualizado', detail: 'Cambios guardados' });
-  this.cargarDatos();
 }
+
+  guardarCambiosMiembro(miembro: Miembros) {
+    this.miembrosService.actualizarMiembro(miembro.id, miembro);
+
+
+    const todosLosGrupos = this.gruposService.getGrupos();
+
+    todosLosGrupos.forEach(grupo => {
+      const miembrosActuales = grupo.miembrosIds ?? [];
+      const debePertenecer = miembro.grupoIds?.includes(grupo.id) ?? false;
+
+      let nuevosMiembros: number[];
+      if (debePertenecer && !miembrosActuales.includes(miembro.id)) {
+        nuevosMiembros = [...miembrosActuales, miembro.id];
+      } else if (!debePertenecer && miembrosActuales.includes(miembro.id)) {
+        nuevosMiembros = miembrosActuales.filter(id => id !== miembro.id);
+      } else {
+        return; // Sin cambios en este grupo
+      }
+
+      this.gruposService.actualizarGrupo(grupo.id, {
+        nombre: grupo.nombre,
+        miembrosIds: nuevosMiembros
+      });
+    });
+
+    this.messageService.add({ severity: 'info', summary: 'Actualizado', detail: 'Cambios guardados' });
+    this.cargarDatos();
+  }
 
   guardarGrupo() {
     const nombre = this.nuevoGrupo.nombre?.trim();
@@ -182,7 +194,6 @@ guardarCambiosMiembro(miembro: Miembros) {
     this.nuevoGrupo = { id: 0, nombre: '' };
     this.cargarDatos();
   }
-
 
   eliminarGrupo(id: number) {
     this.gruposService.eliminarGrupo(id);
