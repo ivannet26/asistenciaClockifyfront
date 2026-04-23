@@ -88,6 +88,7 @@ export class ProyectosComponent implements OnInit {
   } = { nombre: '', cliente: null, publico: true, progreso: 0 };
 
   canCreate$!: Observable<boolean>;
+  canfavorito$!: Observable<boolean>;
 
   private favoritosService = new FavoritosService();
   private usuarioActualId: number = JSON.parse(localStorage.getItem('userSession') || '{}').userData?.id;
@@ -97,7 +98,9 @@ export class ProyectosComponent implements OnInit {
     private datepipe: DatePipe,
     private messageService: MessageService,
     private permissionService: PermissionService,
-  ) { }
+  ) {
+    this.canfavorito$ = this.permissionService.canDo('activeFavorito');
+  }
 
   ngOnInit(): void {
     this.cargarClientes();
@@ -106,7 +109,7 @@ export class ProyectosComponent implements OnInit {
     this.permissionService.canDo('createProject').subscribe(v => {
       console.log('canCreate cambió a:', v);
     });
-    
+
   }
 
   get mostrarLista(): boolean {

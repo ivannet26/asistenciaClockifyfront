@@ -35,6 +35,10 @@ const REGLAS: Record<string, {
         configCheck: () => true,
         getRolMinimo: () => RolNombre.ADMINISTRADOR,
     },
+    activeFavorito: {
+        configCheck: cfg => cfg.usuario.favoritesEnabled,
+        getRolMinimo: () => RolNombre.EMPLEADO,
+    },
 };
 
 @Injectable({ providedIn: 'root' })
@@ -62,7 +66,6 @@ export class PermissionService {
         );
     }
 
-    // Para guards o comprobaciones síncronas puntuales
     canDoSync(accion: string): boolean {
         const rol = this.session.currentRole;
         const cfg = this.config.getConfig();

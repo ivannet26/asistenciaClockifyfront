@@ -128,9 +128,11 @@
                                         <th style="width: 10%"
                                             class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
                                             Progreso</th>
-                                        <th style="width: 7%"
-                                            class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
-                                            Favorito</th>
+                                        <ng-container *ngIf="canfavorito$ | async">
+                                            <th style="width: 7%"
+                                                class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
+                                                Favorito</th>
+                                        </ng-container>
                                         <th style="width: 10%"
                                             class="bg-white text-500 font-bold text-xs uppercase border-bottom-1 surface-border">
                                             Acceso</th>
@@ -185,8 +187,8 @@
                                                 {{ proyecto.progreso }}%
                                             </span>
                                         </td>
-
-                                        <td class="border-none">
+                                        <ng-container *ngIf="canfavorito$ | async">
+                                            <td class="border-none">
                                             <p-button
                                                 [icon]="esFavorito(proyecto.id) ? 'pi pi-star-fill' : 'pi pi-star'"
                                                 [text]="true"
@@ -194,7 +196,7 @@
                                                 (onClick)="toggleFavorito(proyecto.id)">
                                             </p-button>
                                         </td>
-
+                                        </ng-container>
                                         <td class="border-none">
                                             <span class="text-700 font-medium text-xs">
                                                 {{ proyecto.publico ? 'Público' : 'Privado' }}

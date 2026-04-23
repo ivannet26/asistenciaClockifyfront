@@ -1,0 +1,15 @@
+{
+    "usuario": {
+        "grouping": {
+            "primary": "cliente",
+            "secondary": "proyecto",
+            "tertiary": "tarea"
+        },
+        "durationFormat": "hh:mm:ss",
+        "favoritesEnabled": false
+    },
+    "espacioTrabajo": {
+        "projectCreationPermission": "ADMINISTRADOR",
+        "forceTimer": false
+    }
+}
