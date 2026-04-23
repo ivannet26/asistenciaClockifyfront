@@ -60,6 +60,8 @@ export class PermissionService {
     ) { }
 
     canDo(accion: string): Observable<boolean> {
+        //this.session.currentRole$.subscribe(r => console.log('ROL EMITE:', r));
+    //this.config.config$.subscribe(c => console.log('CONFIG EMITE:', c));
         return combineLatest([
             this.session.currentRole$,
             this.config.config$,

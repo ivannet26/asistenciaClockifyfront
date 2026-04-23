@@ -18,6 +18,8 @@ import { ClientesService } from '../../service/clientes.service';
 import { Clientes } from '../../model/Clientes';
 import { ProyectosService } from '../../service/proyectos.service';
 import { TimerService } from '../../service/timer.service';
+import { Observable } from 'rxjs';
+import { PermissionService } from '../../service/permission.service';
 
 @Component({
   selector: 'app-rastreador',
@@ -47,8 +49,8 @@ export class RastreadorComponent implements OnInit, OnDestroy {
 
   registros: Registro[] = [];
   registrosAgrupados: any[] = [];
-
   registroSeleccionadoParaEditar: any = null;
+  canCreateP$!: Observable<boolean>;
 
   nuevoProyecto = {
     nombre: '',
@@ -58,9 +60,10 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   };
 
   constructor(
-    private proyectosService: ProyectosService, 
+    private proyectosService: ProyectosService,
     private clientesService: ClientesService,
-    public timerService: TimerService 
+    public timerService: TimerService,
+    private permissionService: PermissionService
   ) { }
 
   ngOnInit() {
@@ -69,6 +72,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     this.cargarClientes();
     this.cargarEtiquetas();
     this.agruparRegistros();
+    this.canCreateP$ = this.permissionService.canDo('createProject');
 
     const timerGuardado = localStorage.getItem('timer_activo');
     if (timerGuardado) {
@@ -77,15 +81,15 @@ export class RastreadorComponent implements OnInit, OnDestroy {
       const ultimaSenal = new Date(data.fin).getTime();
       const segundosDeSilencio = (ahora - ultimaSenal) / 1000;
 
-      if (segundosDeSilencio > 3) { 
+      if (segundosDeSilencio > 3) {
         console.log("Sesión finalizada detectada. Guardando registro...");
         const session = JSON.parse(localStorage.getItem('userSession') || '{}');
         const inicio = new Date(data.inicio);
-        const fin = new Date(data.fin); 
+        const fin = new Date(data.fin);
         const diffMs = fin.getTime() - inicio.getTime();
 
         const registroRecuperado: any = {
-          descripcion: data.descripcion ,
+          descripcion: data.descripcion,
           proyecto: data.proyecto,
           miembroId: session.userData?.id,
           miembroNombre: session.userData?.nombre,
@@ -108,16 +112,16 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() { }
 
   toggleTimer() {
     this.registroSeleccionadoParaEditar = null;
     if (!this.timerService.corriendo()) {
       this.timerService.start(
-        new Date(), 
-        this.tareaActual, 
-        this.proyectoSeleccionado, 
-        this.esFacturable, 
+        new Date(),
+        this.tareaActual,
+        this.proyectoSeleccionado,
+        this.esFacturable,
         this.etiquetasSeleccionadas
       );
     } else {
@@ -131,7 +135,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     if (inicio) {
       const diffMs = fin.getTime() - inicio.getTime();
       const session = JSON.parse(localStorage.getItem('userSession') || '{}');
-      
+
       const nuevo: any = {
         descripcion: this.tareaActual?.trim() || 'Sin descripción',
         proyecto: this.proyectoSeleccionado,
@@ -154,7 +158,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
 
   guardarRegistro(nuevo: any) {
     const data = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
-    const existe = data.find((r: any) => 
+    const existe = data.find((r: any) =>
       new Date(r.inicio).getTime() === new Date(nuevo.inicio).getTime()
     );
     if (!existe) {
@@ -166,22 +170,22 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   // FUNCIÓN CORREGIDA PARA ACTUALIZAR LOCALSTORAGE
   actualizarRegistroEnStorage(regActualizado: any) {
     const todos = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
-    
+
     // Buscamos el registro en el storage usando el tiempo de inicio como ID único
-    const index = todos.findIndex((r: any) => 
+    const index = todos.findIndex((r: any) =>
       new Date(r.inicio).getTime() === new Date(regActualizado.inicio).getTime()
     );
 
     if (index !== -1) {
       // Reemplazamos el objeto antiguo con el editado (que ya trae la nueva descripción)
       todos[index] = regActualizado;
-      
+
       // Guardamos la lista completa actualizada
       localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(todos));
-      
+
       // Sincronizamos la UI
       this.cargarRegistros();
-      this.agruparRegistros(); 
+      this.agruparRegistros();
       console.log('Registro actualizado en LocalStorage');
     }
   }
@@ -214,11 +218,11 @@ export class RastreadorComponent implements OnInit, OnDestroy {
 
     this.registros.forEach(reg => {
       const fecha = new Date(reg.inicio);
-      let clave = this.esMismaFecha(fecha, hoy) ? 'hoy' : 
-                  this.esMismaFecha(fecha, ayer) ? 'ayer' : fecha.toDateString();
-      
-      let label = clave === 'hoy' ? 'Hoy' : clave === 'ayer' ? 'Ayer' : 
-                  fecha.toLocaleDateString('es-PE', { weekday: 'short', day: 'numeric', month: 'short' });
+      let clave = this.esMismaFecha(fecha, hoy) ? 'hoy' :
+        this.esMismaFecha(fecha, ayer) ? 'ayer' : fecha.toDateString();
+
+      let label = clave === 'hoy' ? 'Hoy' : clave === 'ayer' ? 'Ayer' :
+        fecha.toLocaleDateString('es-PE', { weekday: 'short', day: 'numeric', month: 'short' });
 
       if (!mapa.has(clave)) {
         mapa.set(clave, { label, fecha, registros: [], totalMs: 0 });
@@ -234,8 +238,8 @@ export class RastreadorComponent implements OnInit, OnDestroy {
 
   eliminarRegistro(registro: any) {
     const todos = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
-    const filtrados = todos.filter((r: any) => 
-        new Date(r.inicio).getTime() !== new Date(registro.inicio).getTime()
+    const filtrados = todos.filter((r: any) =>
+      new Date(r.inicio).getTime() !== new Date(registro.inicio).getTime()
     );
     localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(filtrados));
     this.cargarRegistros();
@@ -298,8 +302,8 @@ export class RastreadorComponent implements OnInit, OnDestroy {
   cargarProyectos() { this.proyectos = this.proyectosService.getProyectos(); }
   cargarClientes() { this.clientes = this.clientesService.getClientes(); }
   cargarEtiquetas() { this.etiquetasDisponibles = JSON.parse(localStorage.getItem(this.STORAGE_ETIQUETAS) || '[]'); }
-  
-  seleccionarProyecto(proyecto: Proyecto, panel: any) { 
+
+  seleccionarProyecto(proyecto: Proyecto, panel: any) {
     if (this.registroSeleccionadoParaEditar) {
       this.registroSeleccionadoParaEditar.proyecto = proyecto;
       this.actualizarRegistroEnStorage(this.registroSeleccionadoParaEditar);
@@ -307,15 +311,15 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     } else {
       this.proyectoSeleccionado = proyecto;
     }
-    panel.hide(); 
+    panel.hide();
   }
 
   abrirModalNuevoProyecto() { this.mostrarModalProyecto = true; }
-  
+
   guardarProyecto() {
     if (!this.nuevoProyecto.nombre?.trim()) return;
     this.proyectos = this.proyectosService.agregarProyecto(
-      this.nuevoProyecto.nombre, this.nuevoProyecto.cliente?.id ?? 0, 
+      this.nuevoProyecto.nombre, this.nuevoProyecto.cliente?.id ?? 0,
       this.nuevoProyecto.color, this.nuevoProyecto.publico, 0, true, new Date()
     );
     this.proyectoSeleccionado = this.proyectos[this.proyectos.length - 1];

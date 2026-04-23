@@ -160,8 +160,11 @@
                 <i class="pi pi-chevron-right"></i>
             </div>
         </div>
-        <button pButton label="Crear nuevo Proyecto" icon="pi pi-plus-circle" class="p-button-text p-button-info w-full"
-            (click)="panelProyectos.hide(); abrirModalNuevoProyecto()">
+        <button pButton label="Crear nuevo Proyecto" 
+                            *ngIf="canCreateP$ | async" 
+                            icon="pi pi-plus-circle" 
+                            class="p-button-text p-button-info w-full"
+                            (click)="panelProyectos.hide(); abrirModalNuevoProyecto()">
         </button>
     </div>
 </p-overlayPanel>
@@ -202,7 +205,11 @@
     </div>
     <ng-template pTemplate="footer">
         <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="mostrarModalProyecto = false"></button>
-        <button pButton label="Crear" icon="pi pi-check" (click)="guardarProyecto()"></button>
+        <button *ngIf="canCreateP$ | async" 
+                pButton label="Crear" 
+                icon="pi pi-check" 
+                (click)="guardarProyecto()">
+        </button>
     </ng-template>
 </p-dialog>
 
