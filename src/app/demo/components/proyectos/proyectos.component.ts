@@ -24,6 +24,8 @@ import { PermissionService } from '../../service/permission.service';
 import { Observable } from 'rxjs';
 import { FavoritosService } from '../../service/favoritoproyecto.service';
 
+import { AppAjustes } from '../../service/appajustes.service';
+
 @Component({
   selector: 'app-proyectos',
   standalone: true,
@@ -58,6 +60,8 @@ export class ProyectosComponent implements OnInit {
   filtroEstado: string = 'Activo';
   filtroCliente: Clientes | null = null;
   filtroAcceso: string = 'Todos';
+
+  jerarquia2Nombre = 'Proyecto';
 
   // Opciones Dropdowns
   opcionesEstado = [
@@ -98,6 +102,7 @@ export class ProyectosComponent implements OnInit {
     private datepipe: DatePipe,
     private messageService: MessageService,
     private permissionService: PermissionService,
+    private appAjustes: AppAjustes
   ) {
     
   }
@@ -107,6 +112,9 @@ export class ProyectosComponent implements OnInit {
     this.cargarProyectos();
     this.canfavorito$ = this.permissionService.canDo('activeFavorito');
     this.canCreateP$ = this.permissionService.canDo('createProject');
+    this.appAjustes.config$.subscribe(config => {
+      this.jerarquia2Nombre = config.espacioTrabajo.jerarquia2Nombre;
+    });
   }
 
   get mostrarLista(): boolean {

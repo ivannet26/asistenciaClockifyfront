@@ -14,6 +14,8 @@ export interface EspacioTrabajoConfig {
     projectCreationPermission: RolNombre.ADMINISTRADOR | RolNombre.GERENTE | 'all';
     etiquetaCreationPermission: RolNombre.ADMINISTRADOR | 'all';
     forceTimer: boolean;
+    jerarquia1Nombre: string;
+    jerarquia2Nombre: string;
 }
 
 export interface AppConfig {
@@ -35,5 +37,7 @@ export const DEFAULT_CONFIG: AppConfig = {
         projectCreationPermission: RolNombre.GERENTE,
         etiquetaCreationPermission: RolNombre.ADMINISTRADOR,
         forceTimer: false,
+        jerarquia1Nombre: 'Cliente',
+        jerarquia2Nombre: 'Proyecto',
     },
 };

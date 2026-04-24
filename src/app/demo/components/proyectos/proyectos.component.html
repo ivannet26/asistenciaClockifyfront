@@ -2,22 +2,24 @@
 <div class="clientes-pagina">
     <div class="clientes-panel ">
         <div class="flex flex-column  sm:flex-row justify-content-between align-items-center p-4 gap-3">
-            <h2 class="titulo-seccion m-0">Proyectos</h2>
+            <h2 class="titulo-seccion m-0">
+                <th>{{ jerarquia2Nombre }}</th>
+            </h2>
         </div>
 
         <div class="clientes-contenido">
             <p-card styleClass="card-tabla-estandar">
                 <div class="contenedor-vacio" *ngIf="!mostrarLista">
                     <h1 class="titulo-principal">
-                        Añadir Proyectos para organizar mejor tus registros
+                        Añadir {{ jerarquia2Nombre }} para organizar mejor tus registros
                     </h1>
                     <p class="subtitulo">
-                        Asigna registros a los proyectos para optimizar la colaboración.
+                        Asigna registros a los {{ jerarquia2Nombre }} para optimizar la colaboración.
                     </p>
 
                     <div class="flex flex-column gap-3 mt-2" style="width: 300px;">
                         <div class="flex flex-column gap-1">
-                            <label class="text-sm font-medium text-color-secondary">Nombre del proyecto</label>
+                            <label class="text-sm font-medium text-color-secondary">Nombre del {{ jerarquia2Nombre }}</label>
                             <input pInputText placeholder="Introduce el nombre de proyecto"
                                 [(ngModel)]="nuevoProyecto.nombre" class="w-full" />
                         </div>
@@ -42,7 +44,8 @@
                             </div>
                         </div>
 
-                        <button pButton label="Crear proyecto" class="p-button-info w-full" (click)="guardarProyecto()">
+                        <button pButton class="p-button-info w-full" (click)="guardarProyecto()">
+                            <label>Crear {{ jerarquia2Nombre }}</label>
                         </button>
                     </div>
                 </div>
@@ -100,7 +103,7 @@
                         </div>
                         <div
                             class="surface-100 p-2 flex justify-content-between align-items-center border-bottom-1 surface-border">
-                            <span class="text-xs font-bold text-500 ml-2 uppercase">Proyectos</span>
+                            <span class="text-xs font-bold text-500 ml-2 uppercase">{{ jerarquia2Nombre }}</span>
                             <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
                             hover:bg-green-700 h9over:border-green-600" label="Exportar" icon="pi pi-file-excel"
                                 (onClick)="exportar()">
@@ -189,13 +192,13 @@
                                         </td>
                                         <ng-container *ngIf="canfavorito$ | async">
                                             <td class="border-none">
-                                            <p-button
-                                                [icon]="esFavorito(proyecto.id) ? 'pi pi-star-fill' : 'pi pi-star'"
-                                                [text]="true"
-                                                [severity]="esFavorito(proyecto.id) ? 'warn' : 'secondary'"
-                                                (onClick)="toggleFavorito(proyecto.id)">
-                                            </p-button>
-                                        </td>
+                                                <p-button
+                                                    [icon]="esFavorito(proyecto.id) ? 'pi pi-star-fill' : 'pi pi-star'"
+                                                    [text]="true"
+                                                    [severity]="esFavorito(proyecto.id) ? 'warn' : 'secondary'"
+                                                    (onClick)="toggleFavorito(proyecto.id)">
+                                                </p-button>
+                                            </td>
                                         </ng-container>
                                         <td class="border-none">
                                             <span class="text-700 font-medium text-xs">
@@ -243,10 +246,10 @@
     </div>
 </div>
 
-<p-dialog header="Crear nuevo Proyecto" [(visible)]="mostrarModalProyecto" [modal]="true" [style]="{ width: '450px' }"
-    [draggable]="false" [resizable]="false">
+<p-dialog [header]="'Crear nuevo ' + jerarquia2Nombre" [(visible)]="mostrarModalProyecto" [modal]="true"
+    [style]="{ width: '450px' }" [draggable]="false" [resizable]="false">
     <div class="flex flex-column gap-3 mt-2">
-        <input pInputText placeholder="Introduce el nombre de Proyecto" [(ngModel)]="nuevoProyecto.nombre"
+        <input pInputText [placeholder]="'Nombre del ' + jerarquia2Nombre" [(ngModel)]="nuevoProyecto.nombre"
             class="w-full" />
         <p-dropdown [options]="clientes" optionLabel="nombre" [(ngModel)]="nuevoProyecto.cliente"
             placeholder="Seleccionar cliente" appendTo="body" styleClass="w-full"></p-dropdown>
@@ -254,7 +257,7 @@
             <div class="flex align-items-center gap-2">
                 <input type="color" [(ngModel)]="nuevoProyecto.color"
                     style="border:none; width:40px; height:40px; cursor:pointer" />
-                <label class="text-sm">Color del proyecto</label>
+                <label class="text-sm">Color del {{ jerarquia2Nombre }}</label>
             </div>
             <div class="flex align-items-center gap-2">
                 <p-checkbox [(ngModel)]="nuevoProyecto.publico" binary="true"></p-checkbox>

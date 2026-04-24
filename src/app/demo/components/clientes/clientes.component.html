@@ -1,7 +1,7 @@
 <p-toast position="top-right" [baseZIndex]="9999" [preventOpenDuplicates]="true" />
 <div class="clientes-pagina">
   <div class="clientes-panel">
-    <h2 class="titulo-seccion">Clientes</h2>
+    <h2 class="titulo-seccion">{{ jerarquia1Nombre }}</h2>
 
     <div class="clientes-contenido">
 
@@ -10,14 +10,14 @@
 
         <div class="contenedor-vacio" *ngIf="!mostrarLista">
           <h1 class="titulo-principal">
-            Añadir clientes para organizar tus proyectos
+            Añadir {{ jerarquia1Nombre }} para organizar tus proyectos
           </h1>
           <p class="subtitulo">
-            Asignar clientes a proyectos y seguir el progreso de cada cliente.
+            Asignar {{ jerarquia1Nombre }} a proyectos y seguir el progreso de cada cliente.
           </p>
 
           <div class="grupo-input">
-            <input type="text" pInputText [(ngModel)]="nuevoClienteNombre" placeholder="Añadir nuevo cliente"
+            <input type="text" pInputText [(ngModel)]="nuevoClienteNombre" [placeholder]="'Añadir nuevo ' + jerarquia1Nombre"
               class="input-personalizado" (keyup.enter)="agregarCliente()" />
             <button pButton type="button" label="AÑADIR" class="boton-personalizado" (click)="agregarCliente()">
             </button>
@@ -39,7 +39,7 @@
             </div>
             <ng-container *ngIf="canCreate$ | async">
               <div class="grupo-input">
-                <input type="text" pInputText [(ngModel)]="nuevoClienteNombre" placeholder="Añadir nuevo cliente"
+                <input type="text" pInputText [(ngModel)]="nuevoClienteNombre" [placeholder]="'Añadir nuevo '+ jerarquia1Nombre"
                   class="input-personalizado" />
                 <button pButton type="button" label="Añadir" class="boton-personalizado" (click)="agregarCliente()">
                 </button>
@@ -48,7 +48,7 @@
           </div>
 
           <div class="surface-100 p-2 flex justify-content-between align-items-center border-bottom-1 surface-border">
-            <span class="text-xs font-bold text-500 ml-2 uppercase">Clientes</span>
+            <span class="text-xs font-bold text-500 ml-2 uppercase">{{ jerarquia1Nombre }}</span>
             <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
                             hover:bg-green-700 h9over:border-green-600" label="Exportar" icon="pi pi-file-excel"
               (onClick)="exportar()">

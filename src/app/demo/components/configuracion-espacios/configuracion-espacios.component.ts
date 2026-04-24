@@ -21,10 +21,20 @@ import { TooltipModule } from 'primeng/tooltip';
 })
 export class ConfiguracionEspaciosComponent implements OnInit {
 
-  opcionesJerarquia = [
+  opcionesJerarquia1 = [
     { label: 'Cliente', value: 'cliente' },
+    { label: 'Departamento', value: 'departamento' },
+    { label: 'Categoria', value: 'categoria' }
+  ];
+  opcionesJerarquia2 = [
     { label: 'Proyecto', value: 'proyecto' },
-    { label: 'Tarea', value: 'tarea' }
+    { label: 'Ubicación', value: 'ubicacion' },
+    { label: 'Trabajo', value: 'trabajo' }
+  ];
+  opcionesJerarquia3 = [
+    { label: 'Tarea', value: 'tarea' },
+    { label: 'Actividad', value: 'actividad' },
+    { label: 'Área de trabajo', value: 'areadetrabajo' }
   ];
 
   formatosHora = [
@@ -38,7 +48,7 @@ export class ConfiguracionEspaciosComponent implements OnInit {
   formatoSeleccionado = 'hh:mm:ss';
   crearProyectos = 'GERENTE';
   crearEtiquetas = 'ADMINISTRADOR';
-  crearTareas = 'all'; // Variable añadida para el control de tareas
+  crearTareas = 'all'; 
   agruparPor1 = 'cliente';
   agruparPor2 = 'proyecto';
   agruparPor3 = 'tarea';
@@ -46,28 +56,25 @@ export class ConfiguracionEspaciosComponent implements OnInit {
   constructor(private appAjustes: AppAjustes) { }
 
   ngOnInit(): void {
-    // 1. Sincronización inicial con LocalStorage para el estado del switch
-    const savedForce = localStorage.getItem('force_timer');
-    if (savedForce !== null) {
-      this.temporizadorForzado = JSON.parse(savedForce);
-    }
-
-    // 2. Leer config guardada del servicio
-    this.appAjustes.config$.subscribe(config => {
-      this.favoritosActivo = config.usuario.favoritesEnabled;
-      this.formatoSeleccionado = config.usuario.durationFormat;
-      this.agruparPor1 = config.usuario.grouping.primary;
-      this.agruparPor2 = config.usuario.grouping.secondary;
-      this.agruparPor3 = config.usuario.grouping.tertiary;
-      this.crearProyectos = config.espacioTrabajo.projectCreationPermission;
-      this.crearEtiquetas = config.espacioTrabajo.etiquetaCreationPermission;
-      
-      // Solo actualizamos si el servicio trae un valor nuevo
-      if (config.espacioTrabajo.forceTimer !== undefined) {
-        this.temporizadorForzado = config.espacioTrabajo.forceTimer;
-      }
-    });
+  const savedForce = localStorage.getItem('force_timer');
+  if (savedForce !== null) {
+    this.temporizadorForzado = JSON.parse(savedForce);
   }
+
+  this.appAjustes.config$.subscribe(config => {
+    this.favoritosActivo = config.usuario.favoritesEnabled;
+    this.formatoSeleccionado = config.usuario.durationFormat;
+    this.agruparPor1 = config.usuario.grouping.primary;
+    this.agruparPor2 = config.usuario.grouping.secondary;
+    this.agruparPor3 = config.usuario.grouping.tertiary;
+    this.crearProyectos = config.espacioTrabajo.projectCreationPermission;
+    this.crearEtiquetas = config.espacioTrabajo.etiquetaCreationPermission;
+    if (config.espacioTrabajo.forceTimer !== undefined) {
+      this.temporizadorForzado = config.espacioTrabajo.forceTimer;
+    }
+  });
+}
+
 
   onFavoritosChange() {
     this.appAjustes.patchUsuario({ favoritesEnabled: this.favoritosActivo });
@@ -78,15 +85,23 @@ export class ConfiguracionEspaciosComponent implements OnInit {
   }
 
   onAgruparChange() {
-    this.appAjustes.patchUsuario({
-      grouping: {
-        primary: this.agruparPor1 as any,
-        secondary: this.agruparPor2 as any,
-        tertiary: this.agruparPor3 as any
-      }
-    });
-  }
+  // Obtener el label del valor seleccionado
+  const label1 = this.opcionesJerarquia1.find(o => o.value === this.agruparPor1)?.label ?? this.agruparPor1;
+  const label2 = this.opcionesJerarquia2.find(o => o.value === this.agruparPor2)?.label ?? this.agruparPor2;
 
+  // Guardar agrupación + nombres de jerarquía
+  this.appAjustes.patchUsuario({
+    grouping: {
+      primary: this.agruparPor1 as any,
+      secondary: this.agruparPor2 as any,
+      tertiary: this.agruparPor3 as any
+    }
+  });
+  this.appAjustes.patchEspacioTrabajo({
+    jerarquia1Nombre: label1,
+    jerarquia2Nombre: label2
+  });
+}
   onPermisosChangeP() {
     this.appAjustes.patchEspacioTrabajo({
       projectCreationPermission: this.crearProyectos as any

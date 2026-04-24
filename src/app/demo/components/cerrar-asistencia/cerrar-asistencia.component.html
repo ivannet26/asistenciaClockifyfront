@@ -2,7 +2,7 @@
 
 <div class="card p-4 shadow-1 border-round">
     <h2 class="text-900 font-bold mb-2">Panel de Administracion</h2>
-    
+
 
     <p-table [value]="usuariosActivos" styleClass="p-datatable-gridlines" [responsiveLayout]="'scroll'">
         <ng-template pTemplate="header">
@@ -12,6 +12,7 @@
                 <th style="background-color: #003366; color: white;">nombre y apellido</th>
                 <th style="background-color: #003366; color: white;">dni</th>
                 <th style="background-color: #003366; color: white;" class="text-center">estado temporizador</th>
+                <th style="background-color: #003366; color: white;" class="text-center">Acción</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-user>
@@ -21,10 +22,13 @@
                 <td>{{user.nombreCompleto}}</td>
                 <td>{{user.dni}}</td>
                 <td class="text-center">
-                    <button pButton label="Detener" 
-                            class="p-button-danger font-bold px-4"
-                            style="background-color: #cc0000; border: none;"
-                            (click)="detenerAsistencia(user)">
+                    <span class="font-bold text-green-600 mr-3">
+                        {{ calcularTiempo(user.tiempoInicio) }}
+                    </span>
+                </td>
+                <td class="text-center">
+                    <button pButton label="Detener" class="p-button-danger font-bold px-4"
+                        style="background-color: #cc0000; border: none;" (click)="detenerAsistencia(user)">
                     </button>
                 </td>
             </tr>

@@ -73,7 +73,9 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     this.cargarEtiquetas();
     this.agruparRegistros();
     this.canCreateP$ = this.permissionService.canDo('createProject');
-
+    this.timerService.detenerDesdeAfuera$.subscribe(() => {
+      this.finalizarYGuardarManual();
+    });
     const timerGuardado = localStorage.getItem('timer_activo');
     if (timerGuardado) {
       const data = JSON.parse(timerGuardado);
@@ -178,7 +180,7 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     if (index !== -1) {
       todos[index] = regActualizado;
       localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(todos));
-      
+
       // Forzamos sincronización visual
       this.cargarRegistros();
       this.agruparRegistros();

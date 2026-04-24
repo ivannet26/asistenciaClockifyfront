@@ -12,13 +12,13 @@
                         Elige cómo quieres agrupar el tiempo y establece las condiciones de uso.
                     </p>
                     <div class="flex flex-column gap-2 md:w-20rem">
-                        <p-dropdown [options]="opcionesJerarquia" [(ngModel)]="agruparPor1"
+                        <p-dropdown [options]="opcionesJerarquia1" [(ngModel)]="agruparPor1"
                             (onChange)="onAgruparChange()" class="w-full">
                         </p-dropdown>
-                        <p-dropdown [options]="opcionesJerarquia" [(ngModel)]="agruparPor2"
+                        <p-dropdown [options]="opcionesJerarquia2" [(ngModel)]="agruparPor2"
                             (onChange)="onAgruparChange()" class="w-full">
                         </p-dropdown>
-                        <p-dropdown [options]="opcionesJerarquia" [(ngModel)]="agruparPor3"
+                        <p-dropdown [options]="opcionesJerarquia3" [(ngModel)]="agruparPor3"
                             (onChange)="onAgruparChange()" class="w-full">
                         </p-dropdown>
                     </div>

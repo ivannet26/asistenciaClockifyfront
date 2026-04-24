@@ -17,6 +17,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from "primeng/toast";
 import { PermissionService } from '../../service/permission.service';
 import { Observable } from 'rxjs';
+import { AppAjustes } from '../../service/appajustes.service';
 
 @Component({
   selector: 'app-clientes',
@@ -43,6 +44,7 @@ export class ClientesComponent implements OnInit {
   clientes: Clientes[] = [];
   clientesFiltrados: Clientes[] = [];
   nuevoClienteNombre: string = '';
+  jerarquia1Nombre = 'Cliente';
   monedas = Monedas;
   textoBusqueda: string = '';
   opcionesFiltro = [
@@ -56,7 +58,9 @@ export class ClientesComponent implements OnInit {
 
   constructor(private clientesService: ClientesService,
               private messageService: MessageService,
-              private permissionService: PermissionService,) { 
+              private permissionService: PermissionService,
+              private appAjustes: AppAjustes
+            ) { 
 
   }
 
@@ -69,6 +73,9 @@ export class ClientesComponent implements OnInit {
     this.clientes = this.clientesService.getClientes();
     this.clientesFiltrados = [...this.clientes];
     this.canCreate$ = this.permissionService.canDo('createProject');
+    this.appAjustes.config$.subscribe(config => {
+      this.jerarquia1Nombre = config.espacioTrabajo.jerarquia1Nombre;
+    });
   }
 
   agregarCliente() {

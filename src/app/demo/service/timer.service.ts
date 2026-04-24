@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class TimerService {
@@ -15,7 +16,8 @@ export class TimerService {
 
   constructor(private titleService: Title) {}
 
-  // Revive el timer cuando se recarga la página
+  detenerDesdeAfuera$ = new Subject<void>();
+  
   remanecer(data: any) {
     this.inicioTiempo = new Date(data.inicio);
     this.tareaActual.set(data.descripcion || '');
