@@ -37,7 +37,8 @@ export class ConfiguracionEspaciosComponent implements OnInit {
   temporizadorForzado = false;
   formatoSeleccionado = 'hh:mm:ss';
   crearProyectos = 'GERENTE';
-  crearEtiquetas = 'ADMINISTRADOR'
+  crearEtiquetas = 'ADMINISTRADOR';
+  crearTareas = 'all'; // Variable añadida para el control de tareas
   agruparPor1 = 'cliente';
   agruparPor2 = 'proyecto';
   agruparPor3 = 'tarea';
@@ -45,7 +46,13 @@ export class ConfiguracionEspaciosComponent implements OnInit {
   constructor(private appAjustes: AppAjustes) { }
 
   ngOnInit(): void {
-    // Leer config guardada (localStorage → assets/config.json)
+    // 1. Sincronización inicial con LocalStorage para el estado del switch
+    const savedForce = localStorage.getItem('force_timer');
+    if (savedForce !== null) {
+      this.temporizadorForzado = JSON.parse(savedForce);
+    }
+
+    // 2. Leer config guardada del servicio
     this.appAjustes.config$.subscribe(config => {
       this.favoritosActivo = config.usuario.favoritesEnabled;
       this.formatoSeleccionado = config.usuario.durationFormat;
@@ -54,7 +61,11 @@ export class ConfiguracionEspaciosComponent implements OnInit {
       this.agruparPor3 = config.usuario.grouping.tertiary;
       this.crearProyectos = config.espacioTrabajo.projectCreationPermission;
       this.crearEtiquetas = config.espacioTrabajo.etiquetaCreationPermission;
-      this.temporizadorForzado = config.espacioTrabajo.forceTimer;
+      
+      // Solo actualizamos si el servicio trae un valor nuevo
+      if (config.espacioTrabajo.forceTimer !== undefined) {
+        this.temporizadorForzado = config.espacioTrabajo.forceTimer;
+      }
     });
   }
 
@@ -88,7 +99,19 @@ export class ConfiguracionEspaciosComponent implements OnInit {
     });
   }
 
+  onPermisosChangeT() {
+    // Lógica para el cambio de permisos de tareas
+    console.log('Permisos de tareas cambiados a:', this.crearTareas);
+  }
+
+  // FUNCIÓN CORREGIDA PARA HACER FUNCIONAR EL BLOQUEO
   onTemporizadorChange() {
+    // Notificamos al servicio
     this.appAjustes.patchEspacioTrabajo({ forceTimer: this.temporizadorForzado });
+
+    // PERSISTENCIA CLAVE: Guardamos en LocalStorage para que el Calendario lo detecte
+    localStorage.setItem('force_timer', JSON.stringify(this.temporizadorForzado));
+    
+    console.log('Estado de Temporizador Forzado guardado:', this.temporizadorForzado);
   }
 }
