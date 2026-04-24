@@ -52,6 +52,7 @@
 
             </div>
         </p-tabPanel>
+
         <p-tabPanel header="PERMISOS">
             <div class="p-3">
 
@@ -81,6 +82,7 @@
                         </div>
                     </div>
                 </section>
+
                 <section class="mb-5">
                     <h3 class="text-lg font-bold mb-1">Quién puede crear Tareas</h3>
                     <p class="text-500 mb-3" style="font-size: 0.85rem;">
@@ -88,22 +90,23 @@
                     </p>
                     <div class="flex flex-wrap gap-4">
                         <div class="flex align-items-center gap-2">
-                            <p-radioButton name="proyectos" value="ADMINISTRADOR">
+                            <p-radioButton name="tareas" value="ADMINISTRADOR" [(ngModel)]="crearTareas" (onClick)="onPermisosChangeT()">
                             </p-radioButton>
                             <label>Administradores</label>
                         </div>
                         <div class="flex align-items-center gap-2">
-                            <p-radioButton name="proyectos" value="GERENTE">
+                            <p-radioButton name="tareas" value="GERENTE" [(ngModel)]="crearTareas" (onClick)="onPermisosChangeT()">
                             </p-radioButton>
                             <label>Administradores y gerentes</label>
                         </div>
                         <div class="flex align-items-center gap-2">
-                            <p-radioButton name="proyectos" value="all">
+                            <p-radioButton name="tareas" value="all" [(ngModel)]="crearTareas" (onClick)="onPermisosChangeT()">
                             </p-radioButton>
                             <label>Cualquiera</label>
                         </div>
                     </div>
                 </section>
+
                 <section class="mb-5">
                     <h3 class="text-lg font-bold mb-1">Quién puede crear etiquetas</h3>
                     <p class="text-500 mb-3" style="font-size: 0.85rem;">
@@ -124,16 +127,20 @@
                         </div>
                     </div>
                 </section>
+
                 <hr class="border-300 my-4">
+
                 <section class="mb-5">
-                    <h3 class="text-lg font-bold mb-1" style="color: #888;">Temporizador forzado</h3>
+                    <h3 class="text-lg font-bold mb-1" style="color: #444;">Temporizador forzado</h3>
                     <p class="text-500 mb-3" style="font-size: 0.85rem;">
                         Evita que los usuarios añadan tiempo manualmente.
                     </p>
                     <div class="flex align-items-center gap-2">
                         <p-inputSwitch [(ngModel)]="temporizadorForzado" (onChange)="onTemporizadorChange()">
                         </p-inputSwitch>
-                        <span class="text-500 italic">Deshabilitar añadir y editar el tiempo manualmente</span>
+                        <span [ngClass]="{'text-primary font-bold': temporizadorForzado, 'text-500': !temporizadorForzado}">
+                            Deshabilitar añadir y editar el tiempo manualmente
+                        </span>
                     </div>
                 </section>
 

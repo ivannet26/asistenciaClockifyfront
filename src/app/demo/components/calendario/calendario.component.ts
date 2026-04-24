@@ -43,16 +43,19 @@ export class CalendarioComponent implements OnInit {
   proyectoSeleccionado: any = null;
   etiquetasSeleccionadas: any[] = [];
   fechaSeleccionada: Date = new Date();
-  duracionInicio: string = '00:00';
-  duracionFin: string = '00:00';
+  duracionInicio: string = '00:00:00';
+  duracionFin: string = '00:00:00';
 
   constructor(private router: Router) { }
 
   ngOnInit() {
     this.cargarDesdeLocalStorage();
-    console.log('Registros cargados:', this.registros);
     this.generarHoras();
     this.refrescarTodo();
+  }
+
+  esEdicionBloqueada(): boolean {
+    return JSON.parse(localStorage.getItem('force_timer') || 'false');
   }
 
   irAlRastreador() {
@@ -89,16 +92,18 @@ export class CalendarioComponent implements OnInit {
       this.proyectoSeleccionado = this.listaProyectos.find(p => p.nombre === nombreP);
       this.etiquetasSeleccionadas = registroExistente.etiquetas || [];
       this.fechaSeleccionada = new Date(registroExistente.inicio);
-      this.duracionInicio = this.formatearHora(registroExistente.inicio);
-      this.duracionFin = this.formatearHora(registroExistente.fin);
+      this.duracionInicio = this.formatearHoraConSegundos(registroExistente.inicio);
+      this.duracionFin = this.formatearHoraConSegundos(registroExistente.fin);
     } else {
+      if (this.esEdicionBloqueada()) return;
+
       this.registroActivo = null;
       const f = new Date(dia.completa);
       const [h, m] = hora.split(':').map(Number);
-      f.setHours(h, m, 0);
+      f.setHours(h, m, 0, 0);
       this.fechaSeleccionada = f;
-      this.duracionInicio = hora;
-      this.duracionFin = this.sumarMinutos(hora, 30);
+      this.duracionInicio = `${hora}:00`;
+      this.duracionFin = this.sumarMinutos(hora, 30) + ":00";
       this.descripcionTarea = '';
       this.proyectoSeleccionado = null;
       this.etiquetasSeleccionadas = [];
@@ -108,6 +113,13 @@ export class CalendarioComponent implements OnInit {
 
   guardarEntrada() {
     const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+    const nuevaFechaInicio = this.combinarFechaHora(this.fechaSeleccionada, this.duracionInicio);
+    const nuevaFechaFin = this.combinarFechaHora(this.fechaSeleccionada, this.duracionFin);
+
+    if (nuevaFechaFin <= nuevaFechaInicio) {
+      alert("La hora de fin debe ser mayor a la de inicio");
+      return;
+    }
 
     const registroActualizado = {
       ...this.registroActivo,
@@ -115,8 +127,9 @@ export class CalendarioComponent implements OnInit {
       proyecto: this.proyectoSeleccionado,
       miembroId: session.userData?.id,
       miembroNombre: session.userData?.nombre,
-      inicio: this.registroActivo ? this.registroActivo.inicio : this.combinarFechaHora(this.fechaSeleccionada, this.duracionInicio),
-      fin: this.registroActivo ? this.registroActivo.fin : this.combinarFechaHora(this.fechaSeleccionada, this.duracionFin),
+      inicio: nuevaFechaInicio,
+      fin: nuevaFechaFin,
+      duracion: this.formatearDuracionParaStorage(nuevaFechaFin.getTime() - nuevaFechaInicio.getTime()),
       etiquetas: this.etiquetasSeleccionadas
     };
 
@@ -133,40 +146,53 @@ export class CalendarioComponent implements OnInit {
   }
 
   getDuracionTotalModal(): string {
-    if (!this.registroActivo) {
-      // Si es nuevo, calculamos entre duracionInicio y duracionFin (default 30 min)
-      return "00:30:00";
+    try {
+      const inicio = this.combinarFechaHora(this.fechaSeleccionada, this.duracionInicio);
+      const fin = this.combinarFechaHora(this.fechaSeleccionada, this.duracionFin);
+      const diffMs = fin.getTime() - inicio.getTime();
+      return diffMs >= 0 ? this.formatearDuracionParaStorage(diffMs) : "00:00:00";
+    } catch {
+      return "00:00:00";
     }
-    const diffMs = this.registroActivo.fin.getTime() - this.registroActivo.inicio.getTime();
-    const totalSegundos = Math.floor(diffMs / 1000);
-    const hrs = Math.floor(totalSegundos / 3600);
-    const mins = Math.floor((totalSegundos % 3600) / 60);
-    const secs = totalSegundos % 60;
-    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  private formatearDuracionParaStorage(ms: number): string {
+    const totalS = Math.floor(ms / 1000);
+    const h = Math.floor(totalS / 3600).toString().padStart(2, '0');
+    const m = Math.floor((totalS % 3600) / 60).toString().padStart(2, '0');
+    const s = (totalS % 60).toString().padStart(2, '0');
+    return `${h}:${m}:${s}`;
+  }
+
+  formatearHoraConSegundos(date: Date): string {
+    const h = date.getHours().toString().padStart(2, '0');
+    const m = date.getMinutes().toString().padStart(2, '0');
+    const s = date.getSeconds().toString().padStart(2, '0');
+    return `${h}:${m}:${s}`;
   }
 
   formatearHora = (date: Date) => `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 
   combinarFechaHora(fecha: Date, horaStr: string): Date {
     const d = new Date(fecha);
-    const [h, m] = horaStr.split(':').map(Number);
-    d.setHours(h, m, 0);
+    const partes = horaStr.split(':').map(Number);
+    const h = partes[0] || 0;
+    const m = partes[1] || 0;
+    const s = partes[2] || 0;
+    d.setHours(h, m, s, 0);
     return d;
   }
 
   calcularDuracion(reg: any): string {
     const diffMs = reg.fin.getTime() - reg.inicio.getTime();
-    const hrs = Math.floor(diffMs / 3600000);
-    const mins = Math.floor((diffMs % 3600000) / 60000);
-    const secs = Math.floor((diffMs % 60000) / 1000);
-    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}h`;
+    return this.formatearDuracionParaStorage(diffMs);
   }
 
   calcularEstiloEvento(reg: any) {
     const intervalo = this.zoomNivel === 1 ? 30 : this.zoomNivel === 2 ? 15 : this.zoomNivel === 3 ? 5 : 60;
-    const minutosInicio = reg.inicio.getMinutes() % intervalo; // 👈 relativo a la celda
+    const minutosInicio = reg.inicio.getMinutes() % intervalo; 
     const duracionMinutos = (reg.fin.getTime() - reg.inicio.getTime()) / (1000 * 60);
-    const alturaMinima = Math.max(duracionMinutos, 15);
+    const alturaMinima = Math.max(duracionMinutos, 25);
 
     const nombreP = reg.proyecto?.nombre || reg.proyecto;
     const infoP = this.listaProyectos.find(p => p.nombre === nombreP);
@@ -179,14 +205,15 @@ export class CalendarioComponent implements OnInit {
       'border-left': '4px solid rgba(0,0,0,0.2)',
       'padding': '4px', 'color': 'white',
       'font-size': '0.70rem', 'border-radius': '4px',
-      'pointer-events': 'auto', 'cursor': 'pointer'
+      'pointer-events': 'auto', 'cursor': 'pointer',
+      'overflow': 'hidden'
     };
   }
 
   generarHoras() {
     this.horas = [];
     let int = this.zoomNivel === 1 ? 30 : this.zoomNivel === 2 ? 15 : this.zoomNivel === 3 ? 5 : 60;
-    for (let min = 60; min < 24 * 60; min += int) {
+    for (let min = 0; min < 24 * 60; min += int) {
       const h = Math.floor(min / 60);
       const m = min % 60;
       this.horas.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
@@ -198,12 +225,9 @@ export class CalendarioComponent implements OnInit {
   generarDias() {
     const nuevosDias = [];
     const nombres = ['lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.', 'dom.'];
-
-    // Calculamos el lunes de la semana de la fechaActual
     const base = new Date(this.fechaActual);
     const diaSemana = base.getDay();
     const diff = base.getDate() - (diaSemana === 0 ? 6 : diaSemana - 1);
-
     const lunes = new Date(base.setDate(diff));
     lunes.setHours(0, 0, 0, 0);
 
@@ -216,7 +240,6 @@ export class CalendarioComponent implements OnInit {
         completa: d
       });
     }
-
     this.diasSemana = nuevosDias;
   }
 
@@ -225,27 +248,22 @@ export class CalendarioComponent implements OnInit {
     this.textoFecha = act.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
-  irHoy() {
-    this.fechaActual = new Date();
-    this.vista = 'dia';
-    this.refrescarTodo();
-  }
   irSiguiente() {
-    const salto = this.vista === 'semana' ? 7 : 1;
-    // CREAMOS un nuevo objeto Date para que Angular detecte el cambio de referencia
     const nuevaFecha = new Date(this.fechaActual);
-    nuevaFecha.setDate(nuevaFecha.getDate() + salto);
+    nuevaFecha.setDate(nuevaFecha.getDate() + (this.vista === 'semana' ? 7 : 1));
     this.fechaActual = nuevaFecha;
     this.refrescarTodo();
   }
+
   irAnterior() {
-    const salto = this.vista === 'semana' ? 7 : 1;
     const nuevaFecha = new Date(this.fechaActual);
-    nuevaFecha.setDate(nuevaFecha.getDate() - salto);
+    nuevaFecha.setDate(nuevaFecha.getDate() - (this.vista === 'semana' ? 7 : 1));
     this.fechaActual = nuevaFecha;
     this.refrescarTodo();
   }
+
   cambiarFecha(fecha: Date) { this.fechaActual = new Date(fecha); this.refrescarTodo(); }
+  
   sumarMinutos(h: string, m: number): string {
     const [h1, m1] = h.split(':').map(Number);
     const d = new Date(); d.setHours(h1, m1 + m);
@@ -253,15 +271,15 @@ export class CalendarioComponent implements OnInit {
   }
 
   esMismoDia = (f1: Date, f2: Date) => f1.toDateString() === f2.toDateString();
+  
   esMismaHora(fechaRegistro: Date, horaCelda: string): boolean {
     const [hCelda, mCelda] = horaCelda.split(':').map(Number);
     const minutosRegistro = fechaRegistro.getHours() * 60 + fechaRegistro.getMinutes();
     const minutosCelda = hCelda * 60 + mCelda;
-
     const intervalo = this.zoomNivel === 1 ? 30 : this.zoomNivel === 2 ? 15 : this.zoomNivel === 3 ? 5 : 60;
-
     return minutosRegistro >= minutosCelda && minutosRegistro < (minutosCelda + intervalo);
   }
+
   esHoy = (f: Date) => f.toDateString() === new Date().toDateString();
   aumentarZoom() { if (this.zoomNivel < 3) { this.zoomNivel++; this.generarHoras(); } }
   disminuirZoom() { if (this.zoomNivel > 0) { this.zoomNivel--; this.generarHoras(); } }
