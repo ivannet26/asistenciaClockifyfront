@@ -52,7 +52,6 @@ export class InformesComponent implements OnInit {
   dataDona: any;
   optionsDona: any;
 
-  // --- VARIABLES PARA EL PIPE ---
   tiempoTotal: number = 0; 
   proyectosResumen: any[] = [];
   registrosDetallados: any[] = [];
@@ -60,7 +59,7 @@ export class InformesComponent implements OnInit {
   etiquetasDisponibles: any[] = [];
   gruposDisponibles: any[] = [];
   datosSemanales: any[] = [];
-  totalesPorDiaSemanaSegundos: number[] = []; // Cambiado a número
+  totalesPorDiaSemanaSegundos: number[] = []; 
   etiquetasDias: string[] = [];
 
   filtroEquipo: any = null;
@@ -95,7 +94,7 @@ export class InformesComponent implements OnInit {
   constructor(
     private route: ActivatedRoute, 
     private link: Router,
-    private configService: ConfigService // Inyectamos el servicio
+    public configService: ConfigService // CAMBIO: Inyectado como public para el HTML
   ) {
     this.tabactivot = this.tabsT[0];
     this.tabactivoe = this.tabsE[0];
@@ -126,20 +125,25 @@ export class InformesComponent implements OnInit {
     });
   }
 
-  // --- GETTERS DINÁMICOS ---
+  // --- GETTERS DINÁMICOS ACTUALIZADOS ---
   get opcionesEquipo() { return this.gruposDisponibles; }
+  
   get opcionesClientes() {
     const datos = this.registrosDetallados.map(r => r.clienteNombre).filter(n => n);
     return [...new Set(datos)].map(c => ({ label: c, value: c }));
   }
+
+  // CAMBIO: Ahora el label del filtro de proyectos también es dinámico
   get opcionesProyectos() {
     const datos = this.registrosDetallados.map(r => r.proyecto?.nombre || r.proyecto).filter(p => p);
     return [...new Set(datos)].map(p => ({ label: p, value: p }));
   }
+
   get opcionesTareas() {
     const datos = this.registrosDetallados.map(r => r.tarea).filter(t => t);
     return [...new Set(datos)].map(t => ({ label: t, value: t }));
   }
+
   get opcionesEstados() {
     return [{ label: 'Activo', value: 'Activo' }, { label: 'Archivado', value: 'Archivado' }];
   }
@@ -187,7 +191,6 @@ export class InformesComponent implements OnInit {
         const cliente = clientes.find((c: any) => c.id === r.proyecto?.clienteId);
         const grupoRelacionado = grupos.find((g: any) => g.miembrosIds?.includes(r.miembroId));
         
-        // Convertimos duracion a segundos numéricos para el pipe
         let duracionSegundos = 0;
         if (r.duracion?.includes(':')) {
             const p = r.duracion.split(':');
@@ -198,7 +201,7 @@ export class InformesComponent implements OnInit {
           ...r,
           inicio: new Date(r.inicio),
           fin: new Date(r.fin),
-          duracionSegundos: duracionSegundos, // Nuevo campo numérico
+          duracionSegundos: duracionSegundos,
           clienteNombre: cliente?.nombre || 'Sin Cliente',
           miembroNombre: r.miembroNombre || 'Sin nombre',
           grupoId: grupoRelacionado?.id || null,
@@ -276,7 +279,7 @@ export class InformesComponent implements OnInit {
     this.tiempoTotal = totalSGlobal; 
     this.proyectosResumen = Object.keys(tiemposPorProyecto).map(n => ({
       titulo: n, 
-      duracionSegundos: tiemposPorProyecto[n], // Número para el pipe
+      duracionSegundos: tiemposPorProyecto[n],
       color: '#2196F3'
     }));
 
@@ -289,7 +292,7 @@ export class InformesComponent implements OnInit {
         descripcion: registroRef?.descripcion || 'Sin descripción',
         proyectoColor: registroRef?.proyecto?.color || null,
         clienteNombre: registroRef?.clienteNombre || 'Sin Cliente',
-        diasSegundos: agrupacionSemanal[n], // Arreglo de números
+        diasSegundos: agrupacionSemanal[n],
         totalSegundos: agrupacionSemanal[n].reduce((a, b) => a + b, 0)
       };
     });
@@ -317,7 +320,6 @@ export class InformesComponent implements OnInit {
     this.optionsDona = { cutout: '80%', plugins: { legend: { display: false } } };
   }
 
-  // Método auxiliar solo para el eje Y del gráfico (no acepta pipes)
   private formatearEjeGrafico(t: number): string {
     const h = Math.floor(t / 3600).toString().padStart(2, '0');
     const m = Math.floor((t % 3600) / 60).toString().padStart(2, '0');
@@ -334,8 +336,6 @@ export class InformesComponent implements OnInit {
     const requeridos = horas * 3600;
     const diferencia = requeridos - trabajados;
     
-    // Aquí podrías usar el Pipe inyectado manualmente si quisieras, 
-    // pero para exportar Excel un formato fijo está bien.
     const hDiff = Math.floor(Math.abs(diferencia) / 3600).toString().padStart(2, '0');
     const mDiff = Math.floor((Math.abs(diferencia) % 3600) / 60).toString().padStart(2, '0');
     const sDiff = (Math.abs(diferencia) % 60).toString().padStart(2, '0');
@@ -356,7 +356,8 @@ export class InformesComponent implements OnInit {
         'Inicio': r.inicio ? new Date(r.inicio).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '',
         'Fin': r.fin ? new Date(r.fin).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '',
         'Descripcion': `${r.descripcion || 'Sin descripción'}`,
-        'Trabajo': ` ${r.proyecto?.nombre || r.proyecto || 'Sin Proyecto'}`,
+        // CAMBIO: También dinámico en el Excel
+        [this.configService.jerarquia2Nombre()]: ` ${r.proyecto?.nombre || r.proyecto || 'Sin ' + this.configService.jerarquia2Nombre()}`,
         'Cliente': `${r.clienteNombre || 'Sin Cliente'}`,
         'Horas Extra': this.restarHoras(r.duracion).tiempo,
         'Observación': this.restarHoras(r.duracion).estado,

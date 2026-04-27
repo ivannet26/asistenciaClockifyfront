@@ -64,7 +64,7 @@
 
             <div class="flex-1 border-right-1 surface-border flex align-items-center" style="min-width: 130px; border-right-style: dashed !important;">
               <p-dropdown [options]="opcionesProyectos" [(ngModel)]="filtroProyecto" (onChange)="aplicarFiltrosLocales()"
-                [showClear]="true" placeholder="Proyecto" [appendTo]="'body'" class="w-full" [style]="estiloFiltro"></p-dropdown>
+                [showClear]="true" [placeholder]="configService.jerarquia2Nombre()" [appendTo]="'body'" class="w-full" [style]="estiloFiltro"></p-dropdown>
             </div>
 
             <div class="flex-1 border-right-1 surface-border flex align-items-center" style="min-width: 130px; border-right-style: dashed !important;">
@@ -113,7 +113,7 @@
                 <ng-template pTemplate="header">
                   <tr class="bg-gray-50 text-xs text-500 uppercase">
                     <th style="width: 3rem"></th>
-                    <th>Título</th>
+                    <th>{{ configService.jerarquia2Nombre() }}</th>
                     <th class="text-right">Duración</th>
                     <th class="text-right">Importe</th>
                   </tr>
@@ -160,7 +160,7 @@
                     <span class="font-bold text-sm">{{ r.descripcion || 'Sin descripción' }}</span>
                     <small class="text-500 ml-2"> 
                       <span *ngIf="r.proyecto?.color" [style.color]="r.proyecto.color"> ● </span> 
-                      {{ r.proyecto?.nombre || r.proyecto || 'Sin Proyecto' }} - {{ r.clienteNombre || 'Sin Cliente' }}
+                      {{ r.proyecto?.nombre || r.proyecto || 'Sin ' + configService.jerarquia2Nombre() }} - {{ r.clienteNombre || 'Sin Cliente' }}
                     </small>
                   </div>
                   <div class="flex align-items-center mt-2 gap-2 flex-wrap">
@@ -187,7 +187,7 @@
           <p-table [value]="datosSemanales" styleClass="p-datatable-gridlines p-datatable-sm" [style]="{'min-width': '900px'}">
             <ng-template pTemplate="header">
               <tr class="text-xs text-500 uppercase bg-gray-50">
-                <th style="width: 30%">Proyecto / Descripción</th>
+                <th style="width: 30%">{{ configService.jerarquia2Nombre() }} / Descripción</th>
                 <th style="width: 9%" *ngFor="let dia of etiquetasDias" class="text-center">{{ dia }}</th>
                 <th class="text-center" style="width: 10%">Total</th>
               </tr>
@@ -266,7 +266,7 @@
                   <th style="width: 10%" class="text-center">Fecha</th>
                   <th style="width: 8%" class="text-center">Inicio</th>
                   <th style="width: 8%" class="text-center">Fin</th>
-                  <th style="width: 35%" class="text-center">Trabajo</th>
+                  <th style="width: 35%" class="text-center">{{ configService.jerarquia2Nombre() }}</th>
                   <th style="width: 10%" class="text-center">Duración</th>
                   <th style="width: 15%" class="text-center">H. Extra / Obs</th>
                 </tr>
@@ -280,7 +280,7 @@
                   <td class="celda-truncate">
                     <div class="flex align-items-center justify-content-center gap-2">
                       <span class="font-bold">{{ r.descripcion || 'Sin descripción' }}</span>
-                      <small class="text-500">● {{ r.proyecto?.nombre || 'Sin Proyecto' }}</small>
+                      <small class="text-500">● {{ r.proyecto?.nombre || 'Sin ' + configService.jerarquia2Nombre() }}</small>
                     </div>
                   </td>
                   <td class="text-right font-bold">{{ r.duracionSegundos | formatDuration }}</td>
@@ -308,7 +308,7 @@
         </div>
         <h2 class="text-900 font-bold mb-2">Bienvenido a Informes</h2>
         <p class="text-600 line-height-3 mb-5">
-          Parece que aún no hay registros de tiempo para organizar. Comienza a rastrear tus actividades para ver tus informes.
+          Parece que aún no hay registros de tiempo para organizar. Comienza a rastrear tus actividades para ver tus informes de {{ configService.jerarquia2Nombre() | lowercase }}.
         </p>
         <button pButton label="Comenzar a rastrear" icon="pi pi-play"
           class="p-button-raised p-button-info px-5 py-3 font-bold" (click)="irAlRastreador()" style="width: auto;">
