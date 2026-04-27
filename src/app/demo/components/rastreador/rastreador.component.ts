@@ -20,6 +20,8 @@ import { ProyectosService } from '../../service/proyectos.service';
 import { TimerService } from '../../service/timer.service';
 import { Observable } from 'rxjs';
 import { PermissionService } from '../../service/permission.service';
+// IMPORTANTE: Asegúrate de que la ruta sea la correcta según tu estructura
+import { ConfigService } from '../../../demo/service/config.service'; 
 
 @Component({
   selector: 'app-rastreador',
@@ -63,7 +65,9 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     private proyectosService: ProyectosService,
     private clientesService: ClientesService,
     public timerService: TimerService,
-    private permissionService: PermissionService
+    private permissionService: PermissionService,
+    // CORRECCIÓN: Inyectamos el ConfigService como public para que el HTML pueda verlo
+    public configService: ConfigService 
   ) { }
 
   ngOnInit() {
@@ -169,7 +173,6 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     }
   }
 
-  // CORRECCIÓN: Búsqueda exacta por tiempo de inicio para permitir cambio de descripción
   actualizarRegistroEnStorage(regActualizado: any) {
     const todos = JSON.parse(localStorage.getItem(this.STORAGE_REGISTROS) || '[]');
 
@@ -180,8 +183,6 @@ export class RastreadorComponent implements OnInit, OnDestroy {
     if (index !== -1) {
       todos[index] = regActualizado;
       localStorage.setItem(this.STORAGE_REGISTROS, JSON.stringify(todos));
-
-      // Forzamos sincronización visual
       this.cargarRegistros();
       this.agruparRegistros();
       console.log('Registro actualizado en LocalStorage exitosamente');

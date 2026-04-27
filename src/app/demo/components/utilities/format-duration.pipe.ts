@@ -1,34 +1,38 @@
 import { Pipe, PipeTransform, inject } from '@angular/core';
 import { ConfigService } from '../../../demo/service/config.service';
+
 @Pipe({
   name: 'formatDuration',
   standalone: true,
-  pure: false
+  pure: false // Necesario para reaccionar a cambios en el servicio sin recargar
 })
 export class FormatDurationPipe implements PipeTransform {
-  // Inyectamos el servicio directamente en una propiedad de la clase
   private configService = inject(ConfigService);
 
   transform(value: number | string | any): string {
-    if (value === null || value === undefined) return '00:00:00';
+    // Validación básica de nulos o vacíos
+    if (value === null || value === undefined || value === '') return '00:00:00';
 
     const totalSeconds = Math.floor(Number(value));
     
-    // Al haber inyectado ConfigService arriba, TypeScript ya reconocerá durationFormat()
+    // Obtenemos el formato actual de la Signal del servicio
     const format = this.configService.durationFormat(); 
 
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    const hh = hours < 10 ? `0${hours}` : `${hours}`;
-    const mm = minutes < 10 ? `0${minutes}` : `${minutes}`;
-    const ss = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    // Formateo de dos dígitos (01, 02...)
+    const hh = hours.toString().padStart(2, '0');
+    const mm = minutes.toString().padStart(2, '0');
+    const ss = seconds.toString().padStart(2, '0');
 
+    // Lógica de retorno según la configuración
     if (format === 'full') {
-      return `${hh}:${mm}:${ss}`;
+      return `${hh}:${mm}:${ss}`; // Ejemplo: 01:05:09
     } else {
-      return `${hours}:${mm}`;
+      // Formato corto/compacto h:mm sugerido en tu imagen
+      return `${hours}:${mm}`;    // Ejemplo: 1:05
     }
   }
 }

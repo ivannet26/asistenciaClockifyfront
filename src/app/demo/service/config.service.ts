@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core'; // Se añade signal
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
@@ -6,44 +6,60 @@ import { firstValueFrom } from 'rxjs';
     providedIn: 'root',
 })
 export class ConfigService {
-    private config: any = {}; // Inicialmente vacío
+    private config: any = {};
 
-    // --- NUEVA LÓGICA PARA FORMATO REACTIVO ---
-    // 'full' = hh:mm:ss | 'short' = h:mm
-    public durationFormat = signal<'full' | 'short'>('full');
+    // Signal para el formato de duración. 
+    // Intenta leer de localStorage al iniciar; si no existe, usa 'full'.
+    public durationFormat = signal<'full' | 'short'>(
+        (localStorage.getItem('pref_duration_format') as 'full' | 'short') || 'full'
+    );
+
+    // --- NUEVA SIGNAL PARA JERARQUÍA ---
+    // Persiste el nombre personalizado (Ej: Proyecto, Trabajo, Ubicación)
+    public jerarquia2Nombre = signal<string>(
+        localStorage.getItem('pref_jerarquia2_nombre') || 'Proyecto'
+    );
 
     constructor(private http: HttpClient) {}
 
     async loadConfig(): Promise<void> {
-        // console.log("Cargando configuración desde config.json...");
         try {
             this.config = await firstValueFrom(
                 this.http.get('/assets/config.json')
             );
-            (window as any).config = this.config; // Guardar en window para acceso global
-            // console.log(" Configuración cargada:", this.config);
+            (window as any).config = this.config;
         } catch (error) {
             console.error(' Error cargando config.json', error);
         }
     }
 
-    // Método para que el componente de Configuración actualice el formato
+    // Método para actualizar el formato y persistirlo
     updateDurationFormat(label: string): void {
-        if (label && label.includes('hh:mm:ss')) {
-            this.durationFormat.set('full');
-        } else {
-            this.durationFormat.set('short');
+        const newFormat = (label && label.includes('hh:mm:ss')) ? 'full' : 'short';
+        
+        // Actualiza la señal (notifica a los pipes)
+        this.durationFormat.set(newFormat);
+        
+        // Guarda la preferencia en el navegador
+        localStorage.setItem('pref_duration_format', newFormat);
+    }
+
+    // --- NUEVO MÉTODO PARA ACTUALIZAR JERARQUÍA ---
+    updateJerarquia2Nombre(nuevoNombre: string): void {
+        if (nuevoNombre) {
+            this.jerarquia2Nombre.set(nuevoNombre);
+            localStorage.setItem('pref_jerarquia2_nombre', nuevoNombre);
         }
     }
 
-    // --- TUS GETTERS ORIGINALES (SIN CAMBIOS) ---
+    // --- TUS GETTERS ORIGINALES ---
 
     getConfig(key: string): any {
         return (window as any).config ? (window as any).config[key] : null;
     }
 
     getApiUrl(): string {
-        return this.getConfig('url'); // Valor por defecto // verificar si va se http o https
+        return this.getConfig('url');
     }
 
     getRutaDoc(): string {

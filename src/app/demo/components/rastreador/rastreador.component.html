@@ -14,7 +14,7 @@
                         <span class="texto-proyecto">
                             <ng-container *ngIf="proyectoSeleccionado?.id === 0 ; else proyectoNormal">
                                 <i class="pi pi-plus-circle"></i>
-                                Proyecto
+                                {{ configService.jerarquia2Nombre() }}
                             </ng-container>
 
                             <ng-template #proyectoNormal>
@@ -31,7 +31,6 @@
             </div>
 
             <div class="acciones-seccion flex align-items-center justify-content-between w-full md:w-auto gap-3">
-
                 <div class="flex align-items-center gap-2">
                     <button pButton icon="pi pi-tag" class="p-button-text"
                         [ngClass]="{'icono-activo': etiquetasSeleccionadas.length > 0}"
@@ -92,7 +91,7 @@
                             <div class="color-dot" [style.background]="r.proyecto?.color || '#94a3b8'"></div>
                             <span class="proyecto-nombre" [ngClass]="{'text-blue-500 font-bold': !r.proyecto}">
                                 <i *ngIf="!r.proyecto" class="pi pi-plus-circle mr-1"></i>
-                                {{ r.proyecto?.nombre || 'Sin proyecto' }}
+                                {{ r.proyecto?.nombre || 'Sin ' + configService.jerarquia2Nombre() }}
                             </span>
                         </div>
 
@@ -135,7 +134,7 @@
                 </div>
                 <h2 class="text-900 font-bold mb-2">¡Empecemos a rastrear!</h2>
                 <p class="text-600 line-height-3 mb-5">
-                    Bienvenida Alejandra. Aquí podrás inicializar tu rastreador para contabilizar tu tiempo invertido en tus proyectos.
+                    Bienvenida Alejandra. Aquí podrás inicializar tu rastreador para contabilizar tu tiempo invertido en tus {{ configService.jerarquia2Nombre() | lowercase }}s.
                 </p>
             </div>
         </div>
@@ -146,7 +145,7 @@
     <div class="flex flex-column gap-3">
         <span class="p-input-icon-left w-full">
             <i class="pi pi-search"></i>
-            <input type="text" pInputText placeholder="Buscar Proyecto o Cliente" [(ngModel)]="busquedaProyecto"
+            <input type="text" pInputText [placeholder]="'Buscar ' + configService.jerarquia2Nombre() + ' o Cliente'" [(ngModel)]="busquedaProyecto"
                 class="w-full p-inputtext-sm" />
         </span>
         <div style="max-height: 250px; overflow-y: auto;">
@@ -160,7 +159,7 @@
                 <i class="pi pi-chevron-right"></i>
             </div>
         </div>
-        <button pButton label="Crear nuevo Proyecto" 
+        <button pButton [label]="'Crear nuevo ' + configService.jerarquia2Nombre()" 
                 *ngIf="canCreateP$ | async" 
                 icon="pi pi-plus-circle" 
                 class="p-button-text p-button-info w-full"
@@ -190,17 +189,17 @@
     </div>
 </p-overlayPanel>
 
-<p-dialog header="Crear nuevo Proyecto" [(visible)]="mostrarModalProyecto" [modal]="true"
+<p-dialog [header]="'Crear nuevo ' + configService.jerarquia2Nombre()" [(visible)]="mostrarModalProyecto" [modal]="true"
     [style]="{width: 'min(450px, 95vw)'}" [closable]="true">
     <div class="flex flex-column gap-3 mt-2">
-        <input pInputText placeholder="Nombre del proyecto" [(ngModel)]="nuevoProyecto.nombre" class="w-full" />
+        <input pInputText [placeholder]="'Nombre del ' + (configService.jerarquia2Nombre() | lowercase)" [(ngModel)]="nuevoProyecto.nombre" class="w-full" />
         <p-dropdown [options]="clientes" optionLabel="nombre" [(ngModel)]="nuevoProyecto.cliente"
             placeholder="Seleccionar cliente" appendTo="body" class="w-full">
         </p-dropdown>
         <div class="flex flex-wrap align-items-center gap-3">
             <span>Color:</span>
             <input type="color" [(ngModel)]="nuevoProyecto.color" style="border:none; width:40px; height:40px; cursor:pointer" />
-            <p-checkbox [(ngModel)]="nuevoProyecto.publico" binary="true" label="Proyecto Público"></p-checkbox>
+            <p-checkbox [(ngModel)]="nuevoProyecto.publico" binary="true" [label]="configService.jerarquia2Nombre() + ' Público'"></p-checkbox>
         </div>
     </div>
     <ng-template pTemplate="footer">

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AppAjustes } from '../../../demo/service/appajustes.service';
+import { ConfigService } from '../../../demo/service/config.service'; // Inyectamos tu nuevo servicio
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TabViewModule } from 'primeng/tabview';
@@ -53,55 +54,80 @@ export class ConfiguracionEspaciosComponent implements OnInit {
   agruparPor2 = 'proyecto';
   agruparPor3 = 'tarea';
 
-  constructor(private appAjustes: AppAjustes) { }
+  constructor(
+    private appAjustes: AppAjustes,
+    public configService: ConfigService // Inyección del servicio para el Pipe y Signals
+  ) { }
 
   ngOnInit(): void {
-  const savedForce = localStorage.getItem('force_timer');
-  if (savedForce !== null) {
-    this.temporizadorForzado = JSON.parse(savedForce);
-  }
-
-  this.appAjustes.config$.subscribe(config => {
-    this.favoritosActivo = config.usuario.favoritesEnabled;
-    this.formatoSeleccionado = config.usuario.durationFormat;
-    this.agruparPor1 = config.usuario.grouping.primary;
-    this.agruparPor2 = config.usuario.grouping.secondary;
-    this.agruparPor3 = config.usuario.grouping.tertiary;
-    this.crearProyectos = config.espacioTrabajo.projectCreationPermission;
-    this.crearEtiquetas = config.espacioTrabajo.etiquetaCreationPermission;
-    if (config.espacioTrabajo.forceTimer !== undefined) {
-      this.temporizadorForzado = config.espacioTrabajo.forceTimer;
+    const savedForce = localStorage.getItem('force_timer');
+    if (savedForce !== null) {
+      this.temporizadorForzado = JSON.parse(savedForce);
     }
-  });
-}
 
+    this.appAjustes.config$.subscribe(config => {
+      this.favoritosActivo = config.usuario.favoritesEnabled;
+      this.formatoSeleccionado = config.usuario.durationFormat;
+      this.agruparPor1 = config.usuario.grouping.primary;
+      this.agruparPor2 = config.usuario.grouping.secondary;
+      this.agruparPor3 = config.usuario.grouping.tertiary;
+      this.crearProyectos = config.espacioTrabajo.projectCreationPermission;
+      this.crearEtiquetas = config.espacioTrabajo.etiquetaCreationPermission;
+      
+      if (config.espacioTrabajo.forceTimer !== undefined) {
+        this.temporizadorForzado = config.espacioTrabajo.forceTimer;
+      }
+
+      // Sincronización inicial del Pipe con el formato cargado
+      if (this.formatoSeleccionado) {
+        const currentFormat = this.formatosHora.find(f => f.value === this.formatoSeleccionado);
+        this.configService.updateDurationFormat(currentFormat ? currentFormat.label : 'hh:mm:ss');
+      }
+
+      // Sincronización inicial de la jerarquía
+      if (config.espacioTrabajo.jerarquia2Nombre) {
+        this.configService.updateJerarquia2Nombre(config.espacioTrabajo.jerarquia2Nombre);
+      }
+    });
+  }
 
   onFavoritosChange() {
     this.appAjustes.patchUsuario({ favoritesEnabled: this.favoritosActivo });
   }
 
   cambiarFormatoHora(event: any) {
+    // 1. Lógica original de AppAjustes
     this.appAjustes.patchUsuario({ durationFormat: event.value });
+
+    // 2. Notificar al ConfigService para que el Pipe reaccione en tiempo real
+    const formato = this.formatosHora.find(h => h.value === event.value);
+    if (formato) {
+      this.configService.updateDurationFormat(formato.label);
+    }
   }
 
   onAgruparChange() {
-  // Obtener el label del valor seleccionado
-  const label1 = this.opcionesJerarquia1.find(o => o.value === this.agruparPor1)?.label ?? this.agruparPor1;
-  const label2 = this.opcionesJerarquia2.find(o => o.value === this.agruparPor2)?.label ?? this.agruparPor2;
+    // Obtener el label del valor seleccionado
+    const label1 = this.opcionesJerarquia1.find(o => o.value === this.agruparPor1)?.label ?? this.agruparPor1;
+    const label2 = this.opcionesJerarquia2.find(o => o.value === this.agruparPor2)?.label ?? this.agruparPor2;
 
-  // Guardar agrupación + nombres de jerarquía
-  this.appAjustes.patchUsuario({
-    grouping: {
-      primary: this.agruparPor1 as any,
-      secondary: this.agruparPor2 as any,
-      tertiary: this.agruparPor3 as any
-    }
-  });
-  this.appAjustes.patchEspacioTrabajo({
-    jerarquia1Nombre: label1,
-    jerarquia2Nombre: label2
-  });
-}
+    // ACTUALIZACIÓN GLOBAL: Notificamos a la Signal para que cambie en el Rastreador al instante
+    this.configService.updateJerarquia2Nombre(label2);
+
+    // Guardar agrupación + nombres de jerarquía
+    this.appAjustes.patchUsuario({
+      grouping: {
+        primary: this.agruparPor1 as any,
+        secondary: this.agruparPor2 as any,
+        tertiary: this.agruparPor3 as any
+      }
+    });
+    this.appAjustes.patchEspacioTrabajo({
+      jerarquia1Nombre: label1,
+      jerarquia2Nombre: label2
+    });
+  }
+
   onPermisosChangeP() {
     this.appAjustes.patchEspacioTrabajo({
       projectCreationPermission: this.crearProyectos as any
@@ -119,7 +145,6 @@ export class ConfiguracionEspaciosComponent implements OnInit {
     console.log('Permisos de tareas cambiados a:', this.crearTareas);
   }
 
-  // FUNCIÓN CORREGIDA PARA HACER FUNCIONAR EL BLOQUEO
   onTemporizadorChange() {
     // Notificamos al servicio
     this.appAjustes.patchEspacioTrabajo({ forceTimer: this.temporizadorForzado });
