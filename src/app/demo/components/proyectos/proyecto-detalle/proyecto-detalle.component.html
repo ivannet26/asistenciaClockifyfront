@@ -1,0 +1,217 @@
+<p-toast position="top-right" />
+
+<div class="detalle-pagina">
+
+    <!-- CABECERA -->
+    <div class="detalle-cabecera">
+        <span class="breadcrumb-link" (click)="volver()">Proyectos</span>
+        <i class="pi pi-chevron-right text-400 text-xs"></i>
+        <span class="text-700">{{ proyecto?.nombre }}</span>
+    </div>
+
+    <div class="detalle-titulo flex align-items-center justify-content-between">
+        <div class="flex align-items-center gap-2">
+            <div [style.background]="proyecto?.color" style="width:14px;height:14px;border-radius:50%;"></div>
+            <h2 class="m-0 text-900 font-bold text-2xl">{{ proyecto?.nombre }}</h2>
+        </div>
+        <button pButton icon="pi pi-star" class="p-button-text p-button-secondary" pTooltip="Marcar como favorito">
+        </button>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs-contenedor">
+        <div class="tab" [class.activo]="tabActivo === 'tareas'" (click)="tabActivo = 'tareas'">TAREAS</div>
+    </div>
+
+    <!-- CONTENIDO TAB TAREAS -->
+    <div class="tareas-panel">
+
+        <!-- Barra superior -->
+        <div class="tareas-toolbar flex align-items-center justify-content-between gap-2 mb-3">
+            <div class="flex align-items-center gap-2">
+                <p-dropdown [options]="opcionesFiltro" [(ngModel)]="filtroActivo" [style]="{'font-size':'0.85rem'}"
+                    appendTo="body">
+                </p-dropdown>
+                <p-dropdown [options]="opcionesPrioridad" [(ngModel)]="filtroPrioridad"
+                    [style]="{'font-size':'0.85rem'}" appendTo="body">
+                </p-dropdown>
+                <div class="flex align-items-center border-1 surface-border border-round px-2 bg-white">
+                    <i class="pi pi-search text-400 mr-1"></i>
+                    <input type="text" pInputText placeholder="Buscar por nombre" [(ngModel)]="busquedaTarea"
+                        class="border-none shadow-none py-1 text-sm" style="outline:none;width:160px;" />
+                </div>
+            </div>
+            <div class="flex align-items-center gap-2">
+                <input pInputText placeholder="Añadir nuevo Tarea" [(ngModel)]="nombreNuevaTarea"
+                    (keyup.enter)="guardarNuevaTarea()" style="font-size:0.85rem; width:200px;" />
+                <button pButton label="AÑADIR" class="p-button-info p-button-sm" (click)="guardarNuevaTarea()">
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="tareas-tabla">
+            <div class="tareas-tabla-header flex">
+                <span class="col-nombre text-xs font-bold text-500 uppercase">NOMBRE</span>
+                <span class="col-encargado text-xs font-bold text-500 uppercase">ENCARGADOS</span>
+            </div>
+
+            <!-- Sin tareas -->
+            <div *ngIf="tareasFiltradas.length === 0"
+                class="flex flex-column align-items-center justify-content-center py-5 text-400 gap-2">
+                <i class="pi pi-inbox text-4xl"></i>
+                <span class="text-sm">No hay tareas todavía</span>
+            </div>
+
+            <!-- Lista -->
+            <div *ngFor="let tarea of tareasFiltradas" class="tarea-fila flex align-items-center"
+                [class.completada]="tarea.completada">
+
+                <div class="col-nombre flex align-items-center gap-2">
+                    <p-checkbox [binary]="true" [ngModel]="tarea.completada" (onChange)="toggleCompletada(tarea)"
+                        (click)="$event.stopPropagation()">
+                    </p-checkbox>
+                    <div class="prioridad-dot" [style.background]="colorPrioridad(tarea.prioridad)"
+                        [pTooltip]="'Prioridad: ' + (tarea.prioridad | titlecase)">
+                    </div>
+                    <span class="tarea-nombre-texto" [class.line-through]="tarea.completada">
+                        {{ tarea.nombre }}
+                    </span>
+                </div>
+
+                <div class="col-encargado flex align-items-center gap-2">
+                    <button pButton type="button" class="p-button-outlined p-button-sm encargado-btn"
+                        (click)="abrirPanelEncargado($event, tarea, panelEncargado)">
+                        <span *ngIf="!tarea.asignadoA" class="text-600 font-normal">Cualquiera</span>
+                        <span *ngIf="tarea.asignadoA" class="flex align-items-center gap-1 text-700 font-normal">
+                            {{ getNombreMiembro(tarea.asignadoA) }}
+                            <i class="pi pi-times text-xs text-500 hover:text-red-500 ml-1"
+                                (click)="limpiarAsignado(tarea, $event)" pTooltip="Quitar encargado"></i>
+                        </span>
+                        <i class="pi pi-chevron-down text-xs ml-1 text-600"></i>
+                    </button>
+
+                    <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-secondary p-button-sm ml-auto"
+                        (click)="abrirMenuTarea($event, tarea, menuTarea)">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PANEL ENCARGADOS -->
+<p-overlayPanel #panelEncargado [style]="{width: '280px'}">
+    <div class="flex flex-column gap-2">
+        <div class="flex align-items-center border-1 surface-border border-round px-2">
+            <i class="pi pi-search text-400 mr-1"></i>
+            <input type="text" pInputText placeholder="Buscar usuarios o grupos" [(ngModel)]="busquedaEncargado"
+                class="border-none shadow-none py-1 text-sm w-full" style="outline:none;" />
+        </div>
+
+        <div class="flex align-items-center justify-content-between px-1">
+            <span class="text-xs font-bold text-500 uppercase">MOSTRAR</span>
+            <div class="flex gap-2">
+                <span class="text-xs cursor-pointer" [class.font-bold]="filtroEncargado === 'todo'"
+                    [class.text-primary]="filtroEncargado === 'todo'" (click)="filtroEncargado = 'todo'">Todo</span>
+                <span class="text-xs cursor-pointer" [class.font-bold]="filtroEncargado === 'activo'"
+                    [class.text-primary]="filtroEncargado === 'activo'"
+                    (click)="filtroEncargado = 'activo'">Activo</span>
+                <span class="text-xs cursor-pointer" [class.font-bold]="filtroEncargado === 'inactivo'"
+                    [class.text-primary]="filtroEncargado === 'inactivo'"
+                    (click)="filtroEncargado = 'inactivo'">Inactivo</span>
+            </div>
+        </div>
+
+        <div style="max-height: 200px; overflow-y: auto;">
+            <p class="text-xs font-bold text-500 uppercase px-1 mb-1">USUARIOS</p>
+            <div *ngFor="let m of miembrosFiltrados"
+                class="flex align-items-center gap-2 p-2 border-round cursor-pointer hover:bg-100"
+                (click)="asignarEncargado(m, panelEncargado)">
+                <p-checkbox [binary]="true" [ngModel]="tareaEncargadoActual?.asignadoA === m.value"
+                    (click)="$event.stopPropagation()">
+                </p-checkbox>
+                <span class="text-sm">{{ m.label }}</span>
+            </div>
+            <div *ngIf="miembrosFiltrados.length === 0" class="text-xs text-400 p-2">No hay usuarios</div>
+        </div>
+    </div>
+</p-overlayPanel>
+
+<!-- MENU 3 PUNTOS -->
+<p-overlayPanel #menuTarea>
+    <div class="flex flex-column" style="min-width: 180px;">
+        <div class="menu-item p-2 border-round cursor-pointer hover:bg-100"
+            (click)="toggleCompletadaMenu(); menuTarea.hide()">
+            <span [class]="tareaMenuActual?.completada ? 'text-orange-500' : 'text-700'">
+                {{ tareaMenuActual?.completada ? 'Marcar como activa' : 'Marcar como hecha' }}
+            </span>
+        </div>
+        <div class="menu-item p-2 border-round cursor-pointer hover:bg-100"
+            (click)="seleccionarTarea(tareaMenuActual!); menuTarea.hide()">
+            <span class="text-700">Ver detalle</span>
+        </div>
+        <div class="menu-item p-2 border-round cursor-pointer hover:bg-100"
+            (click)="eliminarTarea(tareaMenuActual!); menuTarea.hide()">
+            <span class="text-red-500">Eliminar</span>
+        </div>
+    </div>
+</p-overlayPanel>
+
+<!-- DIALOG DETALLE TAREA -->
+<p-dialog header="Detalle de tarea" [(visible)]="mostrarDialogTarea" [modal]="true" [style]="{width: '420px'}"
+    [draggable]="false" [resizable]="false">
+
+    <div class="flex flex-column gap-3 mt-2" *ngIf="tareaSeleccionada">
+
+        <div class="flex flex-column gap-1">
+            <label class="text-xs text-500 font-bold uppercase">Nombre</label>
+            <input pInputText [(ngModel)]="tareaSeleccionada.nombre" class="w-full" />
+        </div>
+
+        <div class="flex flex-column gap-1">
+            <label class="text-xs text-500 font-bold uppercase">Prioridad</label>
+            <p-dropdown [options]="prioridades" [(ngModel)]="tareaSeleccionada.prioridad" appendTo="body"
+                styleClass="w-full">
+                <ng-template pTemplate="selectedItem">
+                    <div class="flex align-items-center gap-2" *ngIf="tareaSeleccionada.prioridad">
+                        <div style="width:10px;height:10px;border-radius:50%;"
+                            [style.background]="colorPrioridad(tareaSeleccionada.prioridad)">
+                        </div>
+                        <span>{{ tareaSeleccionada.prioridad | titlecase }}</span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="item" let-item>
+                    <div class="flex align-items-center gap-2">
+                        <div style="width:10px;height:10px;border-radius:50%;"
+                            [style.background]="colorPrioridad(item.value)"></div>
+                        <span>{{ item.label }}</span>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+        <div class="flex flex-column gap-1">
+            <label class="text-xs text-500 font-bold uppercase">Asignar a</label>
+            <p-dropdown [options]="miembros" [(ngModel)]="tareaSeleccionada.asignadoA" placeholder="Sin asignar"
+                appendTo="body" styleClass="w-full" [showClear]="true">
+            </p-dropdown>
+        </div>
+
+        <div class="flex flex-column gap-1">
+            <label class="text-xs text-500 font-bold uppercase">Descripción</label>
+            <textarea pInputText rows="3" [(ngModel)]="tareaSeleccionada.descripcion"
+                placeholder="Añadir descripción..." class="w-full" style="resize:vertical;font-family:inherit;">
+            </textarea>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary"
+            (click)="cerrarDetalle()">
+        </button>
+        <button pButton label="Guardar cambios" icon="pi pi-check" class="p-button-info"
+            (click)="guardarCambiosTarea()">
+        </button>
+    </ng-template>
+</p-dialog>

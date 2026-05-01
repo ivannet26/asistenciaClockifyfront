@@ -15,7 +15,7 @@ import { InformesComponent } from './demo/components/informes/informes.component
 import { MicuentaComponent } from './demo/components/micuenta/micuenta.component';
 import { ConfiguracionEspaciosComponent } from './demo/components/configuracion-espacios/configuracion-espacios.component';
 import { CerrarAsistenciaComponent } from './demo/components/cerrar-asistencia/cerrar-asistencia.component';
-
+import { ProyectoDetalleComponent } from './demo/components/proyectos/proyecto-detalle/proyecto-detalle.component';
 import { permissionGuard } from './demo/service/permission.guard';
 
 @NgModule({
@@ -41,6 +41,7 @@ import { permissionGuard } from './demo/service/permission.guard';
                     { path: 'rastreador', component: RastreadorComponent },
                     { path: 'informes', component: InformesComponent},
                     { path: 'proyectos', component: ProyectosComponent },
+                    { path: 'proyectos/:id', component: ProyectoDetalleComponent },
                     { path: 'equipo', component: EquipoComponent },
                     { path: 'panel', component: PanelComponent },
                     { path: 'clientes', component: ClientesComponent },
@@ -48,7 +49,7 @@ import { permissionGuard } from './demo/service/permission.guard';
                     { path: 'micuenta', component: MicuentaComponent},
                     { path: 'configuracion-espacios', component: ConfiguracionEspaciosComponent, canActivate: [permissionGuard('soloAdminODueno')]},
                     { path: 'cerrar-asistencia',component:CerrarAsistenciaComponent, canActivate: [permissionGuard('soloAdminODueno')]},
-                    
+
                 ]
             },
 

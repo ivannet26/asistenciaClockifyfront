@@ -19,7 +19,8 @@
 
                     <div class="flex flex-column gap-3 mt-2" style="width: 300px;">
                         <div class="flex flex-column gap-1">
-                            <label class="text-sm font-medium text-color-secondary">Nombre del {{ jerarquia2Nombre }}</label>
+                            <label class="text-sm font-medium text-color-secondary">Nombre del {{ jerarquia2Nombre
+                                }}</label>
                             <input pInputText placeholder="Introduce el nombre de proyecto"
                                 [(ngModel)]="nuevoProyecto.nombre" class="w-full" />
                         </div>
@@ -104,7 +105,7 @@
                         <div
                             class="surface-100 p-2 flex justify-content-between align-items-center border-bottom-1 surface-border">
                             <span class="text-xs font-bold text-500 ml-2 uppercase">{{ jerarquia2Nombre }}</span>
-                            <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm 
+                            <p-button styleClass="bg-green-700 border-green-500 text-white p-button-sm
                             hover:bg-green-700 h9over:border-green-600" label="Exportar" icon="pi pi-file-excel"
                                 (onClick)="exportar()">
                             </p-button>
@@ -160,7 +161,10 @@
                                                 <input *ngIf="proyectoEditandoId === proyecto.id" pInputText
                                                     [(ngModel)]="editBuffer.nombre" class="text-sm py-1 px-2 w-full" />
                                                 <span *ngIf="proyectoEditandoId !== proyecto.id"
-                                                    class="text-700 font-medium">{{proyecto.nombre}}</span>
+                                                    class="text-700 font-medium cursor-pointer hover:text-primary"
+                                                    (click)="irADetalle(proyecto)">
+                                                    {{proyecto.nombre}}
+                                                </span>
                                             </div>
                                         </td>
 

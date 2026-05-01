@@ -22,7 +22,12 @@
                                     <div *ngIf="proyectoSeleccionado" [style.background]="proyectoSeleccionado.color"
                                         class="color-dot">
                                     </div>
-                                    {{ proyectoSeleccionado?.nombre }}
+                                    <span class="text-blue-500 font-bold hover:underline">
+                                        {{ proyectoSeleccionado?.nombre }}
+                                        <ng-container *ngIf="tareaSeleccionada">
+                                            : <span class="text-600 font-normal">{{ tareaSeleccionada.nombre }}</span>
+                                        </ng-container>
+                                    </span>
                                 </div>
                             </ng-template>
                         </span>
@@ -52,7 +57,7 @@
 
                 <div class="botones-control flex align-items-center gap-1">
                     <button pButton [label]="timerService.corriendo() ? 'DETENER' : 'INICIO'"
-                        [ngClass]="timerService.corriendo() ? 'p-button-danger' : 'p-button-info'" 
+                        [ngClass]="timerService.corriendo() ? 'p-button-danger' : 'p-button-info'"
                         (click)="toggleTimer()">
                     </button>
 
@@ -75,9 +80,9 @@
                 <div class="registro-contenido flex flex-column lg:flex-row gap-3 lg:align-items-center">
 
                     <div class="registro-izquierda flex-grow-1">
-                        <input type="text" pInputText 
-                            [(ngModel)]="r.descripcion" 
-                            (blur)="actualizarRegistroEnStorage(r)" 
+                        <input type="text" pInputText
+                            [(ngModel)]="r.descripcion"
+                            (blur)="actualizarRegistroEnStorage(r)"
                             (keyup.enter)="actualizarRegistroEnStorage(r)"
                             class="input-descripcion"
                             placeholder="Sin descripción" />
@@ -85,13 +90,17 @@
 
                     <div class="registro-centro flex flex-wrap align-items-center gap-3 lg:justify-content-end">
 
-                        <div class="flex align-items-center gap-2 cursor-pointer hover:text-primary" 
+                        <div class="flex align-items-center gap-2 cursor-pointer hover:text-primary"
                              style="min-width: 150px;"
                              (click)="abrirPanelProyectosEnRegistro($event, r, panelProyectos)">
                             <div class="color-dot" [style.background]="r.proyecto?.color || '#94a3b8'"></div>
-                            <span class="proyecto-nombre" [ngClass]="{'text-blue-500 font-bold': !r.proyecto}">
+
+                            <span class="proyecto-nombre" [ngClass]="{'text-blue-500 font-bold hover:underline': r.proyecto}">
                                 <i *ngIf="!r.proyecto" class="pi pi-plus-circle mr-1"></i>
                                 {{ r.proyecto?.nombre || 'Sin ' + configService.jerarquia2Nombre() }}
+                                <ng-container *ngIf="r.tarea">
+                                    : <span class="text-600 font-normal">{{ r.tarea.nombre }}</span>
+                                </ng-container>
                             </span>
                         </div>
 
@@ -141,33 +150,142 @@
     </div>
 </div>
 
-<p-overlayPanel #panelProyectos [style]="{ width: 'min(320px, 90vw)' }">
-    <div class="flex flex-column gap-3">
-        <span class="p-input-icon-left w-full">
-            <i class="pi pi-search"></i>
-            <input type="text" pInputText [placeholder]="'Buscar ' + configService.jerarquia2Nombre() + ' o Cliente'" [(ngModel)]="busquedaProyecto"
-                class="w-full p-inputtext-sm" />
-        </span>
-        <div style="max-height: 250px; overflow-y: auto;">
-            <div *ngFor="let proyecto of proyectos"
-                class="flex align-items-center justify-content-between p-2 border-round cursor-pointer hover:bg-100"
-                (click)="seleccionarProyecto(proyecto, panelProyectos)">
-                <div class="flex align-items-center gap-2">
-                    <div [style.background]="proyecto.color" style="width: 12px; height: 12px; border-radius: 50%;"></div>
-                    <span>{{ proyecto.nombre }}</span>
-                </div>
-                <i class="pi pi-chevron-right"></i>
-            </div>
+<!-- PANEL DE PROYECTOS Y TAREAS (AGRUPADO Y CON FAVORITOS) -->
+<p-overlayPanel #panelProyectos [style]="{ width: 'min(380px, 95vw)', padding: '0' }">
+    <div class="flex flex-column">
+        <!-- BUSCADOR -->
+        <div class="p-2 border-bottom-1 surface-border bg-white" style="position: sticky; top: 0; z-index: 10;">
+            <span class="p-input-icon-left w-full">
+                <i class="pi pi-search"></i>
+                <input type="text" pInputText [placeholder]="'Buscar ' + configService.jerarquia2Nombre() + ' o Cliente'"
+                    [(ngModel)]="busquedaProyecto"
+                    (input)="onBusquedaProyectoChange()"
+                    class="w-full p-inputtext-sm border-round-xl" />
+            </span>
         </div>
-        <button pButton [label]="'Crear nuevo ' + configService.jerarquia2Nombre()" 
-                *ngIf="canCreateP$ | async" 
-                icon="pi pi-plus-circle" 
-                class="p-button-text p-button-info w-full"
-                (click)="panelProyectos.hide(); abrirModalNuevoProyecto()">
-        </button>
+
+        <div style="max-height: 350px; overflow-y: auto;" class="bg-white">
+
+            <!-- OPCION SIN PROYECTO (Siempre visible arriba) -->
+            <div class="px-3 py-2 cursor-pointer hover:bg-100 border-bottom-1 surface-border"
+                 (click)="seleccionarSinProyecto(panelProyectos)">
+                <span class="text-700 font-medium">Sin {{ configService.jerarquia2Nombre() }}</span>
+            </div>
+
+            <div *ngIf="gruposProyectos.length > 0; else sinResultados">
+
+                <!-- ITERAR POR GRUPOS (FAVORITOS, SIN CLIENTE, CLIENTES...) -->
+                <div *ngFor="let grupo of gruposProyectos" class="flex flex-column">
+
+                    <!-- CABECERA DEL GRUPO -->
+                    <div class="flex align-items-center justify-content-between px-3 py-2 cursor-pointer surface-50"
+                         (click)="grupo.desplegado = !grupo.desplegado">
+                        <span class="text-500 text-xs font-bold">{{ grupo.nombreCliente }}</span>
+                        <div class="flex align-items-center gap-2 text-500 text-xs">
+                            <span>{{ grupo.proyectos.length }} Proyecto(s)</span>
+                            <i class="pi" [ngClass]="grupo.desplegado ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+                        </div>
+                    </div>
+
+                    <!-- LISTA DE PROYECTOS DENTRO DEL GRUPO -->
+                    <div *ngIf="grupo.desplegado">
+                        <div *ngFor="let p of grupo.proyectos" class="flex flex-column">
+
+                            <!-- Fila del Proyecto -->
+                            <div class="flex align-items-center justify-content-between px-3 py-2 cursor-pointer hover:bg-100 transition-colors"
+                                 (click)="seleccionarProyecto(p, panelProyectos)">
+
+                                <div class="flex align-items-center gap-2 flex-grow-1 text-overflow-ellipsis overflow-hidden"
+                                     [pTooltip]="generarTooltip(p)" tooltipPosition="top" tooltipStyleClass="bg-gray-900 text-white text-xs">
+                                    <div [style.background]="p.color" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;"></div>
+                                    <span class="text-700 font-medium white-space-nowrap text-overflow-ellipsis">{{ p.nombre }}</span>
+                                </div>
+
+                                <div class="flex align-items-center gap-2 flex-shrink-0">
+                                    <div *ngIf="p.tareas && p.tareas.length > 0"
+                                         class="flex align-items-center gap-1 text-xs text-600 hover:text-blue-500 px-2 py-1 border-round"
+                                         (click)="toggleDespliegueTareas($event, p)">
+                                        {{ p.tareas.length }} Tarea(s)
+                                        <i class="pi" [ngClass]="p.desplegado ? 'pi-chevron-up' : 'pi-chevron-down'" style="font-size: 0.7rem;"></i>
+                                    </div>
+
+                                    <div *ngIf="!p.tareas || p.tareas.length === 0"
+                                         class="flex align-items-center gap-1 text-xs text-blue-500 hover:underline px-2 py-1"
+                                         (click)="abrirCrearTarea($event, p, panelProyectos)">
+                                        Crear Tarea
+                                    </div>
+
+                                    <!-- Estrellita del PROYECTO -->
+                                    <i class="pi cursor-pointer text-400 hover:text-orange-400 transition-colors"
+                                       [ngClass]="proyectosFavoritos.includes(p.id) ? 'pi-star-fill text-orange-400' : 'pi-star'"
+                                       (click)="toggleFavoritoProyecto($event, p.id)">
+                                    </i>
+                                </div>
+                            </div>
+
+                            <!-- Lista de Tareas (cuando se abre la flechita del proyecto) -->
+                            <div *ngIf="p.desplegado" class="border-bottom-1 surface-border surface-50">
+                                <div *ngFor="let t of p.tareas"
+                                     class="flex align-items-center justify-content-between py-2 pl-4 pr-3 cursor-pointer hover:bg-200 transition-colors"
+                                     (click)="seleccionarTarea(t, p, panelProyectos)">
+
+                                    <div class="text-600 text-sm pl-2 border-left-2 border-primary"
+                                         [pTooltip]="generarTooltip(p, t)" tooltipPosition="top" tooltipStyleClass="bg-gray-900 text-white text-xs">
+                                        {{ t.nombre }}
+                                    </div>
+
+                                    <!-- Estrellita de la TAREA -->
+                                    <i class="pi cursor-pointer text-400 hover:text-orange-400 transition-colors"
+                                       [ngClass]="tareasFavoritas.includes(t.id) ? 'pi-star-fill text-orange-400' : 'pi-star'"
+                                       (click)="toggleFavoritoTarea($event, t.id, p.id)">
+                                    </i>
+                                </div>
+
+                                <div class="py-2 pl-4 pr-3 text-xs text-blue-500 cursor-pointer hover:underline"
+                                     (click)="abrirCrearTarea($event, p, panelProyectos)">
+                                    <i class="pi pi-plus-circle mr-1"></i>Crear nueva Tarea
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ng-template #sinResultados>
+                <div class="p-3 text-center text-500 text-sm">No se encontraron resultados</div>
+            </ng-template>
+        </div>
+
+        <div class="p-2 border-top-1 surface-border bg-white" style="position: sticky; bottom: 0;">
+            <button pButton [label]="'Crear nuevo ' + configService.jerarquia2Nombre()"
+                    *ngIf="canCreateP$ | async"
+                    icon="pi pi-plus-circle"
+                    class="p-button-text p-button-info w-full text-left"
+                    (click)="panelProyectos.hide(); abrirModalNuevoProyecto()">
+            </button>
+        </div>
     </div>
 </p-overlayPanel>
 
+<!-- DIALOG: CREAR TAREA -->
+<p-dialog [header]="'Crear Tarea en ' + proyectoParaNuevaTarea?.nombre"
+          [(visible)]="mostrarModalTarea" [modal]="true"
+          [style]="{width: 'min(400px, 90vw)'}" [closable]="true">
+    <div class="flex flex-column gap-3 mt-3">
+        <input pInputText placeholder="Nombre de la tarea"
+               [(ngModel)]="nombreNuevaTarea"
+               (keyup.enter)="guardarNuevaTarea()"
+               class="w-full p-inputtext-sm" autofocus />
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary"
+                (click)="mostrarModalTarea = false"></button>
+        <button pButton label="Guardar" icon="pi pi-check" class="p-button-info"
+                (click)="guardarNuevaTarea()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- EL RESTO DE PANELES (ETIQUETAS Y PROYECTO NUEVO) QUEDAN INTACTOS -->
 <p-overlayPanel #panelEtiquetas [style]="{ width: 'min(250px, 80vw)' }">
     <div class="flex flex-column gap-2">
         <span class="p-input-icon-left w-full">
@@ -177,7 +295,7 @@
         </span>
         <div style="max-height: 200px; overflow-y: auto;" class="lista-etiquetas-scroll">
             <div *ngFor="let tag of etiquetasFiltradas" class="flex align-items-center p-2 hover:bg-100 border-round">
-                <p-checkbox [binary]="true" 
+                <p-checkbox [binary]="true"
                     [ngModel]="registroSeleccionadoParaEditar ? registroSeleccionadoParaEditar.etiquetas?.includes(tag.nombre) : etiquetasSeleccionadas.includes(tag.nombre)"
                     (onChange)="toggleEtiqueta(tag.nombre)">
                 </p-checkbox>
@@ -204,9 +322,9 @@
     </div>
     <ng-template pTemplate="footer">
         <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="mostrarModalProyecto = false"></button>
-        <button *ngIf="canCreateP$ | async" 
-                pButton label="Crear" 
-                icon="pi pi-check" 
+        <button *ngIf="canCreateP$ | async"
+                pButton label="Crear"
+                icon="pi pi-check"
                 (click)="guardarProyecto()">
         </button>
     </ng-template>
