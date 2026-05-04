@@ -1,163 +1,176 @@
 :host {
-  display: block;
-  width: 100%;
+    display: block;
+    padding: 2rem;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+}
+
+.micuenta-pagina {
+    width: 100%;
+    padding: 0;
+    min-width: 0;
 }
 
 .calendar-container {
-  height: calc(100vh - 60px);
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .header-toolbar {
-  padding-bottom: 10px;
+    padding-bottom: 10px;
 }
 
 .header-day {
-  text-align: center;
-  font-size: 0.85rem;
-  color: #555;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #555;
 }
 
 .time-sub {
-  display: block;
-  font-size: 0.7rem;
-  color: #3b82f6;
+    display: block;
+    font-size: 0.7rem;
+    color: #3b82f6;
 }
 
 .time-col {
-  width: 80px;
-  text-align: center;
-  border-right: 1px solid #e2e8f0;
-  vertical-align: bottom;
+    width: 80px;
+    text-align: center;
+    border-right: 1px solid #e2e8f0;
+    vertical-align: bottom;
 }
 
 .slot-cell {
-  border-right: 1px dashed #e2e8f0;
-  border-bottom: 1px dashed #e2e8f0;
+    border-right: 1px dashed #e2e8f0;
+    border-bottom: 1px dashed #e2e8f0;
 }
 
 .zoom-controls {
-  display: flex;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .zoom-btn {
-  flex: 1;
-  background: white;
-  border: none;
-  cursor: pointer;
+    flex: 1;
+    background: white;
+    border: none;
+    cursor: pointer;
 }
 
 .zoom-btn:first-child {
-  border-right: 1px solid #ccc;
+    border-right: 1px solid #ccc;
 }
 
-::ng-deep .p-datatable-tbody > tr {
-  height: 60px;
-  vertical-align: top;
+::ng-deep .p-datatable-tbody>tr {
+    height: 60px;
+    vertical-align: top;
 }
 
 ::ng-deep .p-datatable-wrapper {
-  overflow-x: auto;
-  overflow-y: auto;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 .titulo-calendario {
-  font-size: 1.7rem;
-  font-weight: 600;
-  color: #3c4043; 
-  letter-spacing: 0.5px;
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: #3c4043;
+    letter-spacing: 0.5px;
 }
 
 ::ng-deep .view-buttons .p-button {
-  background: white !important;
-  color: black !important;
-  border: 1px solid #ccc !important;
+    background: white !important;
+    color: black !important;
+    border: 1px solid #ccc !important;
 }
 
 ::ng-deep .view-buttons .p-button.activo {
-  background: #e5e7eb !important;
-  color: black !important;
-  border: 1px solid #cbd5e1 !important;
+    background: #e5e7eb !important;
+    color: black !important;
+    border: 1px solid #cbd5e1 !important;
 }
 
-.oculto { display: none; }
+.oculto {
+    display: none;
+}
 
 ::ng-deep th.hoy .header-day {
-  color: #3b82f6 !important;
-  font-weight: 600;
+    color: #3b82f6 !important;
+    font-weight: 600;
 }
 
 ::ng-deep .p-datatable table {
-  table-layout: auto !important;
-  min-width: 800px; /* Evita que la tabla se colapse en móvil */
+    table-layout: auto !important;
+    min-width: 800px;
+    /* Evita que la tabla se colapse en móvil */
 }
 
-::ng-deep th.oculto, ::ng-deep td.oculto {
-  display: none !important;
+::ng-deep th.oculto,
+::ng-deep td.oculto {
+    display: none !important;
 }
 
 /* MODAL Y DIALOGS */
 ::ng-deep .p-dialog .field textarea {
-  width: 100%;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 10px 12px;
-  font-size: 0.85rem;
-  resize: none;
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    resize: none;
 }
 
 .event-block {
-  cursor: pointer;
-  transition: filter 0.2s;
+    cursor: pointer;
+    transition: filter 0.2s;
 }
 
 .event-block:hover {
-  filter: brightness(0.9);
+    filter: brightness(0.9);
 }
 
 /* SECCIÓN RESPONSIVA */
 @media screen and (max-width: 768px) {
-  .header-toolbar {
-    flex-direction: column;
-    align-items: stretch !important;
-  }
+    .header-toolbar {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
 
-  .nav-controls {
-    width: 100%;
-    justify-content: center;
-  }
+    .nav-controls {
+        width: 100%;
+        justify-content: center;
+    }
 
-  .center-controls {
-    width: 100%;
-    justify-content: center !important;
-  }
+    .center-controls {
+        width: 100%;
+        justify-content: center !important;
+    }
 
-  ::ng-deep .responsive-calendar .p-calendar .p-inputtext {
-    width: 100px;
-    font-size: 0.8rem;
-  }
+    ::ng-deep .responsive-calendar .p-calendar .p-inputtext {
+        width: 100px;
+        font-size: 0.8rem;
+    }
 
-  .time-col {
-    width: 50px;
-  }
+    .time-col {
+        width: 50px;
+    }
 
-  .titulo-calendario {
-    font-size: 1rem;
-  }
+    .titulo-calendario {
+        font-size: 1rem;
+    }
 }
 
 @media screen and (max-width: 480px) {
-  .view-buttons {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .left-controls {
-    width: 100%;
-    justify-content: space-between;
-  }
+    .view-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .left-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
 }

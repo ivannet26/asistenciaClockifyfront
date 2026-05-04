@@ -12,93 +12,98 @@ import { MiembrosService } from '../../service/miembros.service';
 import { Miembros, RolNombre } from '../../model/Miembro';
 
 @Component({
-  selector: 'app-micuenta',
-  standalone: true,
-  imports: [
-    CardModule,
-    ToastModule,
-    ButtonModule,
-    CommonModule,
-    FormsModule,
-    InputTextModule,
-    PasswordModule,
-    PaginatorModule
-],
-  providers: [MessageService],
-  templateUrl: './micuenta.component.html',
-  styleUrl: './micuenta.component.css'
+    selector: 'app-micuenta',
+    standalone: true,
+    imports: [
+        CardModule,
+        ToastModule,
+        ButtonModule,
+        CommonModule,
+        FormsModule,
+        InputTextModule,
+        PasswordModule,
+        PaginatorModule
+    ],
+    providers: [MessageService],
+    templateUrl: './micuenta.component.html',
+    styleUrl: './micuenta.component.css'
 })
 export class MicuentaComponent implements OnInit {
 
-  userData: Miembros | null = null;
-  edicion = false;
+    userData: Miembros | null = null;
+    edicion = false;
 
-  datosEditados: Partial<Miembros> = {};
+    datosEditados: Partial<Miembros> = {};
 
     constructor(
-    private miembrosService: MiembrosService,
-    private messageService: MessageService
-  ) { }
+        private miembrosService: MiembrosService,
+        private messageService: MessageService
+    ) { }
 
-  ngOnInit(): void {
-    const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+    ngOnInit(): void {
+        const session = JSON.parse(localStorage.getItem('userSession') || '{}');
 
-    if (session?.isAuthenticated) {
-      const id: number = session.userData.id;
-      this.cargarMiembro(id);
+        if (session?.isAuthenticated) {
+            const id: number = session.userData.id;
+            this.cargarMiembro(id);
+        }
     }
-  }
 
-  cargarMiembro(id: number): void {
-    const miembros = this.miembrosService.getMiembros();
-    this.userData = miembros.find(m => m.id === id) ?? null;
-
-    if (this.userData) {
-      this.datosEditados = { ...this.userData };
+    getIniciales(): string {
+        const nombre = this.userData?.nombre ?? '';
+        return nombre.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
     }
-  }
 
-  editarMiembro(estado: boolean): void {
-    this.edicion = estado;
+    cargarMiembro(id: number): void {
+        const miembros = this.miembrosService.getMiembros();
+        this.userData = miembros.find(m => m.id === id) ?? null;
 
-    if (!estado && this.userData) {
-      this.datosEditados = { ...this.userData };
+        if (this.userData) {
+            this.datosEditados = { ...this.userData };
+        }
     }
-  }
 
-  guardarCambios(): void {
-  if (!this.userData) return;
+    editarMiembro(estado: boolean): void {
+        this.edicion = estado;
 
-  const { nombre, correo, contrasena } = this.datosEditados;
+        if (!estado && this.userData) {
+            this.datosEditados = { ...this.userData };
+        }
+    }
 
-  if (!nombre?.trim() || !correo?.trim() || !contrasena?.trim()) {
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Campos vacíos',
-      detail: 'Por favor completa todos los campos antes de guardar.'
-    });
-    return; // ← corta la ejecución, no guarda nada
-  }
+    guardarCambios(): void {
+        if (!this.userData) return;
 
-  const actualizados = this.miembrosService.actualizarMiembro(
-    this.userData.id,
-    this.datosEditados
-  );
+        const { nombre, correo, contrasena } = this.datosEditados;
 
-  this.userData = actualizados.find(m => m.id === this.userData!.id) ?? null;
+        if (!nombre?.trim() || !correo?.trim() || !contrasena?.trim()) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Campos vacíos',
+                detail: 'Por favor completa todos los campos antes de guardar.'
+            });
+            return; // ← corta la ejecución, no guarda nada
+        }
 
-  const session = JSON.parse(localStorage.getItem('userSession') || '{}');
-  session.userData = this.userData;
-  localStorage.setItem('userSession', JSON.stringify(session));
+        const actualizados = this.miembrosService.actualizarMiembro(
+            this.userData.id,
+            this.datosEditados
+        );
 
-  this.edicion = false;
+        this.userData = actualizados.find(m => m.id === this.userData!.id) ?? null;
 
-  this.messageService.add({
-    severity: 'success',
-    summary: 'Éxito',
-    detail: 'Datos actualizados correctamente'
-  });
-}
+        const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+        session.userData = this.userData;
+        localStorage.setItem('userSession', JSON.stringify(session));
+
+        this.edicion = false;
+
+        this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Datos actualizados correctamente'
+        });
+    }
 
 
 }

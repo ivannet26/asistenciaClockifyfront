@@ -21,14 +21,16 @@ $gutter: 1rem; //for primeflex grid system
 .p-dropdown {
     width: 100% !important;
 }
-.p-calendar{
+
+.p-calendar {
     width: 100% !important;
 }
 
 
 /* Estilo global para todos los dropdowns de PrimeNG */
 .p-dropdown {
-    font-size: 0.8rem !important; /* Tamaño de texto general */
+    font-size: 0.8rem !important;
+    /* Tamaño de texto general */
 }
 
 /* Placeholder */
@@ -50,6 +52,7 @@ $gutter: 1rem; //for primeflex grid system
 .p-dropdown .p-dropdown-trigger {
     width: 2rem !important;
 }
+
 /*
 
  body {
@@ -61,7 +64,7 @@ $gutter: 1rem; //for primeflex grid system
 
 .layout-wrapper .layout-main-container {
     /* CAMBIA ESTO: De 280px a 300px o 310px */
-    margin-left: 300px !important; 
+    margin-left: 300px !important;
     transition: margin-left 0.2s;
 }
 
@@ -72,25 +75,129 @@ $gutter: 1rem; //for primeflex grid system
 .p-dialog {
     z-index: 10000 !important;
 }
+
 .layout-wrapper {
     height: 100vh;
-    overflow: hidden; /* <--- Esto evita que la página entera ruede */
+    overflow: hidden;
+    /* <--- Esto evita que la página entera ruede */
 }
 
 .layout-main-container {
     display: flex;
     flex-direction: column;
-    height: 100vh; 
-    overflow: hidden; /* <--- El contenedor principal tampoco debe rodar */
+    height: 100vh;
+    overflow: hidden;
+    /* <--- El contenedor principal tampoco debe rodar */
 }
 
 .layout-main {
     flex: 1;
-    overflow-y: auto; /* <--- SOLO aquí adentro (donde está tu rastreador) se permite scroll */
+    overflow-y: auto;
+    /* <--- SOLO aquí adentro (donde está tu rastreador) se permite scroll */
 }
 
 @media (max-width: 992px) {
     .layout-wrapper .layout-main-container {
         margin-left: 0 !important;
     }
+}
+
+/* Avatar botón topbar */
+.avatar-btn {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 8px !important;
+    background: #00897B !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+.avatar-iniciales {
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+/* Panel perfil */
+.perfil-panel {
+    width: 280px !important;
+}
+
+.avatar-grande {
+    width: 72px;
+    height: 72px;
+    border-radius: 10px;
+    background: #00897B;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 2px;
+}
+
+.perfil-opcion {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    transition: background 0.15s;
+}
+
+.perfil-opcion:hover {
+    background: var(--surface-hover);
+}
+
+.layout-topbar .avatar-btn.layout-topbar-button {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 8px !important;
+    background: #00897B !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    border: none !important;
+    min-width: 38px !important;
+}
+
+.layout-topbar .avatar-btn.layout-topbar-button:hover {
+    background: #00695C !important;
+}
+
+.layout-topbar .avatar-btn .avatar-iniciales {
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    line-height: 1;
+    display: block !important;
+}
+
+.layout-topbar .avatar-btn i {
+    display: none !important;
+}
+
+app-micuenta {
+    display: block;
+    width: 100%;
+}
+
+.layout-main {
+    padding: 1rem 2rem;
+    box-sizing: border-box;
+}
+
+.layout-main > * {
+    width: 100%;
+    box-sizing: border-box;
 }

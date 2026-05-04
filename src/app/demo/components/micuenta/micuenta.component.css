@@ -1,116 +1,89 @@
 :host {
     display: block;
-    position: relative;
-    z-index: 1;
-    padding: 1.5rem;
+    width: 100%;
     box-sizing: border-box;
 }
 
-.etiquetas-pagina {
-    margin: 0 80px 0 80px;
-    transition: margin 0.3s ease;
-}
-
-@media (max-width: 1024px) {
-    .etiquetas-pagina {
-        margin: 0 25px 0 80px;
-    }
-}
-
-@media (max-width: 992px) {
-    .etiquetas-pagina {
-        margin: auto;
-    }
-}
-
-.etiquetas-panel {
-    background: var(--surface-card);
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
-    padding: 1.25rem;
-    height: 490px;
-}
-
-.etiquetas-contenido {
-    margin-top: 1rem;
-    height: 300px;
-    width: 440px;
-    text-align: center;
-}
-
-.form-user {
-    text-align: left;
-}
-
-.delimitador {
-    width: 0px !important;
-    height: 150px;
-    border-right: 1px solid black;
-}
-
-.form-user div {
-    width: 200px;
-}
-
-.contenedor-vacio {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 4rem 1rem;
-    text-align: center;
-}
-
-.titulo-principal {
-    font-size: 1.75rem;
-    color: #334155;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-.subtitulo {
-    color: #64748b;
-    font-size: 1rem;
-    margin-bottom: 2rem;
-}
-
-.grupo-input {
-    display: flex;
-    gap: 0;
-    max-width: 200px;
-}
-
-:host ::v-deep .p-card-body {
+.micuenta-pagina {
+    width: 100%;
     padding: 0;
 }
 
-@media (max-width: 768px) {
-    .etiquetas-pagina {
-        margin: 0;
-        padding: 0.5rem;
-    }
-
-    .etiquetas-panel {
-        padding: 1rem;
-    }
-
-    .titulo-principal {
-        font-size: 1.4rem;
-    }
-
-    .subtitulo {
-        font-size: 0.9rem;
-    }
+.micuenta-titulo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
 }
 
+.micuenta-card {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
+    border-radius: 10px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+}
+
+.seccion-header {
+    border-bottom: 1px solid var(--surface-border);
+    padding-bottom: 1rem;
+}
+
+.seccion-label { font-size: 1rem; color: var(--text-color); }
+.seccion-sub { margin: 0.25rem 0 0 0; }
+
+.avatar-bloque { display: flex; }
+
+.avatar-circulo {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    background: #00897B;
+    color: white;
+    font-size: 1.6rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 2px;
+}
+
+.info-bloque {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.info-fila {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.info-label {
+    font-size: 0.8rem;
+    color: var(--text-color-secondary);
+}
+
+.info-valor {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.botones-bloque { display: flex; }
+
 .boton-personalizado {
-    border-radius: 4px !important;
-    border: none;
-    color: white !important;
-    font-weight: bold;
-    font-size: 0.9rem;
-    padding: 0 1.5rem;
+    border-radius: 6px !important;
+    font-weight: 600;
     height: 40px;
-    transition: background 0.2s;
-    width: 180px;
+    padding: 0 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .micuenta-card { padding: 1.25rem; }
 }

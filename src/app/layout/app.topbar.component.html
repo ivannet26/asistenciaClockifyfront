@@ -1,7 +1,6 @@
 <div class="layout-topbar" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
 
     <div class="left-section" style="display: flex; align-items: center; gap: 10px;">
-
         <button #menubutton class="p-link layout-menu-button layout-topbar-button"
             (click)="layoutService.onMenuToggle()">
             <i class="pi pi-bars"></i>
@@ -15,41 +14,43 @@
                 </span>
             </ng-template>
         </p-splitButton>
+
         <ng-container *ngIf="canVerConfig$ | async">
             <button class="p-link layout-menu-button layout-topbar-button" (click)="menuTuerca.toggle($event)">
-                <i class="pi pi-cog" style="font-size: 2rem"> </i>
+                <i class="pi pi-cog" style="font-size: 2rem"></i>
             </button>
-
-            <p-tieredMenu #menuTuerca [model]="opcionesTuerca" [popup]="true" appendTo="body"></p-tieredMenu>
+            <p-tieredMenu #menuTuerca [model]="opcionesTuerca" [popup]="true" appendTo="body">
+            </p-tieredMenu>
         </ng-container>
     </div>
 
     <div class="right-section" style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
-        <button class="p-link layout-topbar-button layout-topbar-profile-mobile" (click)="op.toggle($event)">
-            <i class="pi pi-user"></i>
+        <button class="p-link layout-topbar-button layout-topbar-profile-mobile avatar-btn" (click)="op.toggle($event)">
+            <span class="avatar-iniciales">{{ getIniciales() }}</span>
         </button>
     </div>
 
-    <p-overlayPanel #op [showCloseIcon]="false" styleClass="border-round-xl">
-        <div class="flex flex-column align-items-center">
-            <div class="flex align-items-center justify-content-center w-5rem h-5rem border-circle surface-200 ">
-                <i class="pi pi-user text-5xl"></i>
+    <p-overlayPanel #op [showCloseIcon]="false" styleClass="border-round-xl perfil-panel">
+        <!-- Avatar grande + nombre + correo -->
+        <div class="flex flex-column align-items-center gap-2 pb-3"
+            style="border-bottom: 1px solid var(--surface-border);">
+            <div class="avatar-grande">
+                {{ getIniciales() }}
             </div>
-
-            <div class="mt-3">
-                <div class="text-2xl font-medium text-center">{{nombre}}</div>
-            </div>
+            <div class="text-lg font-bold text-900 text-center">{{ nombre }}</div>
+            <div class="text-sm text-500 text-center">{{ correo }}</div>
         </div>
 
-        <div class="border-top-1 surface-border my-2">
-            <p-button severity="info" text="true" label="Mi cuenta" (click)="micuenta()"
-                styleClass="w-full border-round-lg">
-            </p-button>
+        <!-- Opciones -->
+        <div class="flex flex-column mt-2 gap-1">
+            <div class="perfil-opcion" (click)="micuenta(); op.hide()">
+                <i class="pi pi-user text-500"></i>
+                <span>Mi perfil</span>
+            </div>
+            <div class="perfil-opcion text-red-500" (click)="cerrarSesion()">
+                <i class="pi pi-sign-out"></i>
+                <span>Cerrar sesión</span>
+            </div>
         </div>
-
-        <p-button severity="danger" label="Cerrar Sesión" icon="pi pi-sign-out" (click)="cerrarSesion()"
-            styleClass="w-full border-round-lg">
-        </p-button>
     </p-overlayPanel>
-
 </div>

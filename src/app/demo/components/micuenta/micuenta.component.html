@@ -1,74 +1,88 @@
 <p-toast position="top-right" [baseZIndex]="9999" [preventOpenDuplicates]="true" />
-<div class="etiquetas-pagina">
-    <div class="etiquetas-panel flex flex-column justify-content-center align-items-center">
-        <h2 class="titulo-seccion"><i class="pi pi-user text-5xl"></i> Mi Cuenta</h2>
-        <div class="etiquetas-contenido">
-            <p>Tus credenciales de inicio de sesión y el nombre mostrado en los informes.</p>
 
-            <div class="flex flex-column align-items-center gap-3 p-2">
+<div class="micuenta-pagina">
 
-                <div class="flex flex-row gap-4 align-items-center form-user">
-                    <ng-container *ngIf="edicion == false">
-                        <div class="flex flex-column gap-3">
-                            <div class="flex flex-column gap-1">
-                                <label class="font-semibold">Nombre</label>
-                                <p>{{ userData.nombre }}</p>
-                            </div>
-                            <div class="flex flex-column gap-1">
-                                <label class="font-semibold">Correo Electrónico</label>
-                                <p>{{ userData.correo }}</p>
-                            </div>
+    <!-- TÍTULO -->
+    <h2 class="micuenta-titulo">Mi perfil</h2>
 
-                        </div>
-                        <div class="delimitador"></div>
-                        <div class="flex flex-column gap-3">
-                            <div class="flex flex-column gap-1">
-                                <label class="font-semibold">Contraseña</label>
-                                <p>{{ userData.contrasena }}</p>
-                            </div>
-                            <div class="flex flex-column gap-1">
-                                <label class="font-semibold">Rol</label>
-                                <p>{{ userData.rol ?? 'Sin rol' }}</p>
-                            </div>
-                        </div>
-                    </ng-container>
-                    <ng-container *ngIf="edicion == true">
-                        <div class="flex flex-column gap-3">
-                            <div class="flex flex-column gap-1">
-                                <label class="font-semibold">Nombre</label>
-                                <input type="text" pInputText [(ngModel)]="datosEditados.nombre" class="p-2" />
-                            </div>
-                            <div class="flex flex-column gap-1">
-                                <label class="font-semibold">Correo Electrónico</label>
-                                <input type="text" pInputText [(ngModel)]="datosEditados.correo" class="p-2" />
-                            </div>
-                        </div>
-                        <div class="delimitador"></div>
-                        <div class="flex flex-column gap-3">
-                            <div class="flex flex-column gap-1">
-                                <label class="font-semibold">Contraseña</label>
-                                <p-password [toggleMask]="true" weakLabel="muy simple"
-                                    mediumLabel="medianamente complejo" strongLabel="Contraseña fuerte"
-                                    [(ngModel)]="datosEditados.contrasena" />
-                            </div>
-                        </div>
-                    </ng-container>
-                </div>
-                <div class="flex flex-row gap-4 mt-2">
-                    <ng-container *ngIf="edicion == false">
-                        <button pButton label="Editar" severity="info" type="submit" class="boton-personalizado"
-                            (click)="editarMiembro(true)">
-                        </button>
-                    </ng-container>
-                    <ng-container *ngIf="edicion == true">
-                        <button pButton label="Guardar" severity="success" type="submit" class="boton-personalizado"
-                        (click)="guardarCambios()" >
-                        </button>
-                        <button pButton label="Cancelar" severity="warning" type="button" class="boton-personalizado"
-                            (click)="editarMiembro(false)"></button>
-                    </ng-container>
-                </div>
+    <!-- CARD PRINCIPAL -->
+    <div class="micuenta-card">
+
+        <!-- Sección info personal -->
+        <div class="seccion-header">
+            <span class="seccion-label font-bold">Información personal</span>
+            <p class="seccion-sub text-500 text-sm mt-1">
+                Tus credenciales de inicio de sesión y el nombre mostrado en los informes.
+            </p>
+        </div>
+
+        <!-- Avatar con iniciales -->
+        <div class="avatar-bloque">
+            <div class="avatar-circulo">
+                {{ getIniciales() }}
             </div>
         </div>
+
+        <!-- MODO VISTA -->
+        <ng-container *ngIf="edicion == false">
+            <div class="info-bloque">
+                <div class="info-fila">
+                    <span class="info-label">Nombre</span>
+                    <span class="info-valor font-bold">{{ userData?.nombre }}</span>
+                </div>
+                <div class="info-fila">
+                    <span class="info-label">Correo electrónico</span>
+                    <span class="info-valor font-bold">{{ userData?.correo }}</span>
+                </div>
+                <div class="info-fila">
+                    <span class="info-label">Rol</span>
+                    <span class="info-valor font-bold">{{ userData?.rol ?? 'Sin rol' }}</span>
+                </div>
+            </div>
+
+            <div class="botones-bloque">
+                <button pButton label="Editar" icon="pi pi-pencil"
+                    class="p-button-info boton-personalizado"
+                    (click)="editarMiembro(true)">
+                </button>
+            </div>
+        </ng-container>
+
+        <!-- MODO EDICIÓN -->
+        <ng-container *ngIf="edicion == true">
+            <div class="info-bloque">
+                <div class="info-fila">
+                    <span class="info-label">Nombre</span>
+                    <input type="text" pInputText [(ngModel)]="datosEditados.nombre"
+                        class="w-full" />
+                </div>
+                <div class="info-fila">
+                    <span class="info-label">Correo electrónico</span>
+                    <input type="text" pInputText [(ngModel)]="datosEditados.correo"
+                        class="w-full" />
+                </div>
+                <div class="info-fila">
+                    <span class="info-label">Contraseña</span>
+                    <p-password [toggleMask]="true"
+                        weakLabel="muy simple"
+                        mediumLabel="medianamente complejo"
+                        strongLabel="Contraseña fuerte"
+                        [(ngModel)]="datosEditados.contrasena"
+                        styleClass="w-full" />
+                </div>
+            </div>
+
+            <div class="botones-bloque flex gap-2">
+                <button pButton label="Guardar" icon="pi pi-check"
+                    class="p-button-success boton-personalizado"
+                    (click)="guardarCambios()">
+                </button>
+                <button pButton label="Cancelar" icon="pi pi-times"
+                    class="p-button-text p-button-secondary boton-personalizado"
+                    (click)="editarMiembro(false)">
+                </button>
+            </div>
+        </ng-container>
+
     </div>
 </div>

@@ -29,6 +29,7 @@ export class AppTopBarComponent implements OnInit {
     proyectos!: MenuItem[];
     opcionesTuerca!: MenuItem[];
     nombre: string = '';
+    correo: string = '';
 
     @ViewChild('menubutton') menuButton!: ElementRef;
     @ViewChild('topbarmenubutton') topbarMenuButton!: ElementRef;
@@ -43,7 +44,7 @@ export class AppTopBarComponent implements OnInit {
         private aS: LoginService,
         private primeng: PrimeNGConfig,
         private permissionService: PermissionService,
-        private timerService: TimerService 
+        private timerService: TimerService
     ) {
         this.canVerConfig$ = this.permissionService.canDo('soloAdminODueno');
         this.primeng.setTranslation(calendario_traduccion());
@@ -51,6 +52,7 @@ export class AppTopBarComponent implements OnInit {
 
     ngOnInit(): void {
         this.nombre = this.gS.getNombreUsuario() ?? '';
+        this.correo = JSON.parse(localStorage.getItem('userSession') || '{}')?.userData?.correo ?? '';
 
         this.proyectos = [
             { label: 'Proyecto 1', icon: 'pi pi-fw pi-file', command: () => this.link.navigate(['/menu-layout']) },
@@ -66,20 +68,28 @@ export class AppTopBarComponent implements OnInit {
         ];
     }
 
+    getIniciales(): string {
+        const nombre = this.gS.getNombreUsuario() ??
+            JSON.parse(localStorage.getItem('userSession') || '{}')?.userData?.nombre ?? '';
+        return nombre
+            .split(' ')
+            .map((n: string) => n[0])
+            .slice(0, 2)
+            .join('')
+            .toUpperCase();
+    }
     abrirConfiguracionEspacios() {
         this.link.navigate(['/menu-layout/configuracion-espacios']);
     }
 
-    // FUNCIÓN DE CIERRE CON REGISTRO AUTOMÁTICO
     cerrarSesion() {
-        // 1. Intentar capturar y guardar lo que está corriendo antes de borrar sesión
         const timerActivo = localStorage.getItem('timer_activo');
         const sessionStr = localStorage.getItem('userSession');
 
         if (timerActivo && sessionStr) {
             const data = JSON.parse(timerActivo);
             const session = JSON.parse(sessionStr);
-            
+
             const inicio = new Date(data.inicio);
             const fin = new Date();
             const diffMs = fin.getTime() - inicio.getTime();
@@ -96,28 +106,22 @@ export class AppTopBarComponent implements OnInit {
                 etiquetas: data.etiquetas || []
             };
 
-            // Guardar en el historial de registros
             const historial = JSON.parse(localStorage.getItem('registros') || '[]');
-            // Evitar duplicados comparando el inicio
             const existe = historial.find((r: any) => new Date(r.inicio).getTime() === inicio.getTime());
-            
+
             if (!existe) {
                 historial.unshift(nuevoRegistro);
                 localStorage.setItem('registros', JSON.stringify(historial));
             }
         }
 
-        // 2. Detener motor y limpiar rastro del timer
         this.timerService.forceStop();
         localStorage.removeItem('timer_activo');
-
-        // 3. Limpiar sesión de usuario y navegar
         this.aS.logout();
         this.gS.clearSession();
         this.link.navigate(['/Inicio_Sesion']);
     }
 
-    // Función auxiliar para el formato de duración (HH:mm:ss)
     private formatearDuracion(ms: number): string {
         const totalS = Math.floor(ms / 1000);
         const h = Math.floor(totalS / 3600).toString().padStart(2, '0');
