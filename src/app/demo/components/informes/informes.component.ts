@@ -52,14 +52,14 @@ export class InformesComponent implements OnInit {
   dataDona: any;
   optionsDona: any;
 
-  tiempoTotal: number = 0; 
+  tiempoTotal: number = 0;
   proyectosResumen: any[] = [];
   registrosDetallados: any[] = [];
-  registrosFiltrados: any[] = []; 
+  registrosFiltrados: any[] = [];
   etiquetasDisponibles: any[] = [];
   gruposDisponibles: any[] = [];
   datosSemanales: any[] = [];
-  totalesPorDiaSemanaSegundos: number[] = []; 
+  totalesPorDiaSemanaSegundos: number[] = [];
   etiquetasDias: string[] = [];
 
   filtroEquipo: any = null;
@@ -71,6 +71,8 @@ export class InformesComponent implements OnInit {
   filtroDescripcion: string = '';
 
   estiloFiltro = { 'border': 'none', 'font-size': '12px' };
+
+
 
   tabsT: MenuItem[] = [
     { label: 'Resumido', id: '0' },
@@ -92,7 +94,7 @@ export class InformesComponent implements OnInit {
   opcionSeleccionada: number = 1;
 
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private link: Router,
     public configService: ConfigService // CAMBIO: Inyectado como public para el HTML
   ) {
@@ -103,7 +105,7 @@ export class InformesComponent implements OnInit {
   ngOnInit() {
     this.configurarGraficos();
     this.cargarEtiquetasDeStorage();
-    this.cargarGruposDeStorage(); 
+    this.cargarGruposDeStorage();
     this.seleccionarOpcion('estaSemana');
 
     this.route.queryParams.subscribe(params => {
@@ -127,7 +129,7 @@ export class InformesComponent implements OnInit {
 
   // --- GETTERS DINÁMICOS ACTUALIZADOS ---
   get opcionesEquipo() { return this.gruposDisponibles; }
-  
+
   get opcionesClientes() {
     const datos = this.registrosDetallados.map(r => r.clienteNombre).filter(n => n);
     return [...new Set(datos)].map(c => ({ label: c, value: c }));
@@ -140,12 +142,24 @@ export class InformesComponent implements OnInit {
   }
 
   get opcionesTareas() {
-    const datos = this.registrosDetallados.map(r => r.tarea).filter(t => t);
-    return [...new Set(datos)].map(t => ({ label: t, value: t }));
-  }
+  return this.registrosDetallados
+    .filter(r => {
+      if (!this.filtroProyecto) return true;
+      const nombreProy = r.proyecto?.nombre || r.proyecto;
+      return nombreProy === this.filtroProyecto; // ← compara con el filtro activo
+    })
+    .map(r => r.tarea?.nombre || r.tarea)
+    .filter(t => t)
+    .filter((t, i, arr) => arr.indexOf(t) === i)
+    .map(t => ({ label: t, value: t }));
+}
 
   get opcionesEstados() {
     return [{ label: 'Activo', value: 'Activo' }, { label: 'Archivado', value: 'Archivado' }];
+  }
+
+  irAlRastreador() {
+    this.link.navigate(['/menu-layout/rastreador']);
   }
 
   aplicarFiltrosLocales() {
@@ -153,7 +167,8 @@ export class InformesComponent implements OnInit {
       const coincideEquipo = !this.filtroEquipo || r.grupoId === this.filtroEquipo;
       const coincideCliente = !this.filtroCliente || r.clienteNombre === this.filtroCliente;
       const coincideProyecto = !this.filtroProyecto || (r.proyecto?.nombre || r.proyecto) === this.filtroProyecto;
-      const coincideTarea = !this.filtroTarea || r.tarea === this.filtroTarea;
+      const coincideTarea = !this.filtroTarea ||
+        (r.tarea?.nombre || r.tarea) === this.filtroTarea;
       const coincideEtiqueta = !this.filtroEtiquetaSeleccionada || (r.etiquetas && r.etiquetas.includes(this.filtroEtiquetaSeleccionada));
       const coincideEstado = !this.filtroEstado || (r.estado || 'Activo') === this.filtroEstado;
       const coincideDesc = !this.filtroDescripcion || r.descripcion?.toLowerCase().includes(this.filtroDescripcion.toLowerCase());
@@ -161,7 +176,7 @@ export class InformesComponent implements OnInit {
     });
 
     if (this.rangoFechas && this.rangoFechas[0]) {
-        this.procesarEstadisticas(this.rangoFechas[0]);
+      this.procesarEstadisticas(this.rangoFechas[0]);
     }
   }
 
@@ -182,32 +197,33 @@ export class InformesComponent implements OnInit {
   cargarTodoDesdeStorage(inicioF: Date, finF: Date) {
     const data = localStorage.getItem('registros');
     if (!data) return;
-    
+
     const registros = JSON.parse(data);
     const clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
     const grupos = JSON.parse(localStorage.getItem('grupos') || '[]');
 
     this.registrosDetallados = registros.map((r: any) => {
-        const cliente = clientes.find((c: any) => c.id === r.proyecto?.clienteId);
-        const grupoRelacionado = grupos.find((g: any) => g.miembrosIds?.includes(r.miembroId));
-        
-        let duracionSegundos = 0;
-        if (r.duracion?.includes(':')) {
-            const p = r.duracion.split(':');
-            duracionSegundos = (parseInt(p[0]) * 3600) + (parseInt(p[1]) * 60) + parseInt(p[2]);
-        }
+      const cliente = clientes.find((c: any) => c.id === r.proyecto?.clienteId);
+      const grupoRelacionado = grupos.find((g: any) => g.miembrosIds?.includes(r.miembroId));
 
-        return {
-          ...r,
-          inicio: new Date(r.inicio),
-          fin: new Date(r.fin),
-          duracionSegundos: duracionSegundos,
-          clienteNombre: cliente?.nombre || 'Sin Cliente',
-          miembroNombre: r.miembroNombre || 'Sin nombre',
-          grupoId: grupoRelacionado?.id || null,
-          grupoNombre: grupoRelacionado?.nombre || 'Sin Grupo'
-        };
-      })
+      let duracionSegundos = 0;
+      if (r.duracion?.includes(':')) {
+        const p = r.duracion.split(':');
+        duracionSegundos = (parseInt(p[0]) * 3600) + (parseInt(p[1]) * 60) + parseInt(p[2]);
+      }
+
+      return {
+        ...r,
+        inicio: new Date(r.inicio),
+        fin: new Date(r.fin),
+        duracionSegundos: duracionSegundos,
+        clienteNombre: cliente?.nombre || 'Sin Cliente',
+        miembroNombre: r.miembroNombre || 'Sin nombre',
+        grupoId: grupoRelacionado?.id || null,
+        grupoNombre: grupoRelacionado?.nombre || 'Sin Grupo',
+        tarea: r.tarea?.nombre || r.tarea || null
+      };
+    })
       .filter((r: any) => r.inicio >= inicioF && r.inicio <= new Date(finF.getTime() + 86400000))
       .sort((a: any, b: any) => b.inicio.getTime() - a.inicio.getTime());
 
@@ -263,7 +279,7 @@ export class InformesComponent implements OnInit {
     this.registrosFiltrados.forEach(r => {
       const s = r.duracionSegundos || 0;
       const proyNombre = (r.proyecto && typeof r.proyecto === 'object') ? r.proyecto.nombre : (r.proyecto || 'Sin Proyecto');
-      
+
       tiemposPorProyecto[proyNombre] = (tiemposPorProyecto[proyNombre] || 0) + s;
       totalSGlobal += s;
 
@@ -276,15 +292,15 @@ export class InformesComponent implements OnInit {
       }
     });
 
-    this.tiempoTotal = totalSGlobal; 
+    this.tiempoTotal = totalSGlobal;
     this.proyectosResumen = Object.keys(tiemposPorProyecto).map(n => ({
-      titulo: n, 
+      titulo: n,
       duracionSegundos: tiemposPorProyecto[n],
       color: '#2196F3'
     }));
 
     this.datosSemanales = Object.keys(agrupacionSemanal).map(n => {
-      const registroRef = this.registrosFiltrados.find((r: any) => 
+      const registroRef = this.registrosFiltrados.find((r: any) =>
         ((r.proyecto?.nombre || r.proyecto) === n)
       );
       return {
@@ -330,12 +346,12 @@ export class InformesComponent implements OnInit {
   CambioTabE(event: any) { this.tabactivoe = event; }
 
   restarHoras(duracion: string, horas: number = 8): { tiempo: string, estado: string } {
-    if(!duracion) return { tiempo: '00:00:00', estado: 'Sin datos' };
+    if (!duracion) return { tiempo: '00:00:00', estado: 'Sin datos' };
     const [h, m, s] = duracion.split(':').map(Number);
     const trabajados = (h * 3600) + (m * 60) + s;
     const requeridos = horas * 3600;
     const diferencia = requeridos - trabajados;
-    
+
     const hDiff = Math.floor(Math.abs(diferencia) / 3600).toString().padStart(2, '0');
     const mDiff = Math.floor((Math.abs(diferencia) % 3600) / 60).toString().padStart(2, '0');
     const sDiff = (Math.abs(diferencia) % 60).toString().padStart(2, '0');

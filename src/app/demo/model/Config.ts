@@ -16,6 +16,7 @@ export interface EspacioTrabajoConfig {
     forceTimer: boolean;
     jerarquia1Nombre: string;
     jerarquia2Nombre: string;
+    jerarquia3Nombre: string;
 }
 
 export interface AppConfig {
@@ -39,5 +40,6 @@ export const DEFAULT_CONFIG: AppConfig = {
         forceTimer: false,
         jerarquia1Nombre: 'Cliente',
         jerarquia2Nombre: 'Proyecto',
+        jerarquia3Nombre: 'Tarea'
     },
 };

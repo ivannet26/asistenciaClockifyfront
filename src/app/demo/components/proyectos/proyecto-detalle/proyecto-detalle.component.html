@@ -20,7 +20,7 @@
 
     <!-- TABS -->
     <div class="tabs-contenedor">
-        <div class="tab" [class.activo]="tabActivo === 'tareas'" (click)="tabActivo = 'tareas'">TAREAS</div>
+        <div class="tab" [class.activo]="tabActivo === 'tareas'" (click)="tabActivo = 'tareas'">{{ jerarquia3Nombre }}</div>
     </div>
 
     <!-- CONTENIDO TAB TAREAS -->
@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div class="flex align-items-center gap-2">
-                <input pInputText placeholder="Añadir nuevo Tarea" [(ngModel)]="nombreNuevaTarea"
+                <input pInputText [placeholder]="'Añadir ' + jerarquia3Nombre" [(ngModel)]="nombreNuevaTarea"
                     (keyup.enter)="guardarNuevaTarea()" style="font-size:0.85rem; width:200px;" />
                 <button pButton label="AÑADIR" class="p-button-info p-button-sm" (click)="guardarNuevaTarea()">
                 </button>

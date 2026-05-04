@@ -17,6 +17,7 @@ import { Proyecto } from '../../../model/Proyecto';
 import { Tarea } from '../../../model/Tarea';
 import { ProyectosService } from '../../../service/proyectos.service';
 import { TareasService } from '../../../service/tareas.service';
+import { AppAjustes } from 'src/app/demo/service/appajustes.service';
 
 @Component({
     selector: 'app-proyecto-detalle',
@@ -46,6 +47,8 @@ export class ProyectoDetalleComponent implements OnInit {
     filtroActivo: string = 'activo';
     filtroPrioridad: string = 'todas';
 
+    jerarquia3Nombre = 'Tarea';
+
     // Encargados panel
     busquedaEncargado: string = '';
     filtroEncargado: string = 'todo';
@@ -53,22 +56,22 @@ export class ProyectoDetalleComponent implements OnInit {
 
     prioridades = [
         { label: 'Ninguna', value: 'ninguna' },
-        { label: 'Baja',    value: 'baja' },
-        { label: 'Media',   value: 'media' },
-        { label: 'Alta',    value: 'alta' },
+        { label: 'Baja', value: 'baja' },
+        { label: 'Media', value: 'media' },
+        { label: 'Alta', value: 'alta' },
     ];
 
     opcionesFiltro = [
-        { label: 'Mostrar activo',     value: 'activo' },
+        { label: 'Mostrar activo', value: 'activo' },
         { label: 'Mostrar completado', value: 'completado' },
-        { label: 'Mostrar todo',       value: 'todo' },
+        { label: 'Mostrar todo', value: 'todo' },
     ];
 
     opcionesPrioridad = [
         { label: 'Todas las prioridades', value: 'todas' },
-        { label: 'Alta',    value: 'alta' },
-        { label: 'Media',   value: 'media' },
-        { label: 'Baja',    value: 'baja' },
+        { label: 'Alta', value: 'alta' },
+        { label: 'Media', value: 'media' },
+        { label: 'Baja', value: 'baja' },
         { label: 'Ninguna', value: 'ninguna' },
     ];
 
@@ -77,8 +80,9 @@ export class ProyectoDetalleComponent implements OnInit {
         private router: Router,
         private proyectosService: ProyectosService,
         private tareasService: TareasService,
+        private appAjustes: AppAjustes,
         private messageService: MessageService
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -88,6 +92,9 @@ export class ProyectoDetalleComponent implements OnInit {
             this.router.navigate(['/menu-layout/proyectos']);
             return;
         }
+        this.appAjustes.config$.subscribe(config => {
+            this.jerarquia3Nombre = config.espacioTrabajo.jerarquia3Nombre;
+        });
         this.cargarTareas();
         this.cargarMiembros();
     }

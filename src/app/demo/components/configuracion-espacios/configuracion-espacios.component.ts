@@ -49,7 +49,7 @@ export class ConfiguracionEspaciosComponent implements OnInit {
   formatoSeleccionado = 'hh:mm:ss';
   crearProyectos = 'GERENTE';
   crearEtiquetas = 'ADMINISTRADOR';
-  crearTareas = 'all'; 
+  crearTareas = 'all';
   agruparPor1 = 'cliente';
   agruparPor2 = 'proyecto';
   agruparPor3 = 'tarea';
@@ -73,7 +73,7 @@ export class ConfiguracionEspaciosComponent implements OnInit {
       this.agruparPor3 = config.usuario.grouping.tertiary;
       this.crearProyectos = config.espacioTrabajo.projectCreationPermission;
       this.crearEtiquetas = config.espacioTrabajo.etiquetaCreationPermission;
-      
+
       if (config.espacioTrabajo.forceTimer !== undefined) {
         this.temporizadorForzado = config.espacioTrabajo.forceTimer;
       }
@@ -110,11 +110,10 @@ export class ConfiguracionEspaciosComponent implements OnInit {
     // Obtener el label del valor seleccionado
     const label1 = this.opcionesJerarquia1.find(o => o.value === this.agruparPor1)?.label ?? this.agruparPor1;
     const label2 = this.opcionesJerarquia2.find(o => o.value === this.agruparPor2)?.label ?? this.agruparPor2;
+    const label3 = this.opcionesJerarquia3.find(o => o.value === this.agruparPor3)?.label ?? this.agruparPor3;
 
-    // ACTUALIZACIÓN GLOBAL: Notificamos a la Signal para que cambie en el Rastreador al instante
     this.configService.updateJerarquia2Nombre(label2);
 
-    // Guardar agrupación + nombres de jerarquía
     this.appAjustes.patchUsuario({
       grouping: {
         primary: this.agruparPor1 as any,
@@ -124,7 +123,8 @@ export class ConfiguracionEspaciosComponent implements OnInit {
     });
     this.appAjustes.patchEspacioTrabajo({
       jerarquia1Nombre: label1,
-      jerarquia2Nombre: label2
+      jerarquia2Nombre: label2,
+      jerarquia3Nombre: label3
     });
   }
 
@@ -151,7 +151,7 @@ export class ConfiguracionEspaciosComponent implements OnInit {
 
     // PERSISTENCIA CLAVE: Guardamos en LocalStorage para que el Calendario lo detecte
     localStorage.setItem('force_timer', JSON.stringify(this.temporizadorForzado));
-    
+
     console.log('Estado de Temporizador Forzado guardado:', this.temporizadorForzado);
   }
 }
