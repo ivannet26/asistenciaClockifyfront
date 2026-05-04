@@ -59,17 +59,17 @@
 
             <div class="flex-1 border-right-1 surface-border flex align-items-center" style="min-width: 130px; border-right-style: dashed !important;">
               <p-dropdown [options]="opcionesClientes" [(ngModel)]="filtroCliente" (onChange)="aplicarFiltrosLocales()"
-                [showClear]="true" placeholder="Cliente" [appendTo]="'body'" class="w-full" [style]="estiloFiltro"></p-dropdown>
+                [showClear]="true" [placeholder]="jerarquia1Nombre"  [appendTo]="'body'" class="w-full" [style]="estiloFiltro"></p-dropdown>
             </div>
 
             <div class="flex-1 border-right-1 surface-border flex align-items-center" style="min-width: 130px; border-right-style: dashed !important;">
               <p-dropdown [options]="opcionesProyectos" [(ngModel)]="filtroProyecto" (onChange)="aplicarFiltrosLocales()"
-                [showClear]="true" [placeholder]="configService.jerarquia2Nombre()" [appendTo]="'body'" class="w-full" [style]="estiloFiltro"></p-dropdown>
+                [showClear]="true" [placeholder]="jerarquia2Nombre" [appendTo]="'body'" class="w-full" [style]="estiloFiltro"></p-dropdown>
             </div>
 
             <div class="flex-1 border-right-1 surface-border flex align-items-center" style="min-width: 130px; border-right-style: dashed !important;">
               <p-dropdown [options]="opcionesTareas" [(ngModel)]="filtroTarea"
-                [showClear]="true" (onChange)="filtroTarea = null; aplicarFiltrosLocales()" placeholder="Tarea" [appendTo]="'body'" class="w-full" [style]="estiloFiltro"></p-dropdown>
+                [showClear]="true" (onChange)="filtroTarea = null; aplicarFiltrosLocales()" [placeholder]="jerarquia3Nombre" [appendTo]="'body'" class="w-full" [style]="estiloFiltro"></p-dropdown>
             </div>
 
             <div class="flex-1 border-right-1 surface-border flex align-items-center" style="min-width: 130px; border-right-style: dashed !important;">

@@ -21,6 +21,7 @@ import { MenuItem } from 'primeng/api';
 import { FormatDurationPipe } from '../utilities/format-duration.pipe';
 import { ConfigService } from '../../../demo/service/config.service';
 import { ExtraccionExcel } from '../utilities/extraccion-excel.utils';
+import { AppAjustes } from '../../service/appajustes.service';
 
 @Component({
   selector: 'app-informes',
@@ -70,6 +71,10 @@ export class InformesComponent implements OnInit {
   filtroEstado: any = null;
   filtroDescripcion: string = '';
 
+  jerarquia1Nombre = 'Clientes';
+  jerarquia2Nombre = 'Pro';
+  jerarquia3Nombre = 'Tarea';
+
   estiloFiltro = { 'border': 'none', 'font-size': '12px' };
 
 
@@ -96,13 +101,19 @@ export class InformesComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private link: Router,
-    public configService: ConfigService // CAMBIO: Inyectado como public para el HTML
+    private appAjustes: AppAjustes,
+    public configService: ConfigService 
   ) {
     this.tabactivot = this.tabsT[0];
     this.tabactivoe = this.tabsE[0];
   }
 
   ngOnInit() {
+    this.appAjustes.config$.subscribe(config => {
+      this.jerarquia1Nombre = config.espacioTrabajo.jerarquia1Nombre;
+      this.jerarquia2Nombre = config.espacioTrabajo.jerarquia2Nombre;
+      this.jerarquia3Nombre = config.espacioTrabajo.jerarquia3Nombre;
+    });
     this.configurarGraficos();
     this.cargarEtiquetasDeStorage();
     this.cargarGruposDeStorage();
@@ -142,17 +153,17 @@ export class InformesComponent implements OnInit {
   }
 
   get opcionesTareas() {
-  return this.registrosDetallados
-    .filter(r => {
-      if (!this.filtroProyecto) return true;
-      const nombreProy = r.proyecto?.nombre || r.proyecto;
-      return nombreProy === this.filtroProyecto; // ← compara con el filtro activo
-    })
-    .map(r => r.tarea?.nombre || r.tarea)
-    .filter(t => t)
-    .filter((t, i, arr) => arr.indexOf(t) === i)
-    .map(t => ({ label: t, value: t }));
-}
+    return this.registrosDetallados
+      .filter(r => {
+        if (!this.filtroProyecto) return true;
+        const nombreProy = r.proyecto?.nombre || r.proyecto;
+        return nombreProy === this.filtroProyecto; // ← compara con el filtro activo
+      })
+      .map(r => r.tarea?.nombre || r.tarea)
+      .filter(t => t)
+      .filter((t, i, arr) => arr.indexOf(t) === i)
+      .map(t => ({ label: t, value: t }));
+  }
 
   get opcionesEstados() {
     return [{ label: 'Activo', value: 'Activo' }, { label: 'Archivado', value: 'Archivado' }];
